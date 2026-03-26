@@ -18,7 +18,7 @@ const cardItems = [
     }
 ]
 
-export default function WhyAustin() {
+export default function LearningExp() {
     return (
         <div className="bg-[#1E73BE] md:flex flex-wrap">
             <div className="flex-1 md:order-2">

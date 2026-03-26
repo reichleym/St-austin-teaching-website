@@ -18,7 +18,7 @@ export default function Home() {
             <HeroSection />
             <ExplorePrograms />
             <FeaturedPrograms />
-            <WhyAustin />
+            <WhyAustin button={true} whyAustinDesc={true} />
             <LearnSomething />
             <Testimonial />
             <LearningExp />

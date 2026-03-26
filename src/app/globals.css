@@ -28,11 +28,13 @@
     --foreground: #ededed;
   }
 }
-
+h1,h2,h3,h4,h5,h6 {
+  font-family: "EB Garamond", serif;
+}
 body {
   background: #ffffff;
   color: #333333;
-  font-size: 15px;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 18px;
+  font-family: "Teachers", sans-serif;
 }
 

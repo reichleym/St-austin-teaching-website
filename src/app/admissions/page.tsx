@@ -95,7 +95,7 @@ export default function AdmissionsPage() {
                     <div className="grid md:grid-cols-2 gap-10">
                         <div className="md:col-span-1">
                             <h2 className="text-3xl font-bold mb-10">Requirements</h2>
-                            <CheckList listContent={listContent} className="max-w-[500px]" />
+                            <CheckList listContent={listContent} className="max-w-[500px] space-y-5" />
                         </div>
                         <div className="md:col-span-1">
                             <img src="cta-img.png" className="max-w-[500px] ml-auto h-full object-cover" alt="" />
@@ -110,19 +110,19 @@ export default function AdmissionsPage() {
                     </div>
                     <div className="mx-auto max-w-[840px] space-y-5">
                         {deadlineItem.map((item, index) =>
-                            <div className="grid md:grid-cols-5 gap-4 bg-[#F9F9F9] py-5 px-10 rounded-[10px] items-center" key={index}>
+                            <div className="grid md:grid-cols-5 gap-4 bg-[#1E73BE0D] py-5 px-7 border border-[#1E73BE] rounded items-center" key={index}>
                                 <div className="col-span-2">
                                     <h3 className="text-2xl font-bold">{item.title}</h3>
                                 </div>
                                 <div className="col-span-3">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="col-span-1">
-                                            <h4 className="mb-5">{item.headingOne}</h4>
-                                            <p className="text-lg font-semibold">{item.dateOne}</p>
+                                            <div className="mb-2.5 text-[15px]">{item.headingOne}</div>
+                                            <p className="text-lg font-semibold leading-tight">{item.dateOne}</p>
                                         </div>
                                         <div className="col-span-1">
-                                            <h4 className="mb-5">{item.headingTwo}</h4>
-                                            <p className="text-lg font-semibold">{item.dateTwo}</p>
+                                            <div className="mb-2.5 text-[15px]">{item.headingTwo}</div>
+                                            <p className="text-lg font-semibold leading-tight">{item.dateTwo}</p>
                                         </div>
                                     </div>
                                 </div>
