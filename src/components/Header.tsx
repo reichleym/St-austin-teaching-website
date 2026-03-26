@@ -22,7 +22,7 @@ export default function Header() {
     const menuItems = [
         { label: 'Programs', href: '/program' },
         { label: 'Admissions', href: '/admissions' },
-        { label: 'Tuition & Aid', href: '#' },
+        { label: 'Tuition & Aid', href: '/tuition' },
         { label: 'Student Experience', href: '#' },
         { label: 'About', href: '#' },
     ];
