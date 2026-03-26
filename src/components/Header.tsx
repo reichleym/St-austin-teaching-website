@@ -20,8 +20,8 @@ export default function Header() {
     };
 
     const menuItems = [
-        { label: 'Programs', href: '#' },
-        { label: 'Admissions', href: '#' },
+        { label: 'Programs', href: '/program' },
+        { label: 'Admissions', href: '/admissions' },
         { label: 'Tuition & Aid', href: '#' },
         { label: 'Student Experience', href: '#' },
         { label: 'About', href: '#' },
@@ -48,7 +48,7 @@ export default function Header() {
                 <div className="flex justify-between items-center">
                     {/* Logo - Left Side */}
                     <div className="flex-shrink-0">
-                        <a href="#" className="">
+                        <a href="/" className="">
                             <img src="/austin-logo.png" width={210} alt="Austin Logo" />
                         </a>
                     </div>
