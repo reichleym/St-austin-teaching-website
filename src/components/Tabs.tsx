@@ -37,7 +37,7 @@ export default function Tabs({ tabs, defaultActiveTab }: TabsProps) {
                     </li>
                 )}
             </ul>
-            <div className="">
+            <div className="relative">
                 {tabs.map((tab) => (
                     <div key={tab.label} className={`transition-opacity duration-400 ${activeTab === tab.label ? 'opacity-100' : 'opacity-0 absolute top-0 left-0 w-full'}`}>
                         {tab.content}

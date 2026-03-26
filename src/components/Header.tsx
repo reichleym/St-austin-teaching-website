@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Menu, X, Search } from 'lucide-react';
 import Button from './Button';
 import { RxCross2 } from "react-icons/rx";
+import Link from 'next/link';
 
 
 export default function Header() {
@@ -37,13 +38,7 @@ export default function Header() {
                 <div className="container py-2 flex justify-end gap-5 items-center">
                     {
                         topMenuItem.map((topItem) =>(
-                            <a
-                                key={topItem.label}
-                                href={topItem.href}
-                                className="text-sm text-white hover:opacity-75 transition-opacity duration-200 leading-6"
-                            >
-                                {topItem.label}
-                            </a>
+                            <Link key={topItem.label} href={topItem.href} className='className="text-sm text-white hover:opacity-75 transition-opacity duration-200 leading-6"'>{topItem.label}</Link>
                         ))
                     }
                     <Button variant="white" className='px-4'>Apply Now</Button>

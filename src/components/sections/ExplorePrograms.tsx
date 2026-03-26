@@ -1,9 +1,9 @@
 import Button from "../Button";
 
-export default function ExplorePrograms() {
+export default function ExplorePrograms({className, ...rest}: {className?: string}) {
     return (
         <>
-        <section className="pt-25">
+        <section className={`pt-25 ${className}`} {...rest}>
             <div className="container">
                 <div className="bg-[#1E73BE] p-10 rounded-lg text-white grid grid-cols-1 md:grid-cols-4 items-center">
                     <h2 className="font-semibold text-2xl col-span-1 me-4">Explore Programs</h2>

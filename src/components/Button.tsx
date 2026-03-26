@@ -18,7 +18,7 @@ export default function Button({
     const variantStyles = {
         primary: 'bg-[#1E73BE] text-white',
         white: 'bg-white text-[#1E73BE]',
-        icon: 'bg-white text-[#1E73BE]',
+        icon: 'bg-white text-[#1E73BE] gap-3',
         outline: 'bg-transparent border border-[#1E73BE] text-[#1E73BE] hover:opacity-100 hover:bg-[#1E73BE] hover:text-white',
         whiteOutline: 'bg-transparent border border-[#fff] text-[#fff] hover:opacity-100 hover:bg-[#fff] hover:text-[#1E73BE]',
     };
