@@ -13,7 +13,7 @@ export default function Button({
     className = '',
     ...rest
 }: ButtonProps) {
-    const baseStyles = 'text-[15px] leading-tight font-medium hover:opacity-80 px-6 py-2.5 rounded-[5px] transition-colors duration-200 cursor-pointer flex items-center';
+    const baseStyles = 'text-[15px] leading-tight font-medium hover:opacity-80 px-6 py-2.5 rounded transition-colors duration-200 cursor-pointer flex items-center';
 
     const variantStyles = {
         primary: 'bg-[#1E73BE] text-white',

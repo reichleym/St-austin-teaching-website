@@ -91,15 +91,18 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            <Accreditation blockContent={blockContent} title="Accreditation" />
+            <Accreditation blockContent={blockContent} title="Accreditation" classNameCard="border border-[#33333340] p-[30px]" />
 
-            <section className="py-25">
+            <section className="pb-25">
                 <div className="container">
+                     <div className="flex flex-col items-center text-center mb-[50px]">
+                        <h2 className="text-3xl font-bold">Leadership Team</h2>
+                    </div>
                     <div className="grid md:grid-cols-4 gap-6">
                         {teamMembers.map((member, index) => (
                             <div
                                 key={index}
-                                className="card rounded-lg border border-[#F5F5F5] overflow-hidden"
+                                className="card rounded-lg border border-[#F5F5F5] bg-[#F5F5F5] overflow-hidden"
                             >
                                 <img
                                     src={member.image}
@@ -107,9 +110,9 @@ export default function AboutPage() {
                                     className="w-[322px] h-[322px] object-cover"
                                 />
                                 <div className="p-5 bg-[#F5F5F5]">
-                                    <h3 className="font-semibold mb-[5px] text-[22px]">
+                                    <h4 className="font-semibold mb-[5px] text-[22px]">
                                         {member.name}
-                                    </h3>
+                                    </h4>
                                     <h5 className="text-lg font-medium mb-[10px] text-[#1E73BE]">
                                         {member.role}
                                     </h5>
