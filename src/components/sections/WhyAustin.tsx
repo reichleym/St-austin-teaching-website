@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Button from "../Button"
 
 const cardItems = [
@@ -23,7 +24,7 @@ const cardItems = [
     }
 ]
 
-export default function WhyAustin({whiteCards = cardItems, secTitle = "Why Choose St. Austin?", whyAustinDesc, button}: {whiteCards?: {icon: string; title: string; description: string;}[]; secTitle?: string; whyAustinDesc?: React.ReactNode | string | null; button?: React.ReactNode}) {
+export default function WhyAustin({ whiteCards = cardItems, secTitle = "Why Choose St. Austin?", whyAustinDesc, button }: { whiteCards?: { icon: string; title: string; description: string; }[]; secTitle?: string; whyAustinDesc?: React.ReactNode | string | null; button?: React.ReactNode }) {
     return (
         <div className="bg-[#1E73BE] py-12">
             <div className="container">
@@ -31,7 +32,7 @@ export default function WhyAustin({whiteCards = cardItems, secTitle = "Why Choos
                     <div className="text-white">
                         <h2 className="text-4xl font-bold mb-2.5">{secTitle}</h2>
                         {whyAustinDesc && <p className="mb-7">Discover the St. Austin difference with our commitment to excellence, flexibility, and career success.</p>}
-                        {button && <Button variant="white">Learn More</Button>}
+                        {button && <Link href='/about'><Button variant="white">Learn More</Button></Link>}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 col-span-2">
                         {whiteCards.map((item, index) => (

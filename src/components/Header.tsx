@@ -24,7 +24,7 @@ export default function Header() {
         { label: 'Admissions', href: '/admissions' },
         { label: 'Tuition & Aid', href: '/tuition' },
         { label: 'Student Experience', href: '#' },
-        { label: 'About', href: '#' },
+        { label: 'About', href: '/about' },
     ];
     const topMenuItem = [
         { label: 'Government Employees', href: '#' },
