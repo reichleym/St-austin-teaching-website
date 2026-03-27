@@ -4,17 +4,8 @@
   --background: #ffffff;
   --foreground: #171717;
 }
-.container {
-  max-width: 1320px;
-  margin: 0 auto;
-  padding-left: 15px;
-  padding-right: 15px;
-}
-.container-fluid {
-  margin: 0 auto;
-  padding-left: 15px;
-  padding-right: 15px;
-}
+
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -37,3 +28,18 @@ body {
   font-size: 18px;
   font-family: "Teachers", sans-serif;
 }
+<<<<<<< HEAD
+=======
+
+.container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.container-fluid {
+  margin: 0 auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+>>>>>>> f7b593b35c38248f2e3586d35ba5d149b9a4e99a
