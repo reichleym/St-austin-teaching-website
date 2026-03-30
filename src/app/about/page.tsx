@@ -61,7 +61,7 @@ export default function AboutPage() {
         <>
             <BannerSection {...bannerContent} >
             </BannerSection>
-            <section className="py-25">
+            <section className="md:py-25 py-15">
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10 items-center">
                         <div className="md:col-span-1">
@@ -76,7 +76,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            <section className="py-25 bg-[#F5F5F5]">
+            <section className="md:py-25 py-15 bg-[#F5F5F5]">
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10">
                         <div className="md:col-span-1">
@@ -93,7 +93,7 @@ export default function AboutPage() {
 
             <Accreditation blockContent={blockContent} title="Accreditation" />
 
-            <section className="py-25">
+            <section className="md:py-25 py-15">
                 <div className="container">
                     <div className="grid md:grid-cols-4 gap-6">
                         {teamMembers.map((member, index) => (

@@ -1,3 +1,6 @@
+import Link from "next/dist/client/link";
+import { FaAngleRight } from "react-icons/fa";
+
 const StoriesContent = [
     { img: "/Jerome Bell.jpg", name: "Jerome Bell", profile: "Nursing Assistant" },
     { img: "/Jerome Bell.jpg", name: "Jerome Bell", profile: "Nursing Assistant" },
@@ -11,11 +14,16 @@ const StoriesContent = [
 export default function FeaturedStories() {
     return (
         <>
-            <section className="py-25 bg-[#F9F9F9]">
-                <div className="container-fluid max-w-[2000px]">
-                    <div className="mb-10 text-center">
-                        <h2 className="font-semibold text-4xl mb-2.5">Featured Stories</h2>
+            <section className="md:py-25 py-15 bg-[#F9F9F9]">
+                <div className="container">
+                    <div className="mb-12 flex flex-wrap gap-5 items-center justify-between">
+                        <h2 className="font-semibold md:text-[50px] text-4xl leading-tight">Featured Stories</h2>
+                        <Link href="#" className="text-[#1E73BE] hover:underline flex items-center gap-2">
+                            View More Stories <FaAngleRight />
+                        </Link>
                     </div>
+                </div>
+                <div className="container-fluid max-w-[2000px]">
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-5">
                         {StoriesContent.map((card, index) => (
                             <div key={index} className="bg-white rounded-[10px] shadow-md relative overflow-hidden h-[340px]">

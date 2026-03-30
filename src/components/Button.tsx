@@ -1,3 +1,5 @@
+import { FaAngleRight } from "react-icons/fa6";
+
 interface ButtonProps {
     children: React.ReactNode;
     variant?: 'primary' | 'outline' | 'white' | 'icon' | 'whiteOutline';
@@ -13,7 +15,7 @@ export default function Button({
     className = '',
     ...rest
 }: ButtonProps) {
-    const baseStyles = 'text-[15px] text-center justify-center leading-tight font-medium hover:opacity-80 px-6 py-2.5 rounded-[5px] transition-colors duration-200 cursor-pointer flex items-center';
+    const baseStyles = 'text-[18px] text-center justify-center leading-tight font-medium hover:opacity-80 px-6 py-2 min-h-[40px] rounded-[5px] transition-colors duration-200 cursor-pointer flex items-center gap-3';
 
     const variantStyles = {
         primary: 'bg-[#1E73BE] text-white',
@@ -28,7 +30,7 @@ export default function Button({
     return (
         <button className={combinedClass} {...rest}>
             {children}
-            {icon && <span className="flex items-center">{icon}</span>}
+            {icon && <span className="flex items-center"><FaAngleRight /></span>}
         </button>
     );
 }

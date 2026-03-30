@@ -59,7 +59,6 @@ export default async function ProgramPage({
     const params = await searchParams;
     const selectedDegreeLevel = getSingleParam(params.degreeLevel);
     const selectedFieldOfStudy = getSingleParam(params.fieldOfStudy);
-
     const bannerContent = {
         title: "Our Programs",
         description: "Discover career-focused programs designed for the modern professional.",
