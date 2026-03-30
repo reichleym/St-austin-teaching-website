@@ -23,7 +23,7 @@ export default function ProgramCard({ programCardContent = defaultProgramCardCon
                         </div>
                         <div className="flex items-center justify-between mt-4">
                             <span className="text-[13px] text-[#33333380] flex items-center gap-2"><IoMdTime size={22} /> {featureItem.time}</span>
-                            <Link href="/program" className="">
+                            <Link href={featureItem.href || "/program"} className="">
                                 <Button variant="outline">View Program</Button>
                             </Link>
                         </div>
