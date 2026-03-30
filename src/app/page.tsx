@@ -22,9 +22,9 @@ export default function Home() {
             <LearnSomething />
             <Testimonial />
             <LearningExp />
-            <FeaturedStories />
             <NewsAnnouncements />
-            <CtaSection />
+            <FeaturedStories />
+            <CtaSection className="pt-25" />
       </main>
       {/* <Footer /> */}
     </div>

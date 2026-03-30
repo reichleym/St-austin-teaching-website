@@ -24,22 +24,22 @@ const cardItems = [
     }
 ]
 
-export default function WhyAustin({ whiteCards = cardItems, secTitle = "Why Choose St. Austin?", whyAustinDesc, button }: { whiteCards?: { icon: string; title: string; description: string; }[]; secTitle?: string; whyAustinDesc?: React.ReactNode | string | null; button?: React.ReactNode }) {
+export default function WhyAustin({ whiteCards = cardItems, secTitle = "Why St. Austin?", whyAustinDesc, button }: { whiteCards?: { icon: string; title: string; description: string; }[]; secTitle?: string; whyAustinDesc?: React.ReactNode | string | null; button?: React.ReactNode }) {
     return (
-        <div className="bg-[#1E73BE] py-12">
+        <div className="bg-[#1E73BE] md:py-25 py-15">
             <div className="container">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                    <div className="text-white">
-                        <h2 className="text-4xl font-bold mb-2.5">{secTitle}</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-8 gap-8 items-center">
+                    <div className="text-white lg:col-span-3">
+                        <h2 className="text-4xl md:text-[50px] font-bold mb-2.5 leading-tight">{secTitle}</h2>
                         {whyAustinDesc && <p className="mb-7">Discover the St. Austin difference with our commitment to excellence, flexibility, and career success.</p>}
-                        {button && <Link href='/about'><Button variant="white">Learn More</Button></Link>}
+                        {button && <Link href='/about' className="inline-block"><Button variant="white">Learn More</Button></Link>}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 col-span-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:col-span-5">
                         {whiteCards.map((item, index) => (
-                            <div className="bg-white p-4 rounded-[10px]" key={index}>
+                            <div className="bg-white p-5 rounded-[10px]" key={index}>
                                 <div className="flex items-center mb-2.5">
                                     <div className="text-4xl mr-2.5">
-                                        <img src={item.icon} alt={item.title} />
+                                        <img src={item.icon} alt={item.title} width={60} />
                                     </div>
                                     <div className="text-xl font-semibold">{item.title}</div>
                                 </div>

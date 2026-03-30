@@ -58,8 +58,8 @@ export default function ProgramPage() {
             <section className="py-25">
                 <div className="container">
                     <h2 className="text-3xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
-                    <div className="max-w-2xl mx-auto">
-                        <table className="table w-full text-left border border-[#33333326] border-collapse overflow-hidden">
+                    <div className="max-w-2xl mx-auto relative overflow-x-auto rounded border-[#33333326] border-default">
+                        <table className="table w-full text-left border border-[#33333326] border-collapse overflow-hidden w-full text-sm text-left rtl:text-right text-body">
                             <thead className="bg-[#1E73BE] text-white text-lg font-semibold">
                                 <tr>
                                     {tableHeadings.map((heading, index) => (
@@ -67,7 +67,7 @@ export default function ProgramPage() {
                                     ))}
                                 </tr>
                             </thead>
-                            <tbody className="">
+                            <tbody className="border-b border-default">
                                 {tableData.map((row, index) => (
                                     <tr key={index} className="odd:bg-[#F9F9F9] border border-[#33333326] border-collapse text-lg">
                                         <td className="py-3 px-5">{row.program}</td>

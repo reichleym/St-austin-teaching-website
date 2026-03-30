@@ -13,18 +13,18 @@ function NewsCard() {
 
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-4 md:gap-5 gap-10">
             {NewsCardContent.map((NewsItem, index) =>
                 <div key={index} className="">
                     <div className="relative">
                         <img src={NewsItem.img} alt={NewsItem.title} className="w-full h-[200px] object-cover mb-4 rounded-[10px] " />
-                        <span className="absolute bottom-2 left-2 bg-[#1E73BE] text-white text-xs font-semibold px-2 py-1 rounded">{NewsItem.newsbadge}</span>
+                        <span className="absolute bottom-2 left-2 bg-[#1E73BE] text-white text-sm font-medium px-2 py-1 rounded">{NewsItem.newsbadge}</span>
                     </div>
                     <div className="">
-                        <h3 className="font-semibold text-md mb-2">{NewsItem.title}</h3>
-                        <p className="text-[15px]">{NewsItem.description}</p>
-                        <div className="flex items-center justify-between mt-3">
-                            <span className="text-[13px] text-[#33333380] mt-2 flex items-center gap-2"><IoMdTime size={22} /> {NewsItem.time}</span>
+                        <div className="font-semibold text-xl mb-2 leading-tight">{NewsItem.title}</div>
+                        <p className="leading-tight">{NewsItem.description}</p>
+                        <div className="flex items-center justify-between mt-5">
+                            <span className="text-sm text-[#33333380] flex items-center gap-2"><IoMdTime size={22} /> {NewsItem.time}</span>
                         </div>
                     </div>
                 </div>
@@ -36,11 +36,11 @@ function NewsCard() {
 export default function NewsAnnouncements() {
     return (
         <>
-            <section className="py-25">
+            <section className="md:py-25 py-15">
                 <div className="container">
-                    <div className="mb-10 flex flex-wrap gap-5 items-center justify-between">
-                        <h2 className="font-semibold text-4xl mb-2.5">News & Announcements</h2>
-                        <Button>Read More News</Button>
+                    <div className="mb-8 flex flex-wrap gap-5 items-center justify-between">
+                        <h2 className="font-semibold md:text-[50px] text-4xl leading-tight">News & Announcements</h2>
+                        <Button className="" variant="outline" icon={true}>Read More News</Button>
                     </div>
                     <NewsCard />
                 </div>

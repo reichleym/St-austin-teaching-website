@@ -18,18 +18,18 @@ export default function LearnSomething() {
         }
     ];
     return (
-        <div className="bg-[#F9F9F9] py-25">
+        <div className="bg-[#F9F9F9] md:py-25 py-15">
             <div className="container">
                 <div className="">
                     <div className="">
-                        <h2 className="text-4xl font-bold mb-2.5">Learn Something New With St. Austin</h2>
+                        <h2 className="md:text-[50px] text-4xl font-bold mb-2.5 leading-tight">Learn Something New With St. Austin</h2>
                         <p className="mb-7">St. Austin helps learners around the world grow their skills and careers. Join our learning community today!</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-4 mt-10 gap-5">
+                    <div className="grid grid-cols-2 md:grid-cols-4 mt-10 md:gap-6 gap-4">
                         {valueCards.map((card, index) => (
-                            <div className="text-center px-5 py-10 bg-white rounded-[10px]" key={index}>
-                                <h3 className="text-4xl text-[#1E73BE] font-semibold mb-2.5 italic">{card.value}</h3>
-                                <p className="font-medium">{card.title}</p>
+                            <div className="text-center px-2 py-8 bg-white rounded-[10px] border-b-6 border-[#1E73BE]" key={index}>
+                                <div className="lg:text-6xl text-4xl text-[#1E73BE] font-semibold mb-4 italic">{card.value}</div>
+                                <p className="text-xl font-medium">{card.title}</p>
                             </div>
                         ))}
                     </div>
