@@ -6,6 +6,8 @@ const connectionString =
     process.env.st_austin_teaching_platform_POSTGRES_URL ||
     process.env.st_austin_teaching_platform_PRISMA_DATABASE_URL;
 
+export const isDatabaseConfigured = Boolean(connectionString);
+
 type PostgresClient = ReturnType<typeof postgres>;
 
 const globalForPostgres = globalThis as typeof globalThis & {
@@ -25,8 +27,18 @@ function createClient(): PostgresClient {
     });
 }
 
-export const sql = globalForPostgres.__stAustinPostgres ?? createClient();
+let sqlClient: PostgresClient | undefined = globalForPostgres.__stAustinPostgres;
 
-if (process.env.NODE_ENV !== "production") {
-    globalForPostgres.__stAustinPostgres = sql;
+export function getSql(): PostgresClient {
+    if (sqlClient) {
+        return sqlClient;
+    }
+
+    sqlClient = createClient();
+
+    if (process.env.NODE_ENV !== "production") {
+        globalForPostgres.__stAustinPostgres = sqlClient;
+    }
+
+    return sqlClient;
 }

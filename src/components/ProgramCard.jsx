@@ -10,14 +10,18 @@ const defaultProgramCardContent = [
     { img: "/news-card-img.png", title: "Master of Business Administration", description: "Advance your career with executive-level business acumen and leadership training.", time: "2 years", badgeName: "Popular" }
 ];
 
-export default function ProgramCard({ programCardContent = defaultProgramCardContent }) {
+export default function ProgramCard({ programCardContent }) {
+    const cards = programCardContent ?? defaultProgramCardContent;
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-5">
-            {programCardContent.map((featureItem, index) =>
+            {cards.map((featureItem, index) =>
                 <div key={index} className="bg-white rounded-lg border border-[#33333340] p-4 flex items-center flex-col">
                     <div className="relative w-full mb-3">
                         <img src={featureItem.img} alt={featureItem.title} className="w-full h-[140px] rounded object-cover" />
-                        <span class="absolute bottom-2 border border-[#33333340] left-2 bg-white text-sm font-medium px-2 py-1 rounded">{featureItem.badgeName}</span>
+                        <span className="absolute bottom-2 border border-[#33333340] left-2 bg-white text-sm font-medium px-2 py-1 rounded">
+                            {featureItem.badgeName || "Program"}
+                        </span>
                     </div>
                     <div className="flex flex-col justify-between flex-1">
                         <div className="flex-1">

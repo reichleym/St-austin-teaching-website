@@ -40,7 +40,9 @@ export default function Footer() {
                                     <div className="font-semibold text-[22px] leading-tight mb-5 uppercase">Our Campus</div>
                                     <ul className="space-y-1">
                                         {campusMenuItems.map((item) =>
-                                            <li><a href={item.href} className="  hover:opacity-80 transition-colors duration-200">{item.label}</a></li>
+                                            <li key={item.label}>
+                                                <a href={item.href} className="  hover:opacity-80 transition-colors duration-200">{item.label}</a>
+                                            </li>
                                         )}
                                     </ul>
                                 </div>
@@ -48,7 +50,9 @@ export default function Footer() {
                                     <div className="font-semibold text-[22px] leading-tight mb-5 uppercase">Resources</div>
                                     <ul className="space-y-1">
                                         {recordMenuItems.map((item) =>
-                                            <li><a href={item.href} className="  hover:opacity-80 transition-colors duration-200">{item.label}</a></li>
+                                            <li key={item.label}>
+                                                <a href={item.href} className="  hover:opacity-80 transition-colors duration-200">{item.label}</a>
+                                            </li>
                                         )}
                                     </ul>
                                 </div>
@@ -62,10 +66,10 @@ export default function Footer() {
                         </div>
                     </div>
                     <div className="md:flex items-center md:space-y-0 space-y-5 justify-between border-t border-[#FFFFFF80] py-5 text-[16px]">
-                        <p className="">Copyright @ 2026. All Rights Reserved by St.Austin's International University</p>
+                        <p className="">Copyright @ 2026. All Rights Reserved by St.Austin&apos;s International University</p>
                         <ul className="flex gap-3">
                             <li><a href="#" className="hover:opacity-80 transition-colors duration-200">Privacy Policy</a></li>
-                            <span className="">|</span>
+                            <li aria-hidden="true" className="">|</li>
                             <li><a href="#" className="hover:opacity-80 transition-colors duration-200">Terms of Service</a></li>
                         </ul>
                     </div>

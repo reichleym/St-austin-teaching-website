@@ -1,5 +1,5 @@
 import "server-only";
-import { sql } from "@/lib/postgres";
+import { getSql } from "@/lib/postgres";
 
 type DbCourse = Record<string, unknown>;
 
@@ -58,6 +58,8 @@ function pickColumn(columnNames: string[], candidates: readonly string[]): strin
 }
 
 async function getCourseColumns(): Promise<CourseColumnMap> {
+    const sql = getSql();
+
     const tableRows = await sql<
         Array<{
             table_name: string;
@@ -110,6 +112,7 @@ async function getDistinctValues(tableName: string, column?: string): Promise<st
         return [];
     }
 
+    const sql = getSql();
     const quotedTable = quoteIdentifier(tableName);
     const quoted = quoteIdentifier(column);
     const query = `
@@ -180,6 +183,7 @@ export async function getCourses(filters: {
     degreeLevel?: string;
     fieldOfStudy?: string;
 }): Promise<CourseCardItem[]> {
+    const sql = getSql();
     const columns = await getCourseColumns();
     const conditions: string[] = [];
     const params: string[] = [];

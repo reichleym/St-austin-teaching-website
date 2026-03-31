@@ -1,4 +1,4 @@
-export default function Accreditation({ blockContent, title }: { blockContent: { cardTitle: string; cardDescription: string; icon: React.ReactNode; }[]; title: string; }) {
+export default function Accreditation({ blockContent, title }: { blockContent: { cardTitle: string; cardDescription: string; icon: string; }[]; title: string; }) {
     return (
         <section className="py-25">
             <div className="container">

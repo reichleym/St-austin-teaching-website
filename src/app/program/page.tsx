@@ -3,6 +3,7 @@ import ExplorePrograms from "@/components/sections/ExplorePrograms";
 import ProgramCard from "@/components/ProgramCard";
 import BannerSection from "@/components/sections/BannerSection";
 import { getCourseFilters, getCourses, type CourseCardItem } from "@/lib/course-catalog";
+import { isDatabaseConfigured } from "@/lib/postgres";
 
 type ProgramPageSearchParams = Promise<{
     degreeLevel?: string | string[];
@@ -69,19 +70,21 @@ export default async function ProgramPage({
     let degreeLevelOptions: string[] = [];
     let fieldOfStudyOptions: string[] = [];
 
-    try {
-        const [filters, dbPrograms] = await Promise.all([
-            getCourseFilters(),
-            getCourses({
-                degreeLevel: selectedDegreeLevel || undefined,
-                fieldOfStudy: selectedFieldOfStudy || undefined,
-            }),
-        ]);
-        degreeLevelOptions = filters.degreeLevel;
-        fieldOfStudyOptions = filters.fieldOfStudy;
-        programs = dbPrograms;
-    } catch (error) {
-        console.error("Failed to load courses from the database:", error);
+    if (isDatabaseConfigured) {
+        try {
+            const [filters, dbPrograms] = await Promise.all([
+                getCourseFilters(),
+                getCourses({
+                    degreeLevel: selectedDegreeLevel || undefined,
+                    fieldOfStudy: selectedFieldOfStudy || undefined,
+                }),
+            ]);
+            degreeLevelOptions = filters.degreeLevel;
+            fieldOfStudyOptions = filters.fieldOfStudy;
+            programs = dbPrograms;
+        } catch (error) {
+            console.error("Failed to load courses from the database:", error);
+        }
     }
 
     return (
