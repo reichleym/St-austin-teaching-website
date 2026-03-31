@@ -1,0 +1,94 @@
+import BannerSection from "@/components/sections/BannerSection";
+import CtaSection from "@/components/CtaSection";
+import Accreditation from "@/components/sections/Accreditation";
+import CheckList from "@/components/CheckList";
+import Button from "@/components/Button";
+
+export default function studentExperiencePage() {
+    const bannerContent = {
+        title: "Student Experience",
+        description: "Discover what it's like to learn at St. Austin — flexible, supportive, and career-focused.",
+        bgImg: "/bannerImg.jpg"
+    }
+
+    const blockContent = [
+        {
+            cardTitle: "Flexible Online Learning",
+            cardDescription: "Study from anywhere with our state-of-the-art virtual classroom and asynchronous course materials.",
+            icon: "/awards-icon.png"
+        },
+        {
+            cardTitle: "Collaborative Community",
+            cardDescription: "Engage with peers through discussion forums, group projects, and networking events.",
+            icon: "/business-icon.png"
+        },
+        {
+            cardTitle: "Career Services",
+            cardDescription: "Resume workshops, mock interviews, job fairs, and direct employer connections for every student.",
+            icon: "/nursing-icon.png"
+        },
+
+        {
+            cardTitle: "24/7 Support",
+            cardDescription: "Study from anywhere with our state-of-the-art virtual classroom and asynchronous course materials.",
+            icon: "/awards-icon.png"
+        },
+        {
+            cardTitle: "Rich Resources",
+            cardDescription: "Engage with peers through discussion forums, group projects, and networking events.",
+            icon: "/business-icon.png"
+        },
+        {
+            cardTitle: "Global Network",
+            cardDescription: "Resume workshops, mock interviews, job fairs, and direct employer connections for every student.",
+            icon: "/nursing-icon.png"
+        },
+    ]
+    const listContent = [
+        "Academic advising and mentorship",
+        "Writing center and tutoring",
+        "Disability and accessibility services",
+        "Mental health and wellness programs",
+        "Library and research support",
+        "Technology help desk"
+    ]
+
+    return (
+        <>
+            <BannerSection {...bannerContent} >
+            </BannerSection>
+            <Accreditation blockContent={blockContent} title="How You'll Learn" classNameCard="items-center text-center" />
+            <section className="py-25">
+                <div className="container">
+                    <div className="grid md:grid-cols-2 gap-10 items-center">
+                        <div className="md:col-span-1">
+                            <img src="cta-img.png" className="max-w-[500px] h-full max-h-[400px] object-cover rounded-[8px]" alt="" />
+                        </div>
+                        <div className="md:col-span-1">
+                            <h2 className="text-3xl font-bold mb-[10px]">Learn on Your Schedule</h2>
+                            <p className="text-lg">Whether you're a working professional, a parent, or a career changer, our programs are designed to fit your life. Study anytime, anywhere with our award-winning online platform.</p>
+                            <CheckList listContent={listContent} className="max-w-[500px] mt-5" classNamecheckboxList="mb-3 p-0" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="pb-25">
+                <div className="container">
+                    <div className="grid md:grid-cols-2 gap-10 items-center">
+                        <div className="md:col-span-1">
+                            <h2 className="text-3xl font-bold mb-[10px]">Your Learning Dashboard</h2>
+                            <p className="text-lg">Our integrated portal gives you access to assignments, discussions, messaging, grades, and more — all in one place.</p>
+                            <Button className="mt-6" variant="primary">Access the Portal</Button>
+                        </div>
+                        <div className="md:col-span-1">
+                            <img src="cta-img.png" className="max-w-[500px] ml-auto h-full max-h-[400px] object-cover rounded-[8px]" alt="" />
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+            <CtaSection />
+        </>
+    );
+}

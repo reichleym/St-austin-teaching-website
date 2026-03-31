@@ -3,7 +3,7 @@ import Button from "./Button";
 export default function CtaSection({ className }: { className?: string }) {
     return (
         <>
-            <section className={`md:pb-25 pb-15 ${className || ''}`}>
+            <section className={`md:pb-25 pb-15 ${className || ""}`}>
                 <div className="container">
                     <div className="bg-[#1E73BE] text-white rounded-lg grid md:grid-cols-10 gap-10 items-center">
                         <div className="md:col-span-6">
