@@ -1,7 +1,4 @@
-import Link from "next/dist/client/link";
-import Button from "../Button";
 import Tabs from "../Tabs";
-import { IoMdTime } from "react-icons/io";
 import ProgramCard from "../ProgramCard";
 
 export default function FeaturedPrograms() {

@@ -3,8 +3,7 @@ import CtaSection from "@/components/CtaSection";
 
 import BannerSection from "@/components/sections/BannerSection";
 import Button from "@/components/Button";
-import Link from "next/dist/client/link";
-import { CiCircleCheck } from "react-icons/ci";
+import Link from "next/link";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 export default function ProgramPage() {
     const bannerContent = {
