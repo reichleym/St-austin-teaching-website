@@ -3,7 +3,7 @@ export default function Accreditation({ blockContent, title, description, classN
         <section className={`py-25 ${className || ''}`}>
             <div className="container">
                 <div className="flex flex-col items-center text-center mb-[50px]">
-                    <h2 className="text-3xl font-bold">{title}</h2>
+                    <h2 className="text-3xl md:text-[50px] font-bold">{title}</h2>
                     {description && (
                         <p className="mt-3 text-gray-600 max-w-[600px]">
                             {description}
@@ -14,7 +14,7 @@ export default function Accreditation({ blockContent, title, description, classN
                     {blockContent.map((block, index) =>
                         <div className={`flex flex-col rounded-[8px] ${classNameCard || 'border border-[#33333340] p-[30px]'}`} key={index}>
                             <img src={block.icon} alt={block.cardTitle} className="bg-[#1E73BE] mb-2 rounded-[4px] w-[60px] p-[10px]" />
-                            <h3 className="text-xl font-bold mt-[20px] mb-[10px]">{block.cardTitle}</h3>
+                            <h4 className="text-xl font-semibold mt-[20px] mb-[10px]">{block.cardTitle}</h4>
                             <p className="text-gray-600">{block.cardDescription}</p>
                         </div>
                     )}
