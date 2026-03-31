@@ -55,11 +55,11 @@ export default function ProgramPage() {
 
         <>
             <BannerSection {...bannerContent} />
-            <section className="py-25">
+            <section className="md:py-25 py-15">
                 <div className="container">
-                    <h2 className="text-3xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
-                    <div className="max-w-2xl mx-auto relative overflow-x-auto rounded border-[#33333326] border-default">
-                        <table className="table w-full text-left border border-[#33333326] border-collapse overflow-hidden w-full text-sm text-left rtl:text-right text-body">
+                    <h2 className="text-3xl font-bold mb-12 text-center">Tuition Rates</h2>
+                    <div className="max-w-2xl mx-auto relative overflow-x-auto rounded-lg border border-[#33333326]">
+                        <table className="w-full text-sm text-left text-nowrap">
                             <thead className="bg-[#1E73BE] text-white text-lg font-semibold">
                                 <tr>
                                     {tableHeadings.map((heading, index) => (
@@ -67,9 +67,9 @@ export default function ProgramPage() {
                                     ))}
                                 </tr>
                             </thead>
-                            <tbody className="border-b border-default">
+                            <tbody className="">
                                 {tableData.map((row, index) => (
-                                    <tr key={index} className="odd:bg-[#F9F9F9] border border-[#33333326] border-collapse text-lg">
+                                    <tr key={index} className="odd:bg-[#F9F9F9] border-b border-[#33333326] text-lg last:border-0">
                                         <td className="py-3 px-5">{row.program}</td>
                                         <td className="py-3 px-5">{row.perYear}</td>
                                         <td className="py-3 px-5">{row.perCredit}</td>
@@ -81,15 +81,16 @@ export default function ProgramPage() {
                 </div>
             </section>
             <WhyAustin whiteCards={whiteCards} secTitle="Scholarships & Grants" whyAustinDesc={null} button={null} />
-            <section className="bg-[#F9F9F9] py-25">
+            <section className="bg-[#F9F9F9] md:py-25 py-15">
                 <div className="container">
-                    <h2 className="text-3xl font-bold mb-12 text-center">Payment Options</h2>
+                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">Payment Options</h2>
                     <div className="">
                         <CheckList listContent={listContent} className="grid md:grid-cols-2 gap-6" />
+                        <Button href="/contact" className="mt-12 mx-auto block" variant="primary">Contact Financial Aid Office</Button>
                     </div>
                 </div>
             </section>
-            <CtaSection className="pt-25" />
+            <CtaSection className="md:pt-25 pt-15" />
         </>
     );
 }
