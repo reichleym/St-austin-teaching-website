@@ -12,11 +12,25 @@ type ProgramCardItem = {
     href?: string;
 };
 
+function toProgramHref(featureItem: ProgramCardItem): string {
+    if (featureItem.href && featureItem.href.trim().length > 0) {
+        return featureItem.href;
+    }
+
+    const slug = featureItem.title
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    return `/program/${encodeURIComponent(slug || "program")}`;
+}
+
 const defaultProgramCardContent: ProgramCardItem[] = [
-    { img: "/news-card-img.png", title: "Business Administration", description: "Develop strategic thinking and leadership skills for the modern business world.", time: "3 years", badgeName: "New", href: "/program" },
-    { img: "/news-card-img.png", title: "Computer Science", description: "Master algorithms, software engineering, and cutting-edge technology.", time: "4 years", badgeName: "Popular", href: "/program" },
-    { img: "/news-card-img.png", title: "Data Science", description: "Analyze and interpret complex data to drive informed decision-making.", time: "2 years", badgeName: "New", href: "/program" },
-    { img: "/news-card-img.png", title: "Master of Business Administration", description: "Advance your career with executive-level business acumen and leadership training.", time: "2 years", badgeName: "Popular", href: "/program" },
+    { img: "/news-card-img.png", title: "Business Administration", description: "Develop strategic thinking and leadership skills for the modern business world.", time: "3 years", badgeName: "New", href: "/program/business-administration" },
+    { img: "/news-card-img.png", title: "Computer Science", description: "Master algorithms, software engineering, and cutting-edge technology.", time: "4 years", badgeName: "Popular", href: "/program/computer-science" },
+    { img: "/news-card-img.png", title: "Data Science", description: "Analyze and interpret complex data to drive informed decision-making.", time: "2 years", badgeName: "New", href: "/program/data-science" },
+    { img: "/news-card-img.png", title: "Master of Business Administration", description: "Advance your career with executive-level business acumen and leadership training.", time: "2 years", badgeName: "Popular", href: "/program/master-of-business-administration" },
 ];
 
 export default function ProgramCard({ programCardContent }: { programCardContent?: ProgramCardItem[] }) {
@@ -39,7 +53,7 @@ export default function ProgramCard({ programCardContent }: { programCardContent
                         </div>
                         <div className="flex items-center justify-between mt-4">
                             <span className="text-[13px] text-[#33333380] flex items-center gap-2"><IoMdTime size={22} /> {featureItem.time}</span>
-                            <Link href={featureItem.href || "/program"} className="">
+                            <Link href={toProgramHref(featureItem)} className="">
                                 <Button variant="outline">View Program</Button>
                             </Link>
                         </div>

@@ -137,6 +137,14 @@ function getSafeString(value: unknown, fallback = ""): string {
     return fallback;
 }
 
+function toProgramSlug(value: string): string {
+    return value
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
 function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number): CourseCardItem {
     const idValue =
         (columns.id ? row[columns.id] : undefined) ?? row.id ?? row.course_id ?? row.slug ?? index + 1;
@@ -211,4 +219,47 @@ export async function getCourses(filters: {
 
     const rows = await sql.unsafe<DbCourse[]>(query, params);
     return rows.map((row, index) => mapCourseRow(row, columns, index));
+}
+
+export async function getCourseById(courseId: string): Promise<CourseCardItem | null> {
+    const sql = getSql();
+    const columns = await getCourseColumns();
+    const normalizedCourseId = courseId.trim();
+
+    if (normalizedCourseId.length === 0) {
+        return null;
+    }
+
+    if (columns.id) {
+        const quotedTable = quoteIdentifier(columns.tableName);
+        const quotedId = quoteIdentifier(columns.id);
+        const rowByIdQuery = `
+            select *
+            from ${quotedTable}
+            where lower(${quotedId}::text) = lower($1)
+            limit 1
+        `;
+        const rowById = await sql.unsafe<DbCourse[]>(rowByIdQuery, [normalizedCourseId]);
+
+        if (rowById.length > 0) {
+            return mapCourseRow(rowById[0], columns, 0);
+        }
+    }
+
+    // Fallback for routes using a title slug when id lookup does not match.
+    const quotedTable = quoteIdentifier(columns.tableName);
+    const rows = await sql.unsafe<DbCourse[]>(`
+        select *
+        from ${quotedTable}
+        limit 500
+    `);
+    const mappedRows = rows.map((row, index) => mapCourseRow(row, columns, index));
+    const normalizedId = normalizedCourseId.toLowerCase();
+    const normalizedSlug = toProgramSlug(normalizedCourseId);
+
+    return (
+        mappedRows.find((course) => course.id.toLowerCase() === normalizedId) ??
+        mappedRows.find((course) => toProgramSlug(course.title) === normalizedSlug) ??
+        null
+    );
 }
