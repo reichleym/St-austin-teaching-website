@@ -57,7 +57,7 @@ export default function ProgramPage() {
             <BannerSection {...bannerContent} />
             <section className="md:py-25 py-15">
                 <div className="container">
-                    <h2 className="text-3xl font-bold mb-12 text-center">Tuition Rates</h2>
+                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">Tuition Rates</h2>
                     <div className="max-w-2xl mx-auto relative overflow-x-auto rounded-lg border border-[#33333326]">
                         <table className="w-full text-sm text-left text-nowrap">
                             <thead className="bg-[#1E73BE] text-white text-lg font-semibold">
@@ -85,8 +85,8 @@ export default function ProgramPage() {
                 <div className="container">
                     <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">Payment Options</h2>
                     <div className="">
-                        <CheckList listContent={listContent} className="grid md:grid-cols-2 gap-6" />
-                        <Button href="/contact" className="mt-12 mx-auto block" variant="primary">Contact Financial Aid Office</Button>
+                        <CheckList listContent={listContent} className="grid md:grid-cols-2 gap-6 space-y-0" classNamecheckboxList="p-3.5 border border-[#1E73BE]" />
+                        <Button className="mt-12 mx-auto block" variant="primary">Contact Financial Aid Office</Button>
                     </div>
                 </div>
             </section>

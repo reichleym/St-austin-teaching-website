@@ -1,24 +1,20 @@
-export default function Accreditation({ blockContent, title, description, className, classNameCard }: { blockContent: { cardTitle: string; cardDescription: string; icon: string; }[]; title: string; className?: string; classNameCard?: string; description?: string }) {
+import { cn } from "@/lib/utils"
+import IconCard from "../IconCard";
+
+
+export default function Accreditation({ title, description, className, blockContent, classNameCard }: { title: string; description?: string; className?: string;classNameCard?: string; blockContent: { cardTitle: string; cardDescription: string; icon: string; }[] }) {
     return (
-        <section className={`py-25 ${className || ''}`}>
+        <section className={cn("md:py-25 py-15", className || '')}>
             <div className="container">
                 <div className="flex flex-col items-center text-center mb-[50px]">
                     <h2 className="text-3xl md:text-[50px] font-bold">{title}</h2>
                     {description && (
-                        <p className="mt-3 text-gray-600 max-w-[600px]">
+                        <p className="mt-3 max-w-[600px]">
                             {description}
                         </p>
                     )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-[24px]">
-                    {blockContent.map((block, index) =>
-                        <div className={`flex flex-col rounded-[8px] ${classNameCard || 'border border-[#33333340] p-[30px]'}`} key={index}>
-                            <img src={block.icon} alt={block.cardTitle} className="bg-[#1E73BE] mb-2 rounded-[4px] w-[60px] p-[10px]" />
-                            <h4 className="text-xl font-semibold mt-[20px] mb-[10px]">{block.cardTitle}</h4>
-                            <p className="text-gray-600">{block.cardDescription}</p>
-                        </div>
-                    )}
-                </div>
+                <IconCard blockContent={blockContent} className={cn("items-center text-center md:gap-y-12 md:gap-x-20", classNameCard)} />
             </div>
         </section>
     );
