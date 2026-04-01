@@ -1,5 +1,12 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Button from "../Button";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, FormEvent } from "react";
+import { fetchProgramFilters, searchPrograms } from "@/services/programs";
+
+const EMPTY_OPTIONS: string[] = [];
 
 type ExploreProgramsProps = ComponentPropsWithoutRef<"section"> & {
     className?: string;
@@ -12,21 +19,109 @@ type ExploreProgramsProps = ComponentPropsWithoutRef<"section"> & {
 
 export default function ExplorePrograms({
     className,
-    degreeLevelOptions = [],
-    fieldOfStudyOptions = [],
+    degreeLevelOptions = EMPTY_OPTIONS,
+    fieldOfStudyOptions = EMPTY_OPTIONS,
     selectedDegreeLevel = "",
     selectedFieldOfStudy = "",
     action = "/program",
     ...rest
 }: ExploreProgramsProps) {
+    const router = useRouter();
+    const [degreeLevel, setDegreeLevel] = useState(selectedDegreeLevel);
+    const [fieldOfStudy, setFieldOfStudy] = useState(selectedFieldOfStudy);
+    const [apiDegreeLevelOptions, setApiDegreeLevelOptions] = useState<string[]>([]);
+    const [apiFieldOfStudyOptions, setApiFieldOfStudyOptions] = useState<string[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const hasProvidedDegreeLevelOptions = degreeLevelOptions.length > 0;
+    const hasProvidedFieldOfStudyOptions = fieldOfStudyOptions.length > 0;
+    const resolvedDegreeLevelOptions = hasProvidedDegreeLevelOptions
+        ? degreeLevelOptions
+        : apiDegreeLevelOptions;
+    const resolvedFieldOfStudyOptions = hasProvidedFieldOfStudyOptions
+        ? fieldOfStudyOptions
+        : apiFieldOfStudyOptions;
+
+    useEffect(() => {
+        setDegreeLevel(selectedDegreeLevel);
+        setFieldOfStudy(selectedFieldOfStudy);
+    }, [selectedDegreeLevel, selectedFieldOfStudy]);
+
+    useEffect(() => {
+        if (hasProvidedDegreeLevelOptions && hasProvidedFieldOfStudyOptions) {
+            return;
+        }
+
+        let active = true;
+
+        async function hydrateFilters() {
+            try {
+                const filters = await fetchProgramFilters();
+
+                if (!active) {
+                    return;
+                }
+
+                if (!hasProvidedDegreeLevelOptions) {
+                    setApiDegreeLevelOptions(filters.degreeLevel);
+                }
+
+                if (!hasProvidedFieldOfStudyOptions) {
+                    setApiFieldOfStudyOptions(filters.fieldOfStudy);
+                }
+            } catch (error) {
+                console.error("Failed to load program filters:", error);
+            }
+        }
+
+        hydrateFilters();
+
+        return () => {
+            active = false;
+        };
+    }, [hasProvidedDegreeLevelOptions, hasProvidedFieldOfStudyOptions]);
+
+    function buildSearchUrl(): string {
+        const params = new URLSearchParams();
+
+        if (degreeLevel) {
+            params.set("degreeLevel", degreeLevel);
+        }
+
+        if (fieldOfStudy) {
+            params.set("fieldOfStudy", fieldOfStudy);
+        }
+
+        const query = params.toString();
+        return query.length > 0 ? `${action}?${query}` : action;
+    }
+
+    async function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const destination = buildSearchUrl();
+
+        setIsSearching(true);
+        try {
+            await searchPrograms({
+                degreeLevel: degreeLevel || undefined,
+                fieldOfStudy: fieldOfStudy || undefined,
+            });
+        } catch (error) {
+            console.error("Program search request failed:", error);
+        } finally {
+            setIsSearching(false);
+            router.push(destination);
+        }
+    }
+
     return (
-        <section className={`md:pt-25 pt-15 ${className}`} {...rest}>
+        <section className={`md:pt-25 pt-15 ${className ?? ""}`.trim()} {...rest}>
             <div className="container">
                 <div className="bg-[#1E73BE] p-10 rounded-lg text-white gap-5 grid grid-cols-1 md:grid-cols-4 items-center">
                     <h2 className="font-semibold text-3xl col-span-1">Explore Programs</h2>
                     <form
                         action={action}
                         method="GET"
+                        onSubmit={handleSearchSubmit}
                         className="md:flex flex-wrap items-end md:space-x-5 md:space-y-0 space-y-5 col-span-1 md:col-span-3"
                     >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 flex-1">
@@ -36,11 +131,12 @@ export default function ExplorePrograms({
                                     <select
                                         id="degree-level"
                                         name="degreeLevel"
-                                        defaultValue={selectedDegreeLevel}
+                                        value={degreeLevel}
+                                        onChange={(event) => setDegreeLevel(event.target.value)}
                                         className="block appearance-none w-full border border-[#FFFFFFBF] hover:border-white px-3 py-2 pr-8 rounded leading-tight focus:outline-none font-medium"
                                     >
                                         <option value="">All degree levels</option>
-                                        {degreeLevelOptions.map((option) => (
+                                        {resolvedDegreeLevelOptions.map((option) => (
                                             <option key={option} value={option}>
                                                 {option}
                                             </option>
@@ -57,11 +153,12 @@ export default function ExplorePrograms({
                                     <select
                                         id="field-of-study"
                                         name="fieldOfStudy"
-                                        defaultValue={selectedFieldOfStudy}
+                                        value={fieldOfStudy}
+                                        onChange={(event) => setFieldOfStudy(event.target.value)}
                                         className="block appearance-none w-full border border-[#FFFFFFBF] hover:border-white px-3 py-2 pr-8 rounded leading-tight focus:outline-none font-medium"
                                     >
                                         <option value="">All fields of study</option>
-                                        {fieldOfStudyOptions.map((option) => (
+                                        {resolvedFieldOfStudyOptions.map((option) => (
                                             <option key={option} value={option}>
                                                 {option}
                                             </option>
@@ -73,7 +170,9 @@ export default function ExplorePrograms({
                                 </div>
                             </div>
                         </div>
-                        <Button variant="white">Search</Button>
+                        <Button variant="white" disabled={isSearching}>
+                            {isSearching ? "Searching..." : "Search"}
+                        </Button>
                     </form>
                 </div>
             </div>

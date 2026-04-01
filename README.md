@@ -16,6 +16,22 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Environment Variables
+
+Program search API requires a Postgres connection string. Add one of the following to `.env.local`:
+
+```bash
+DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DB_NAME?sslmode=require
+# or
+POSTGRES_URL=postgres://USER:PASSWORD@HOST:5432/DB_NAME?sslmode=require
+# or project-specific keys:
+st_austin_teaching_platform_DATABASE_URL=...
+st_austin_teaching_platform_POSTGRES_URL=...
+st_austin_teaching_platform_PRISMA_DATABASE_URL=...
+```
+
+Without one of these values, `/api/courses` will return HTTP `503`.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
