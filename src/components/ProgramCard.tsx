@@ -3,14 +3,23 @@ import Link from "next/link";
 import Button from "./Button";
 import { IoMdTime } from "react-icons/io";
 
-const defaultProgramCardContent = [
+type ProgramCardItem = {
+    img: string;
+    title: string;
+    description: string;
+    time: string;
+    badgeName?: string;
+    href?: string;
+};
+
+const defaultProgramCardContent: ProgramCardItem[] = [
     { img: "/news-card-img.png", title: "Business Administration", description: "Develop strategic thinking and leadership skills for the modern business world.", time: "3 years", badgeName: "New", href: "/program" },
     { img: "/news-card-img.png", title: "Computer Science", description: "Master algorithms, software engineering, and cutting-edge technology.", time: "4 years", badgeName: "Popular", href: "/program" },
     { img: "/news-card-img.png", title: "Data Science", description: "Analyze and interpret complex data to drive informed decision-making.", time: "2 years", badgeName: "New", href: "/program" },
     { img: "/news-card-img.png", title: "Master of Business Administration", description: "Advance your career with executive-level business acumen and leadership training.", time: "2 years", badgeName: "Popular", href: "/program" },
 ];
 
-export default function ProgramCard({ programCardContent }: { programCardContent?: typeof defaultProgramCardContent }) {
+export default function ProgramCard({ programCardContent }: { programCardContent?: ProgramCardItem[] }) {
     const cards = programCardContent ?? defaultProgramCardContent;
 
     return (

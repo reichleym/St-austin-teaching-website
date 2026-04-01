@@ -6,6 +6,7 @@ import BannerSection from "@/components/sections/BannerSection";
 import Button from "@/components/Button";
 import CheckList from "@/components/CheckList";
 import WhyAustin from "@/components/sections/WhyAustin";
+import Link from "next/link";
 export default function ProgramPage() {
     const bannerContent = {
         title: "Tuition & Financial Aid",
@@ -86,7 +87,7 @@ export default function ProgramPage() {
                     <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">Payment Options</h2>
                     <div className="">
                         <CheckList listContent={listContent} className="grid md:grid-cols-2 gap-6" />
-                        <Button href="/contact" className="mt-12 mx-auto block" variant="primary">Contact Financial Aid Office</Button>
+                        <Link href="/contact"><Button className="mt-12 mx-auto block" variant="primary">Contact Financial Aid Office</Button></Link>
                     </div>
                 </div>
             </section>
