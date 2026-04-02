@@ -13,6 +13,56 @@ type ProgramDetailPageProps = {
     }>;
 };
 
+type ProgramContentPayload = {
+    overview?: unknown;
+    tuitionAndFees?: unknown;
+    curriculum?: unknown;
+    admissionRequirements?: unknown;
+    careerOpportunities?: unknown;
+};
+
+const EMPTY_CONTENT_MESSAGE = "content is not updated yet";
+
+function getNonEmptyString(value: unknown): string | null {
+    if (typeof value === "string") {
+        const trimmed = value.trim();
+        return trimmed.length > 0 ? trimmed : null;
+    }
+
+    if (typeof value === "number") {
+        return String(value);
+    }
+
+    return null;
+}
+
+function getStringList(value: unknown): string[] {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value
+        .map((item) => getNonEmptyString(item))
+        .filter((item): item is string => item !== null);
+}
+
+function parseProgramContent(raw: string | undefined): ProgramContentPayload | null {
+    if (!raw || raw.trim().length === 0) {
+        return null;
+    }
+
+    try {
+        const parsed: unknown = JSON.parse(raw);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+            return parsed as ProgramContentPayload;
+        }
+    } catch {
+        return null;
+    }
+
+    return null;
+}
+
 const fallbackProgramsBySlug: Record<string, CourseCardItem> = {
     "business-administration": {
         id: "business-administration",
@@ -123,28 +173,12 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
         bgImg: "/bannerImg.jpg",
     };
     const bannerBadge = ["Online", program.time];
-    const checkListContent = [
-        "High school diploma or equivalent",
-        "Minimum GPA of 2.5",
-        "English proficiency test",
-        "Personal statement",
-    ];
-    const curriculum = [
-        "Introduction to Business",
-        "Marketing Principles",
-        "Strategic Management",
-        "Capstone Project",
-        "Financial Accounting",
-        "Organizational Behavior",
-        "Business Ethics",
-    ];
-    const careers = [
-        "Business Manager",
-        "Marketing Director",
-        "Financial Analyst",
-        "Entrepreneur",
-        "Operations Manager",
-    ];
+    const structuredContent = parseProgramContent(program.programContent);
+    const programOverviewContent = getNonEmptyString(structuredContent?.overview) ?? EMPTY_CONTENT_MESSAGE;
+    const tuitionAndFees = getNonEmptyString(structuredContent?.tuitionAndFees) ?? EMPTY_CONTENT_MESSAGE;
+    const curriculum = getStringList(structuredContent?.curriculum);
+    const admissionRequirements = getStringList(structuredContent?.admissionRequirements);
+    const careerOpportunities = getStringList(structuredContent?.careerOpportunities);
 
     return (
         <>
@@ -170,42 +204,49 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
                         <div className="md:col-span-3 space-y-12">
                             <div>
                                 <h2 className="md:text-4xl text-3xl font-bold mb-5">Program Overview</h2>
-                                <p>{program.description}</p>
+                                <p className="whitespace-pre-line">{programOverviewContent}</p>
                             </div>
                             <div>
                                 <h2 className="md:text-4xl text-3xl font-bold mb-5">Curriculum</h2>
-                                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {curriculum.map((item, index) => (
-                                        <li className="flex gap-4 items-center" key={item}>
-                                            <span className="bg-[#1E73BE] font-semibold text-white w-11 h-11 rounded-full flex items-center justify-center">
-                                                {String(index + 1).padStart(2, "0")}
-                                            </span>
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
+                                {curriculum.length > 0 ? (
+                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {curriculum.map((item, index) => (
+                                            <li className="flex gap-4 items-center" key={`${item}-${index}`}>
+                                                <span className="bg-[#1E73BE] font-semibold text-white w-11 h-11 rounded-full flex items-center justify-center">
+                                                    {String(index + 1).padStart(2, "0")}
+                                                </span>
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>{EMPTY_CONTENT_MESSAGE}</p>
+                                )}
                             </div>
                             <div>
                                 <h2 className="md:text-4xl text-3xl font-bold mb-5">Career Opportunities</h2>
-                                <p className="mb-5">{program.description}</p>
-                                <div className="flex flex-wrap gap-5">
-                                    {careers.map((tag) => (
-                                        <span
-                                            className="bg-[#1E73BE1A] p-3 border border-[#1E73BE] font-semibold flex items-center gap-2.5"
-                                            key={tag}
-                                        >
-                                            <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE]" />
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
+                                {careerOpportunities.length > 0 ? (
+                                    <div className="flex flex-wrap gap-5">
+                                        {careerOpportunities.map((tag, index) => (
+                                            <span
+                                                className="bg-[#1E73BE1A] p-3 border border-[#1E73BE] font-semibold flex items-center gap-2.5"
+                                                key={`${tag}-${index}`}
+                                            >
+                                                <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE]" />
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p>{EMPTY_CONTENT_MESSAGE}</p>
+                                )}
                             </div>
                         </div>
                         <div className="md:col-span-2 space-y-10">
                             <div className="bg-[#F2F5FA] p-7 rounded-lg space-y-5">
                                 <h4 className="font-semibold text-[22px] leading-tight">Tuition & Fees</h4>
                                 <div className="leading-tight">
-                                    <span className="md:text-[50px] text-4xl font-bold">$12,500</span> <span>/ year</span>
+                                    <span className="md:text-[50px] text-4xl font-bold">{tuitionAndFees}</span>
                                 </div>
                                 <Link href="/tuition" className="hover:underline">
                                     View financial aid options →
@@ -213,14 +254,18 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
                             </div>
                             <div className="bg-[#F2F5FA] p-7 rounded-lg">
                                 <h4 className="font-semibold text-[22px] mb-4">Admission Requirements</h4>
-                                <ul className="space-y-3">
-                                    {checkListContent.map((item) => (
-                                        <li className="flex gap-2.5 items-center" key={item}>
-                                            <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE]" />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
+                                {admissionRequirements.length > 0 ? (
+                                    <ul className="space-y-3">
+                                        {admissionRequirements.map((item, index) => (
+                                            <li className="flex gap-2.5 items-center" key={`${item}-${index}`}>
+                                                <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE]" />
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>{EMPTY_CONTENT_MESSAGE}</p>
+                                )}
                             </div>
                             <div className="bg-[#1E73BE] p-7 rounded-lg text-white text-center">
                                 <h3 className="font-semibold text-[28px] leading-tight mb-5">Start Your Application</h3>

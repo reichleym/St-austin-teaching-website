@@ -8,6 +8,7 @@ type CourseColumnMap = {
     id?: string;
     title?: string;
     description?: string;
+    programContent?: string;
     duration?: string;
     image?: string;
     degreeLevel?: string;
@@ -18,6 +19,7 @@ export type CourseCardItem = {
     id: string;
     title: string;
     description: string;
+    programContent?: string;
     time: string;
     img: string;
     href: string;
@@ -32,6 +34,7 @@ const TEXT_COLUMN_CANDIDATES = {
     id: ["id", "course_id", "uuid", "slug"],
     title: ["title", "course_name", "name", "program_name", "program_title"],
     description: ["description", "summary", "overview", "details"],
+    programContent: ["program_content", "programContent", "programcontent"],
     duration: ["duration", "time", "length", "timeline"],
     image: ["image", "image_url", "thumbnail", "cover_image", "banner_image"],
     degreeLevel: ["degree_level", "degree", "level", "program_level", "degree_type"],
@@ -100,6 +103,7 @@ async function getCourseColumns(): Promise<CourseColumnMap> {
         id: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.id),
         title: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.title),
         description: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.description),
+        programContent: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.programContent),
         duration: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.duration),
         image: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.image),
         degreeLevel: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
@@ -137,6 +141,22 @@ function getSafeString(value: unknown, fallback = ""): string {
     return fallback;
 }
 
+function getOptionalJsonString(value: unknown): string | undefined {
+    if (typeof value === "string" && value.trim().length > 0) {
+        return value;
+    }
+
+    if (value && typeof value === "object") {
+        try {
+            return JSON.stringify(value);
+        } catch {
+            return undefined;
+        }
+    }
+
+    return undefined;
+}
+
 function toProgramSlug(value: string): string {
     return value
         .trim()
@@ -158,6 +178,9 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number): C
         columns.description ? row[columns.description] : undefined,
         getSafeString(row.description, "Program information coming soon.")
     );
+    const programContent = getOptionalJsonString(
+        columns.programContent ? row[columns.programContent] : row.programContent
+    );
     const time = getSafeString(
         columns.duration ? row[columns.duration] : undefined,
         getSafeString(row.duration, "Duration TBD")
@@ -171,6 +194,7 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number): C
         id,
         title,
         description,
+        programContent,
         time,
         img,
         href: `/program/${encodeURIComponent(id)}`,
