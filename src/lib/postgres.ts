@@ -5,9 +5,15 @@ const DATABASE_ENV_KEYS = [
     "st_austin_teaching_platform_DATABASE_URL",
     "st_austin_teaching_platform_POSTGRES_URL",
     "st_austin_teaching_platform_PRISMA_DATABASE_URL",
+    "ST_AUSTIN_TEACHING_PLATFORM_DATABASE_URL",
+    "ST_AUSTIN_TEACHING_PLATFORM_POSTGRES_URL",
+    "ST_AUSTIN_TEACHING_PLATFORM_PRISMA_DATABASE_URL",
     "DATABASE_URL",
     "POSTGRES_URL",
     "PRISMA_DATABASE_URL",
+    "POSTGRES_PRISMA_URL",
+    "POSTGRES_URL_NON_POOLING",
+    "POSTGRES_URL_NO_SSL",
 ] as const;
 
 type DatabaseEnvKey = (typeof DATABASE_ENV_KEYS)[number];
