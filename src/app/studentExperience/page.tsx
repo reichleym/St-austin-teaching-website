@@ -57,32 +57,31 @@ export default function studentExperiencePage() {
         <>
             <BannerSection {...bannerContent} >
             </BannerSection>
-            <Accreditation blockContent={blockContent} title="How You'll Learn" classNameCard="items-center text-center" />
-            <section className="py-25">
+            <Accreditation blockContent={blockContent} title="How You'll Learn"/>
+            <section className="md:pb-25 pb-15">
                 <div className="container">
-                    <div className="grid md:grid-cols-2 gap-10 items-center">
-                        <div className="md:col-span-1">
-                            <img src="cta-img.png" className="max-w-[500px] h-full max-h-[400px] object-cover rounded-[8px]" alt="" />
+                    <div className="grid md:grid-cols-2 md:gap-15 gap-10 items-center">
+                        <div className="md:col-span-1 h-full">
+                            <img src="cta-img.png" className="h-full object-cover rounded-md w-full" alt="" />
                         </div>
                         <div className="md:col-span-1">
-                            <h2 className="text-3xl font-bold mb-[10px]">Learn on Your Schedule</h2>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">Learn on Your Schedule</h2>
                             <p className="text-lg">Whether you're a working professional, a parent, or a career changer, our programs are designed to fit your life. Study anytime, anywhere with our award-winning online platform.</p>
-                            <CheckList listContent={listContent} className="max-w-[500px] mt-5" classNamecheckboxList="mb-3 p-0" />
+                            <CheckList listContent={listContent} className="max-w-[500px] mt-5" classNamecheckboxList="mb-3 p-0 text-[#1E73BE] font-semibold" />
                         </div>
                     </div>
                 </div>
             </section>
-
-            <section className="pb-25">
+            <section className="md:pb-25 pb-15">
                 <div className="container">
-                    <div className="grid md:grid-cols-2 gap-10 items-center">
+                    <div className="grid md:grid-cols-2 md:gap-15 gap-10 items-center">
                         <div className="md:col-span-1">
-                            <h2 className="text-3xl font-bold mb-[10px]">Your Learning Dashboard</h2>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">Your Learning Dashboard</h2>
                             <p className="text-lg">Our integrated portal gives you access to assignments, discussions, messaging, grades, and more — all in one place.</p>
                             <Button className="mt-6" variant="primary">Access the Portal</Button>
                         </div>
-                        <div className="md:col-span-1">
-                            <img src="cta-img.png" className="max-w-[500px] ml-auto h-full max-h-[400px] object-cover rounded-[8px]" alt="" />
+                        <div className="md:col-span-1 h-full">
+                            <img src="cta-img.png" className="h-full object-cover rounded-md w-full" alt="" />
                         </div>
 
                     </div>
