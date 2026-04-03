@@ -38,7 +38,7 @@ export default function Header() {
                 <div className="container py-2 flex justify-end gap-5 items-center">
                     {
                         topMenuItem.map((topItem) =>(
-                            <Link key={topItem.label} href={topItem.href} className='className="text-sm text-white hover:opacity-75 transition-opacity duration-200 leading-6"'>{topItem.label}</Link>
+                            <Link key={topItem.label} href={topItem.href} className='text-sm md:text-base font-medium text-white hover:opacity-75 transition-opacity duration-200 leading-6 align-center'>{topItem.label}</Link>
                         ))
                     }
                     <Button variant="white" className='px-4'>Apply Now</Button>

@@ -93,10 +93,10 @@ export default function AdmissionsPage() {
                     <div className="grid md:grid-cols-2 gap-10">
                         <div className="md:col-span-1">
                             <h2 className="text-3xl font-bold mb-10">Requirements</h2>
-                            <CheckList listContent={listContent} className="max-w-[500px]" />
+                            <CheckList listContent={listContent} className="md:max-w-[500px]" />
                         </div>
                         <div className="md:col-span-1">
-                            <img src="/cta-img.png" className="max-w-[500px] ml-auto h-full object-cover" alt="" />
+                            <img src="/cta-img.png" className="w-full md:max-w-[500px] ml-auto h-full object-cover" alt="" />
                         </div>
                     </div>
                 </div>
