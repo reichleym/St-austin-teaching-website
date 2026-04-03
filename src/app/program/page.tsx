@@ -24,7 +24,7 @@ const fallbackPrograms: CourseCardItem[] = [
         title: "Business Administration",
         description: "Develop strategic thinking and leadership skills for the modern business world.",
         time: "3 years",
-        href: "/program",
+        href: "/program/business-administration",
     },
     {
         id: "fallback-2",
@@ -32,7 +32,7 @@ const fallbackPrograms: CourseCardItem[] = [
         title: "Computer Science",
         description: "Master algorithms, software engineering, and cutting-edge technology.",
         time: "4 years",
-        href: "/program",
+        href: "/program/computer-science",
     },
     {
         id: "fallback-3",
@@ -40,7 +40,7 @@ const fallbackPrograms: CourseCardItem[] = [
         title: "Data Science",
         description: "Analyze and interpret complex data to drive informed decision-making.",
         time: "2 years",
-        href: "/program",
+        href: "/program/data-science",
     },
     {
         id: "fallback-4",
@@ -48,7 +48,7 @@ const fallbackPrograms: CourseCardItem[] = [
         title: "Master of Business Administration",
         description: "Advance your career with executive-level business acumen and leadership training.",
         time: "2 years",
-        href: "/program",
+        href: "/program/master-of-business-administration",
     },
 ];
 
