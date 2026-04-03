@@ -88,7 +88,7 @@ export default function AdmissionsPage() {
                 <Button className="mt-6" variant="icon" icon={<FaAngleRight />} size="lg">Explore Programs</Button>
             </BannerSection>
             <StepsSection stepsContent={stepsContent} title="How to Apply" />
-            <section className="bg-[#F9F9F9] py-25">
+            <section className="bg-[#F9F9F9] md:py-25 py-15">
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10">
                         <div className="md:col-span-1">
@@ -97,14 +97,19 @@ export default function AdmissionsPage() {
                         </div>
                         <div className="md:col-span-1">
                             <img src="/cta-img.png" className="w-full md:max-w-[500px] ml-auto h-full object-cover" alt="" />
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-10">Requirements</h2>
+                            <CheckList listContent={listContent} className="max-w-[500px]" classNamecheckboxList="p-3.5 border border-[#1E73BE]" />
+                        </div>
+                        <div className="md:col-span-1 h-full">
+                            <img src="/cta-img.png" className="w-full h-full object-cover rounded-md" alt="" />
                         </div>
                     </div>
                 </div>
             </section>
-            <section className="py-25">
+            <section className="md:py-25 py-15">
                 <div className="container">
                     <div className="flex flex-col items-center text-center mb-12">
-                        <h2 className="text-3xl font-bold">Important Deadlines</h2>
+                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">Important Deadlines</h2>
                     </div>
                     <div className="mx-auto max-w-[840px] space-y-5">
                         {deadlineItem.map((item, index) => (
@@ -129,10 +134,10 @@ export default function AdmissionsPage() {
                     </div>
                 </div>
             </section>
-            <section className="pb-25">
+            <section className="md:pb-25 pb-15">
                 <div className="container">
-                    <h2 className="text-3xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
-                    <div className="mx-auto max-w-[840px] space-y-5">
+                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">Frequently Asked Questions</h2>
+                    <div className="mx-auto max-w-[890px] space-y-5">
                         <Accordions accordionsContent={accordionsContent} />
                     </div>
                 </div>

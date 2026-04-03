@@ -15,7 +15,7 @@ export default function Accordions({ className, accordionsContent }: { className
         <div className={`space-y-5 ${className || ''}`}>
             {accordionsContent.map((accordion, index) => (
                 <div key={index} className={`p-7 bg-white rounded border border-[#33333340] ${activeAccordion === index ? 'open' : ''}`} onClick={() => handleAccordionClick(index)}>
-                    <div className="cursor-pointer text-[16px] font-semibold flex items-center gap-5 justify-between">{accordion.title} {activeAccordion === index ? <FaAngleUp size={20} /> : <FaAngleDown size={20} />}</div>
+                    <div className="cursor-pointer leading-tight font-semibold flex items-center gap-5 justify-between">{accordion.title} {activeAccordion === index ? <FaAngleUp size={20} /> : <FaAngleDown size={20} />}</div>
                     <p className={`mt-7 pt-4 border-t border-[#33333340] ${activeAccordion === index ? 'block' : 'hidden'}`} >{accordion.description}</p>
                 </div>
             ))}

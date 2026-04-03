@@ -39,6 +39,30 @@ ST_AUSTIN_TEACHING_PLATFORM_PRISMA_DATABASE_URL=...
 
 Without one of these values, `/api/courses` will return HTTP `503`.
 
+## Donation Payment Integration
+
+Donation form submits to `POST /api/donations`.
+
+- `mtn_mobile_money`: Jengupay checkout for MTN Mobile Money.
+- `orange_money`: Jengupay checkout for Orange Money.
+- `credit_card`: Jengupay (preferred) or Stripe card checkout.
+- `bank_transfer`: Stripe bank checkout (`us_bank_account`) when Stripe is active.
+- `cash`: API still supports manual verification mode.
+
+Optional environment variables:
+
+```bash
+STRIPE_SECRET_KEY=sk_test_or_live_key
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+
+# Jengupay (Cameroon)
+JENGUPAY_SECRET_KEY=your-jengupay-secret
+# optional if your account uses api-key style auth
+JENGUPAY_API_KEY=your-jengupay-api-key
+# optional override
+JENGUPAY_API_URL=https://api.jengupay.com/v1/payments/checkout
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

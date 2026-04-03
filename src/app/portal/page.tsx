@@ -4,6 +4,7 @@ import Accreditation from "@/components/sections/Accreditation";
 import CheckList from "@/components/CheckList";
 import Button from "@/components/Button";
 import { IoSettingsOutline } from "react-icons/io5";
+import IconCard from "@/components/IconCard";
 
 
 
@@ -73,9 +74,13 @@ const blockContent = [
         <>
             <BannerSection {...bannerContent} >
             </BannerSection> 
-            <Accreditation blockContent={blockContent} title="" classNameCard="border border-[#33333340] p-[20px] items-center text-center" />
+            <section className="md:py-25 py-15">
+                <div className="container-fluid max-w-[950px]">
+                    <IconCard blockContent={blockContent} classNameCard="border border-[#33333340] p-[20px] items-center text-center" className="" />
+                </div>
+            </section>
 
-            <Accreditation blockContent={blockFeatures} title="Platform Features" description="Everything you need for a seamless learning experience" className="bg-[#F5F5F5] py-25" classNameCard="items-center text-center" />
+            <Accreditation blockContent={blockFeatures} title="Platform Features" description="Everything you need for a seamless learning experience" className="bg-[#F5F5F5] py-25" classNameCard="items-center text-center md:gap-x-15" />
             
             <section className="py-25">
                 <div className="container">
