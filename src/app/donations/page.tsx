@@ -9,8 +9,6 @@ import { FaAngleRight, FaGift, FaHeart } from "react-icons/fa6";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import CtaSection from "@/components/CtaSection";
 import MatchingGiftSection from "@/components/sections/EmployerMatchingGift";
-import Input from "@/components/Input";
-import Select from "@/components/Select";
 
 type DonationFrequency = "one_time" | "monthly";
 type PaymentMethod =
@@ -46,7 +44,7 @@ export default function DonationsPage() {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("credit_card");
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("mtn_mobile_money");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
     const [formSuccess, setFormSuccess] = useState<string | null>(null);
@@ -95,11 +93,9 @@ export default function DonationsPage() {
                             }}
                             className={`min-h-[50px] cursor-pointer border border-[#1E73BE] text-lg font-semibold transition-colors duration-200 ${
                                 isActive
-                            onClick={() => setSelectedAmount(amount)}
-                            className={`min-h-[50px] cursor-pointer border border-[#1E73BE] text-lg font-semibold transition-colors duration-200 ${isActive
                                     ? "border-[#1E73BE] bg-[#1E73BE] text-white"
                                     : "border-[#8CC2F0] bg-[#1E73BE1A] text-[#333333] hover:border-[#1E73BE]"
-                                }`}
+                            }`}
                         >
                             {amount}
                         </button>
@@ -194,13 +190,12 @@ export default function DonationsPage() {
 
             <section className="py-15 md:py-25">
                 <div className="container">
-                    <div className="grid gap-15 md:gap-20 lg:grid-cols-9">
-                        <div className="col-span-5 rounded-[10px] bg-white max-w-[650px]">
+                    <div className="grid gap-[70px] md:gap-[140px] xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,420px)]">
+                        <div className="rounded-[10px] bg-white">
                             <div className="mb-10">
                                 <h2 className="mb-3 text-3xl font-bold leading-tight md:text-[35px]">
                                     Choose Your Gift Amount
                                 </h2>
-                                <h2 className="mb-5 text-3xl font-bold leading-tight md:text-[35px]">Choose Your Gift Amount</h2>
                                 <p className="text-[#333333]">Select a suggested amount or enter your own.</p>
                             </div>
 
@@ -249,15 +244,7 @@ export default function DonationsPage() {
                                         <option>Campus Ministry</option>
                                         <option>Academic Programs</option>
                                     </select>
-                                <div className="">
-                                    <Input labelText="Enter a custom amount" type="text" prependText="$" placeholder={selectedAmount.replace("$", "")} className="" />
                                 </div>
-                                <Select labelText="Designate your gift (optional)">
-                                    <option value="">Where Its Needed Most</option>
-                                    <option value="">Where Its Needed Most</option>
-                                    <option value="">Where Its Needed Most</option>
-                                    <option value="">Where Its Needed Most</option>
-                                </Select>
                             </div>
 
                             <div className="pt-10">
@@ -347,31 +334,15 @@ export default function DonationsPage() {
                                         {isSubmitting ? "Submitting..." : "Donate"}
                                     </Button>
                                 </form>
-                                <h3 className="mb-8 text-3xl font-bold leading-tight md:text-[35px]">Your Information</h3>
-                                <form>
-                                    <div className="grid gap-[20px] md:gap-[24px] sm:grid-cols-2">
-                                        <div className="">
-                                            <Input labelText="First Name" type="text" placeholder="First Name" className="" />
-                                        </div>
-                                        <div className="">
-                                            <Input labelText="Last Name" type="text" placeholder="Last Name" className="" />
-                                        </div>
-                                        <div className="col-span-2">
-                                            <Input labelText="Email Address" type="email" placeholder="Email Address" className="" />
-                                        </div>
-                                    </div>
 
-                                    <Button className="mt-8 w-full" type="submit">
-                                        Donate
-                                    </Button>
-                                </form>
                                 <p className="mx-auto mt-5 max-w-[480px] text-center text-base leading-relaxed text-[#333333]">
                                     Your donation is tax-deductible to the fullest extent allowed by law. St. Austin
                                     University is a 501(c)(3) organization.
                                 </p>
                             </div>
                         </div>
-                        <div className="col-span-4 space-y-6">
+
+                        <div className="space-y-6">
                             <div className="rounded-[10px] bg-[#EFF6FD] py-8 md:py-10 px-6 md:px-5">
                                 <FaHeart className="mb-5 text-[30px] text-[#1E73BE]" />
                                 <h5 className="mb-3 text-[22px] font-semibold leading-tight">Why Give?</h5>
@@ -418,8 +389,6 @@ export default function DonationsPage() {
                     </div>
                 </div>
             </section>
-
-
 
             <Accreditation
                 blockContent={blockFeatures}

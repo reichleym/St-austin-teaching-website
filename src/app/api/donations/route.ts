@@ -213,15 +213,21 @@ export async function POST(request: NextRequest) {
         });
 
         if (!checkout) {
-            return Response.json(
-                {
-                    ok: false,
-                    donation,
-                    error:
-                        "No payment gateway configured. Set JENGUPAY_* for Cameroon payments or STRIPE_SECRET_KEY for Stripe.",
+            await sql`
+                update donations
+                set payment_status = 'gateway_not_configured'
+                where id = ${donationId}
+            `;
+
+            return Response.json({
+                ok: true,
+                donation: {
+                    ...donation,
+                    payment_status: "gateway_not_configured",
                 },
-                { status: 503 }
-            );
+                message:
+                    "Donation was recorded, but payment gateway is not configured yet. Please set JENGUPAY_* or STRIPE_SECRET_KEY.",
+            });
         }
 
         await sql`
