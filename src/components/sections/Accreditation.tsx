@@ -9,7 +9,7 @@ export default function Accreditation({ title, description, className, blockCont
                 <div className="flex flex-col items-center text-center mb-[50px]">
                     <h2 className="text-3xl md:text-[50px] font-bold">{title}</h2>
                     {description && (
-                        <p className="mt-3 max-w-[600px]">
+                        <p className="mt-3">
                             {description}
                         </p>
                     )}
