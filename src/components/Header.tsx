@@ -5,11 +5,13 @@ import { Menu, X, Search } from 'lucide-react';
 import Button from './Button';
 import { RxCross2 } from "react-icons/rx";
 import Link from 'next/link';
+import Modal, { AuthModalView } from './modal';
 
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [searchInput, setIsSearchInput] = useState(false);
+    const [activeAuthView, setActiveAuthView] = useState<AuthModalView | null>(null);
 
     function handleSearchInput() {
         setIsSearchInput((searchInput) => !searchInput);
@@ -17,6 +19,11 @@ export default function Header() {
 
     const toggleMenu = () => {
         setIsMenuOpen((isMenuOpen) => !isMenuOpen);
+    };
+
+    const openPortalModal = (view: AuthModalView = "login") => {
+        setActiveAuthView(view);
+        setIsMenuOpen(false);
     };
 
     const menuItems = [
@@ -78,7 +85,7 @@ export default function Header() {
                                     {searchInput ?<><RxCross2 className="w-6 h-6 text-black"/></> : <Search className="w-6 h-6 text-[#1E73BE]"/>}
                                 </div>
                             </div>
-                            <Button>Portal</Button>
+                            <Button onClick={() => openPortalModal("login")}>Portal</Button>
                         </div>
                     </div>
 
@@ -120,13 +127,23 @@ export default function Header() {
                                 />
                                 <Search className="w-5 h-5 text-gray-500 ml-2" />
                             </div>
-                            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-200">
+                            <button
+                                type="button"
+                                onClick={() => openPortalModal("login")}
+                                className="w-full cursor-pointer rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors duration-200 hover:bg-blue-700"
+                            >
                                 Portal
                             </button>
                         </div>
                     </div>
                 )}
             </nav>
+            <Modal
+                isOpen={activeAuthView !== null}
+                view={activeAuthView ?? "login"}
+                onClose={() => setActiveAuthView(null)}
+                onViewChange={setActiveAuthView}
+            />
         </header>
     );
 }
