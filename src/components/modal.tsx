@@ -14,11 +14,18 @@ export type AuthModalView =
     | "new-password"
     | "password-success";
 
+export type AuthUser = {
+    id: number;
+    fullName: string;
+    email: string;
+};
+
 type ModalProps = {
     isOpen: boolean;
     view: AuthModalView;
     onClose: () => void;
     onViewChange: (view: AuthModalView) => void;
+    onAuthSuccess?: (user: AuthUser) => void;
     className?: string;
 };
 
@@ -29,6 +36,7 @@ type AuthFormState = {
     resetEmail: string;
     loginPassword: string;
     signupPassword: string;
+    resetToken: string;
     newPassword: string;
     confirmPassword: string;
 };
@@ -40,6 +48,7 @@ const initialFormState: AuthFormState = {
     resetEmail: "",
     loginPassword: "",
     signupPassword: "",
+    resetToken: "",
     newPassword: "",
     confirmPassword: "",
 };
@@ -141,11 +150,14 @@ export default function Modal({
     view,
     onClose,
     onViewChange,
+    onAuthSuccess,
     className,
 }: ModalProps) {
     const [formState, setFormState] = useState<AuthFormState>(initialFormState);
     const [showPassword, setShowPassword] = useState<Record<string, boolean>>({});
     const [errorMessage, setErrorMessage] = useState("");
+    const [infoMessage, setInfoMessage] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (!isOpen) {
@@ -184,35 +196,141 @@ export default function Modal({
         formState.resetEmail || formState.loginEmail || formState.signupEmail || "email@example.com";
 
     const closeAndReset = () => {
+        setFormState(initialFormState);
         setShowPassword({});
         setErrorMessage("");
+        setInfoMessage("");
+        setIsSubmitting(false);
         onClose();
     };
 
     const changeView = (nextView: AuthModalView) => {
         setErrorMessage("");
+        setInfoMessage("");
+        setIsSubmitting(false);
         onViewChange(nextView);
     };
 
-    const handlePrimaryAction = () => {
+    const handlePrimaryAction = async () => {
         setErrorMessage("");
+        setInfoMessage("");
+
+        if (isSubmitting) {
+            return;
+        }
 
         if (view === "login") {
-            closeAndReset();
+            if (!formState.loginEmail.trim() || !formState.loginPassword.trim()) {
+                setErrorMessage("Please enter your email and password.");
+                return;
+            }
+
+            setIsSubmitting(true);
+            try {
+                const response = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: formState.loginEmail,
+                        password: formState.loginPassword,
+                    }),
+                });
+
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok || !payload?.ok) {
+                    setErrorMessage(payload?.error || "Unable to log in.");
+                    return;
+                }
+
+                onAuthSuccess?.(payload.user as AuthUser);
+                closeAndReset();
+            } catch {
+                setErrorMessage("Unable to connect to the server. Please try again.");
+            } finally {
+                setIsSubmitting(false);
+            }
             return;
         }
 
         if (view === "signup") {
-            closeAndReset();
+            if (!formState.fullName.trim() || !formState.signupEmail.trim() || !formState.signupPassword.trim()) {
+                setErrorMessage("Please complete all required fields.");
+                return;
+            }
+
+            setIsSubmitting(true);
+            try {
+                const response = await fetch("/api/auth/signup", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        fullName: formState.fullName,
+                        email: formState.signupEmail,
+                        password: formState.signupPassword,
+                    }),
+                });
+
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok || !payload?.ok) {
+                    setErrorMessage(payload?.error || "Unable to create account.");
+                    return;
+                }
+
+                onAuthSuccess?.(payload.user as AuthUser);
+                closeAndReset();
+            } catch {
+                setErrorMessage("Unable to connect to the server. Please try again.");
+            } finally {
+                setIsSubmitting(false);
+            }
             return;
         }
 
         if (view === "reset-password") {
+            if (!formState.resetEmail.trim()) {
+                setErrorMessage("Please provide your email address.");
+                return;
+            }
+
+            setIsSubmitting(true);
+            try {
+                const response = await fetch("/api/auth/password-reset/request", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: formState.resetEmail,
+                    }),
+                });
+
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok || !payload?.ok) {
+                    setErrorMessage(payload?.error || "Unable to process password reset.");
+                    return;
+                }
+
+                if (typeof payload?.devResetToken === "string" && payload.devResetToken.trim()) {
+                    updateField("resetToken", payload.devResetToken);
+                    setInfoMessage("Development mode: reset token auto-filled for this flow.");
+                }
+            } catch {
+                setErrorMessage("Unable to connect to the server. Please try again.");
+                return;
+            } finally {
+                setIsSubmitting(false);
+            }
+
             changeView("check-email");
             return;
         }
 
         if (view === "check-email") {
+            window.open("https://mail.google.com", "_blank", "noopener,noreferrer");
             changeView("new-password");
             return;
         }
@@ -226,6 +344,37 @@ export default function Modal({
             if (formState.newPassword !== formState.confirmPassword) {
                 setErrorMessage("Password and confirm password must match.");
                 return;
+            }
+
+            if (!formState.resetToken.trim()) {
+                setErrorMessage("Please enter your reset token.");
+                return;
+            }
+
+            setIsSubmitting(true);
+            try {
+                const response = await fetch("/api/auth/password-reset/confirm", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: formState.resetEmail || formState.loginEmail || formState.signupEmail,
+                        token: formState.resetToken,
+                        newPassword: formState.newPassword,
+                    }),
+                });
+
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok || !payload?.ok) {
+                    setErrorMessage(payload?.error || "Unable to reset password.");
+                    return;
+                }
+            } catch {
+                setErrorMessage("Unable to connect to the server. Please try again.");
+                return;
+            } finally {
+                setIsSubmitting(false);
             }
 
             changeView("password-success");
@@ -268,6 +417,13 @@ export default function Modal({
                         </button>
                     )}
 
+                    {view !== "new-password" && errorMessage ? (
+                        <p className="mb-6 rounded-[6px] bg-[#FDEBEC] px-4 py-3 text-sm text-[#B42318]">{errorMessage}</p>
+                    ) : null}
+                    {infoMessage ? (
+                        <p className="mb-6 rounded-[6px] bg-[#EFF6FD] px-4 py-3 text-sm text-[#1E73BE]">{infoMessage}</p>
+                    ) : null}
+
                     {view === "login" && (
                         <div>
                             <div className="mb-10 pr-10">
@@ -283,7 +439,7 @@ export default function Modal({
                                 className="space-y-6"
                                 onSubmit={(event) => {
                                     event.preventDefault();
-                                    handlePrimaryAction();
+                                    void handlePrimaryAction();
                                 }}
                             >
                                 <Input
@@ -320,8 +476,8 @@ export default function Modal({
                                         </InlineAction>
                                 </div>
 
-                                <Button type="submit" className="h-[44px] w-full rounded-[7px] text-[20px]">
-                                    Log In
+                                <Button type="submit" disabled={isSubmitting} className="h-[44px] w-full rounded-[7px] text-[20px]">
+                                    {isSubmitting ? "Signing in..." : "Log In"}
                                 </Button>
                             </form>
 
@@ -352,7 +508,7 @@ export default function Modal({
                                 className="space-y-6"
                                 onSubmit={(event) => {
                                     event.preventDefault();
-                                    handlePrimaryAction();
+                                    void handlePrimaryAction();
                                 }}
                             >
                                 <Input
@@ -390,8 +546,8 @@ export default function Modal({
                                     }
                                 />
 
-                                <Button type="submit" className="h-[44px] w-full rounded-[7px] text-[20px]">
-                                    Apply Now
+                                <Button type="submit" disabled={isSubmitting} className="h-[44px] w-full rounded-[7px] text-[20px]">
+                                    {isSubmitting ? "Creating account..." : "Sign up"}
                                 </Button>
                             </form>
 
@@ -422,7 +578,7 @@ export default function Modal({
                                 className="space-y-8"
                                 onSubmit={(event) => {
                                     event.preventDefault();
-                                    handlePrimaryAction();
+                                    void handlePrimaryAction();
                                 }}
                             >
                                 <Input
@@ -435,15 +591,10 @@ export default function Modal({
                                     className={fieldClassName}
                                 />
 
-                                <Button type="submit" className="h-[44px] w-full rounded-[7px] text-[20px]">
-                                    Send Password Reset Link
+                                <Button type="submit" disabled={isSubmitting} className="h-[44px] w-full rounded-[7px] text-[20px]">
+                                    {isSubmitting ? "Sending..." : "Send Password Reset Link"}
                                 </Button>
                             </form>
-
-                            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-center text-[18px] text-[#9A9A9A]">
-                                <span>Resend available in 00:59</span>
-                                <InlineAction className="font-medium text-[#1E73BE]">Click to Resend</InlineAction>
-                            </div>
 
                             <div className="mt-10 text-center">
                                 <InlineAction
@@ -476,16 +627,14 @@ export default function Modal({
 
                             <Button
                                 type="button"
+                                disabled={isSubmitting}
                                 className="mt-10 h-[44px] w-full rounded-[7px] text-[20px]"
-                                onClick={handlePrimaryAction}
+                                onClick={() => {
+                                    void handlePrimaryAction();
+                                }}
                             >
                                 Open Gmail App
                             </Button>
-
-                            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[18px] text-[#9A9A9A]">
-                                <span>Resend available in 00:59</span>
-                                <InlineAction className="font-medium text-[#1E73BE]">Click to Resend</InlineAction>
-                            </div>
 
                             <div className="mt-10 text-center">
                                 <InlineAction
@@ -520,7 +669,7 @@ export default function Modal({
                                 className="space-y-6"
                                 onSubmit={(event) => {
                                     event.preventDefault();
-                                    handlePrimaryAction();
+                                    void handlePrimaryAction();
                                 }}
                             >
                                 <PasswordField
@@ -553,10 +702,20 @@ export default function Modal({
                                     }
                                 />
 
+                                <Input
+                                    type="text"
+                                    name="resetToken"
+                                    labelText="Reset Token"
+                                    placeholder="Paste reset token"
+                                    value={formState.resetToken}
+                                    onChange={(event) => updateField("resetToken", event.target.value)}
+                                    className={fieldClassName}
+                                />
+
                                 {errorMessage ? <p className="text-sm text-red-600">{errorMessage}</p> : null}
 
-                                <Button type="submit" className="h-[44px] w-full rounded-[7px] text-[20px]">
-                                    Reset Password
+                                <Button type="submit" disabled={isSubmitting} className="h-[44px] w-full rounded-[7px] text-[20px]">
+                                    {isSubmitting ? "Resetting..." : "Reset Password"}
                                 </Button>
                             </form>
 
@@ -592,7 +751,9 @@ export default function Modal({
                             <Button
                                 type="button"
                                 className="mt-8 h-[44px] w-full rounded-[7px] text-[20px]"
-                                onClick={handlePrimaryAction}
+                                onClick={() => {
+                                    void handlePrimaryAction();
+                                }}
                             >
                                 ← Back to login
                             </Button>

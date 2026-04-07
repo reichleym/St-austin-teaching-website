@@ -1,10 +1,8 @@
 import BannerSection from "@/components/sections/BannerSection";
-import CtaSection from "@/components/CtaSection";
 import Accreditation from "@/components/sections/Accreditation";
-import CheckList from "@/components/CheckList";
 import Button from "@/components/Button";
-import { IoSettingsOutline } from "react-icons/io5";
 import IconCard from "@/components/IconCard";
+import Link from "next/link";
 
 
 
@@ -88,7 +86,9 @@ const blockContent = [
                         <div className="md:col-span-1">
                             <h2 className="text-3xl font-bold mb-[10px]">Intuitive Dashboard</h2>
                             <p className="text-lg">Navigate your academic journey with ease. Our dashboard puts everything at your fingertips — from upcoming assignments to live class schedules.</p>
-                            <Button className="mt-6" variant="primary">Go to your dashboard</Button>
+                            <Link href="/portal/dashboard" className="inline-flex">
+                                <Button className="mt-6" variant="primary">Go to your dashboard</Button>
+                            </Link>
                         </div>
                         <div className="md:col-span-1">
                             <img src="cta-img.png" className="max-w-[500px] ml-auto h-full max-h-[400px] object-cover rounded-[8px]" alt="" />
