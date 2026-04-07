@@ -11,7 +11,7 @@ type SelectProps = {
 export default function Select({ className, labelText, children, ...rest }: SelectProps) {
   return (
     <>
-      <label className="mb-2 block text-sm font-medium text-[#333333]">{labelText}</label>
+      {labelText ? <label className="mb-2 block text-sm font-medium text-[#333333]">{labelText}</label> : null}
       <select {...rest} className={cn("border border-[#BDBDBD] h-10 rounded-md p-2.5 w-full bg-white outline-none", className)}>
         {children}
       </select>
