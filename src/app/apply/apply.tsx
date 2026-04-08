@@ -1,12 +1,10 @@
 'use client';
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Check,
-    FileSearch,
-    FileText,
-    Upload,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
@@ -15,66 +13,133 @@ import { cn } from "@/lib/utils";
 type StepId =
     | "dashboard"
     | "program"
-    | "term"
+    | "batchStart"
     | "studentType"
-    | "contactInfo"
-    | "transcript"
+    | "studentInfo"
     | "review"
     | "fees"
     | "submitted";
 
-type PaymentMethod = "card" | "bank" | "mobile" | "";
 type StudentType = "national" | "international";
+type ApplicationStatus = "not_started" | "under_review";
+type SubmissionSummary = {
+    confirmationEmail: string;
+    instructionProgram: string;
+    instructionChecklist: string[];
+};
+
+type GovernmentBenefitState = {
+    isGovernmentEmployee: boolean;
+    governmentEmployeeGroup: string | null;
+    governmentDiscountPercent: number;
+};
+
+type ApplyPageContentProps = {
+    initialApplicationStatus?: ApplicationStatus;
+    programOptions?: string[];
+    initialGovernmentBenefit?: GovernmentBenefitState;
+};
 
 type ApplicationForm = {
     program: string;
-    term: string;
+    batchStart: string;
     studentType: StudentType;
+    firstName: string;
+    lastName: string;
     email: string;
-    phoneCode: string;
     phoneNumber: string;
-    transcriptFileName: string;
-    paymentMethod: PaymentMethod;
+    highestEducation: string;
+    interestLevel: string;
+    interestArea: string;
     cardNumber: string;
     cardExpiry: string;
     cardCvv: string;
 };
 
-const applicationSteps: Exclude<StepId, "dashboard" | "submitted">[] = [
+const fullApplicationSteps: Exclude<StepId, "dashboard" | "submitted">[] = [
     "program",
-    "term",
+    "batchStart",
     "studentType",
-    "contactInfo",
-    "transcript",
+    "studentInfo",
     "review",
     "fees",
 ];
 
 const stepMeta = {
     program: { label: "Program" },
-    term: { label: "Term" },
+    batchStart: { label: "Batch Start" },
     studentType: { label: "Student Type" },
-    contactInfo: { label: "Contact Info" },
-    transcript: { label: "Transcript" },
+    studentInfo: { label: "Student Info" },
     review: { label: "Review" },
     fees: { label: "Application Fees" },
 } as const;
 
-const termOptions = ["September 2026", "January 2027", "September 2027", "January 2028"];
+const batchStartOptions = ["September", "January", "May"];
+const highestEducationOptions = [
+    "High School Diploma",
+    "Associate Degree",
+    "Bachelor's Degree",
+    "Master's Degree",
+    "Doctorate",
+    "Other",
+];
+const interestLevelOptions = ["Exploring options", "Interested", "Very interested", "Ready to apply"];
+const defaultProgramOptions = ["Data Science", "Business Administration", "Public Health"];
+const baseApplicationFeeUSD = 50;
 
 const initialForm: ApplicationForm = {
     program: "",
-    term: "September 2026",
+    batchStart: "September",
     studentType: "national",
+    firstName: "",
+    lastName: "",
     email: "",
-    phoneCode: "CM +237",
     phoneNumber: "",
-    transcriptFileName: "",
-    paymentMethod: "",
+    highestEducation: "",
+    interestLevel: "",
+    interestArea: "",
     cardNumber: "",
     cardExpiry: "",
     cardCvv: "",
 };
+
+function getInstructionChecklistForProgram(program: string): string[] {
+    const normalizedProgram = program.trim().toLowerCase();
+
+    if (normalizedProgram.includes("data")) {
+        return [
+            "Most recent transcript",
+            "Current resume/CV",
+            "Short statement of learning goals",
+            "Proof of identity document",
+        ];
+    }
+
+    if (normalizedProgram.includes("business")) {
+        return [
+            "Most recent transcript",
+            "Current resume/CV",
+            "Personal statement",
+            "Proof of identity document",
+        ];
+    }
+
+    if (normalizedProgram.includes("public")) {
+        return [
+            "Most recent transcript",
+            "Current resume/CV",
+            "Statement of purpose",
+            "Proof of identity document",
+        ];
+    }
+
+    return [
+        "Most recent transcript",
+        "Current resume/CV",
+        "Personal statement",
+        "Proof of identity document",
+    ];
+}
 
 function SectionHeading({ title, description }: { title: string; description: string }) {
     return (
@@ -89,17 +154,19 @@ function SectionHeading({ title, description }: { title: string; description: st
 
 function Stepper({
     activeStep,
+    steps,
     allCompleted = false,
 }: {
     activeStep: Exclude<StepId, "dashboard" | "submitted">;
+    steps: Exclude<StepId, "dashboard" | "submitted">[];
     allCompleted?: boolean;
 }) {
-    const activeIndex = applicationSteps.indexOf(activeStep);
+    const activeIndex = steps.indexOf(activeStep);
 
     return (
         <div className="overflow-x-auto">
             <div className="mx-auto my-8 flex min-w-max items-start justify-center px-4 md:my-13">
-                {applicationSteps.map((step, index) => {
+                {steps.map((step, index) => {
                     const isActive = step === activeStep;
                     const isComplete = allCompleted || index < activeIndex;
                     const connectorClass = allCompleted || index <= activeIndex ? "bg-[#1E73BE]" : "bg-[#D9D9D9]";
@@ -133,7 +200,7 @@ function Stepper({
                                     )}
                                 </p>
                             </div>
-                            {index < applicationSteps.length - 1 ? (
+                            {index < steps.length - 1 ? (
                                 <div className={cn("mt-[26px] h-px w-[34px]", connectorClass)} />
                             ) : null}
                         </div>
@@ -164,7 +231,7 @@ function StepIcon({
         );
     }
 
-    if (step === "term") {
+    if (step === "batchStart") {
         return (
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="29" viewBox="0 0 26 29" fill="none" aria-hidden="true">
                 <path d="M18.0833 0.75V6.08333M7.41667 0.75V6.08333M24.75 14.0833C24.75 9.05533 24.75 6.54067 23.1873 4.97933C21.6247 3.418 19.1113 3.41667 14.0833 3.41667H11.4167C6.38867 3.41667 3.874 3.41667 2.31267 4.97933C0.751333 6.542 0.75 9.05533 0.75 14.0833V16.75C0.75 21.778 0.75 24.2927 2.31267 25.854C3.87533 27.4153 6.38867 27.4167 11.4167 27.4167M0.75 11.4167H24.75" stroke={stroke} strokeOpacity={strokeOpacity} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -182,20 +249,10 @@ function StepIcon({
         );
     }
 
-    if (step === "contactInfo") {
+    if (step === "studentInfo") {
         return (
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="22" viewBox="0 0 28 22" fill="none" aria-hidden="true">
                 <path d="M0.75 5.03533L10.0567 11.2407C11.3407 12.0953 11.982 12.5233 12.6753 12.69C13.2887 12.8367 13.9273 12.8367 14.5393 12.69C15.2327 12.5233 15.874 12.0953 17.158 11.2407L26.4647 5.03533M7.15 20.75H20.0647C22.3047 20.75 23.4247 20.75 24.2807 20.314C25.0328 19.9303 25.6442 19.3184 26.0273 18.566C26.4647 17.71 26.4647 16.59 26.4647 14.35V7.15C26.4647 4.91 26.4647 3.79 26.0287 2.934C25.6452 2.18139 25.0333 1.56949 24.2807 1.186C23.4247 0.75 22.3047 0.75 20.0647 0.75H7.15C4.91 0.75 3.79 0.75 2.934 1.186C2.18188 1.56971 1.57047 2.18159 1.18733 2.934C0.75 3.79 0.75 4.91 0.75 7.15V14.35C0.75 16.59 0.75 17.71 1.186 18.566C1.56949 19.3186 2.18138 19.9305 2.934 20.314C3.79 20.75 4.91 20.75 7.15 20.75Z" stroke={stroke} strokeOpacity={strokeOpacity} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-        );
-    }
-
-    if (step === "transcript") {
-        return (
-            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="29" viewBox="0 0 23 29" fill="none" aria-hidden="true">
-                <path d="M5.5998 17.6C5.38763 17.6 5.18415 17.5157 5.03412 17.3657C4.88409 17.2157 4.7998 17.0122 4.7998 16.8C4.7998 16.5878 4.88409 16.3843 5.03412 16.2343C5.18415 16.0843 5.38763 16 5.5998 16H16.7998C17.012 16 17.2155 16.0843 17.3655 16.2343C17.5155 16.3843 17.5998 16.5878 17.5998 16.8C17.5998 17.0122 17.5155 17.2157 17.3655 17.3657C17.2155 17.5157 17.012 17.6 16.7998 17.6H5.5998ZM5.5998 22.4C5.38763 22.4 5.18415 22.3157 5.03412 22.1657C4.88409 22.0157 4.7998 21.8122 4.7998 21.6C4.7998 21.3878 4.88409 21.1843 5.03412 21.0343C5.18415 20.8843 5.38763 20.8 5.5998 20.8H16.7998C17.012 20.8 17.2155 20.8843 17.3655 21.0343C17.5155 21.1843 17.5998 21.3878 17.5998 21.6C17.5998 21.8122 17.5155 22.0157 17.3655 22.1657C17.2155 22.3157 17.012 22.4 16.7998 22.4H5.5998Z" fill={fill} fillOpacity={fillOpacity}/>
-                <path fillRule="evenodd" clipRule="evenodd" d="M13.096 2.23587e-07H2.4C1.76348 2.23587e-07 1.15303 0.252857 0.702944 0.702944C0.252856 1.15303 0 1.76348 0 2.4V26.4C0 27.0365 0.252856 27.647 0.702944 28.0971C1.15303 28.5471 1.76348 28.8 2.4 28.8H20C20.6365 28.8 21.247 28.5471 21.6971 28.0971C22.1471 27.647 22.4 27.0365 22.4 26.4V9.9232C22.3998 9.32235 22.1743 8.74342 21.768 8.3008L14.8656 0.7776C14.6407 0.532393 14.3672 0.336641 14.0625 0.202775C13.7579 0.06891 13.4288 -0.000143402 13.096 2.23587e-07ZM1.6 2.4C1.6 2.18783 1.68429 1.98434 1.83431 1.83431C1.98434 1.68429 2.18783 1.6 2.4 1.6H13.096C13.207 1.59988 13.3168 1.62286 13.4185 1.66748C13.5201 1.71211 13.6114 1.7774 13.6864 1.8592L20.5888 9.3824C20.7244 9.52986 20.7998 9.72285 20.8 9.9232V26.4C20.8 26.6122 20.7157 26.8157 20.5657 26.9657C20.4157 27.1157 20.2122 27.2 20 27.2H2.4C2.18783 27.2 1.98434 27.1157 1.83431 26.9657C1.68429 26.8157 1.6 26.6122 1.6 26.4V2.4Z" fill={fill} fillOpacity={fillOpacity}/>
-                <path d="M12.8002 9.6H21.6002C21.8124 9.6 22.0159 9.68429 22.1659 9.83432C22.3159 9.98434 22.4002 10.1878 22.4002 10.4C22.4002 10.6122 22.3159 10.8157 22.1659 10.9657C22.0159 11.1157 21.8124 11.2 21.6002 11.2H12.0002C11.788 11.2 11.5845 11.1157 11.4345 10.9657C11.2845 10.8157 11.2002 10.6122 11.2002 10.4V0.8C11.2002 0.587827 11.2845 0.384344 11.4345 0.234315C11.5845 0.0842854 11.788 0 12.0002 0C12.2124 0 12.4159 0.0842854 12.5659 0.234315C12.7159 0.384344 12.8002 0.587827 12.8002 0.8V9.6Z" fill={fill} fillOpacity={fillOpacity}/>
             </svg>
         );
     }
@@ -218,7 +275,7 @@ function StepIcon({
     );
 }
 
-function FormCard({ children, active }: { children: React.ReactNode; active?: boolean }) {
+function FormCard({ children }: { children: React.ReactNode }) {
     return (
         <div
             className={cn(
@@ -287,57 +344,241 @@ function ActionRow({
     nextLabel,
     onBack,
     onNext,
+    errorMessage,
 }: {
     backLabel: string;
     nextLabel: string;
     onBack: () => void;
     onNext: () => void;
+    errorMessage?: string;
 }) {
     return (
-        <div className="mt-15 flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
-            <button
-                type="button"
-                onClick={onBack}
-                className="min-w-[155px] min-h-[40px] cursor-pointer rounded-[5px] border border-[#D1D1D1] bg-white px-5 py-[5px] text-[18px] font-medium text-[#3B3B3B] transition-opacity duration-200 hover:opacity-80"
-            >
-                {backLabel}
-            </button>
-            <Button type="button" onClick={onNext} className="min-w-[155px] min-h-[40px] px-5 py-[5px] text-[14px]">
-                {nextLabel}
-            </Button>
+        <div className="mt-15">
+            <div className="flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
+                <button
+                    type="button"
+                    onClick={onBack}
+                    className="min-w-[155px] min-h-[40px] cursor-pointer rounded-[5px] border border-[#D1D1D1] bg-white px-5 py-[5px] text-[18px] font-medium text-[#3B3B3B] transition-opacity duration-200 hover:opacity-80"
+                >
+                    {backLabel}
+                </button>
+                <Button type="button" onClick={onNext} className="min-w-[155px] min-h-[40px] px-5 py-[5px] text-[14px]">
+                    {nextLabel}
+                </Button>
+            </div>
+            {errorMessage ? (
+                <p className="mt-4 text-sm font-medium text-[#B92A2A]">{errorMessage}</p>
+            ) : null}
         </div>
     );
 }
 
-export default function ApplyPageContent() {
-    const [currentStep, setCurrentStep] = useState<StepId>("dashboard");
+export default function ApplyPageContent({
+    initialApplicationStatus = "not_started",
+    programOptions = defaultProgramOptions,
+    initialGovernmentBenefit = {
+        isGovernmentEmployee: false,
+        governmentEmployeeGroup: null,
+        governmentDiscountPercent: 0,
+    },
+}: ApplyPageContentProps) {
+    const router = useRouter();
+    const [applicationStatus, setApplicationStatus] = useState<ApplicationStatus>(initialApplicationStatus);
+    const [currentStep, setCurrentStep] = useState<StepId>(
+        initialApplicationStatus === "under_review" ? "submitted" : "dashboard"
+    );
     const [form, setForm] = useState<ApplicationForm>(initialForm);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
+    const [submitError, setSubmitError] = useState("");
+    const [validationError, setValidationError] = useState("");
+    const [submissionSummary, setSubmissionSummary] = useState<SubmissionSummary | null>(null);
+
+    useEffect(() => {
+        setValidationError("");
+    }, [currentStep]);
+
+    const flowSteps = fullApplicationSteps;
 
     const currentStepIndex = useMemo(
-        () => applicationSteps.indexOf(currentStep as Exclude<StepId, "dashboard" | "submitted">),
-        [currentStep]
+        () => flowSteps.indexOf(currentStep as Exclude<StepId, "dashboard" | "submitted">),
+        [currentStep, flowSteps]
     );
+    const availableProgramOptions = useMemo(() => {
+        const uniqueOptions = Array.from(
+            new Set(
+                programOptions
+                    .map((option) => option.trim())
+                    .filter((option) => option.length > 0)
+            )
+        );
+        return uniqueOptions.length > 0 ? uniqueOptions : defaultProgramOptions;
+    }, [programOptions]);
+
+    const governmentDiscountPercent = useMemo(() => {
+        if (!initialGovernmentBenefit.isGovernmentEmployee) {
+            return 0;
+        }
+
+        const percentage = Number(initialGovernmentBenefit.governmentDiscountPercent || 0);
+        if (Number.isNaN(percentage) || percentage <= 0) {
+            return 0;
+        }
+
+        return Math.min(100, Math.max(0, percentage));
+    }, [initialGovernmentBenefit.governmentDiscountPercent, initialGovernmentBenefit.isGovernmentEmployee]);
+
+    const applicationFeeSummary = useMemo(() => {
+        const baseFee = baseApplicationFeeUSD;
+        const discountAmount = Number(((baseFee * governmentDiscountPercent) / 100).toFixed(2));
+        const finalAmount = Number(Math.max(0, baseFee - discountAmount).toFixed(2));
+
+        return {
+            baseFee,
+            discountAmount,
+            finalAmount,
+            discountPercent: governmentDiscountPercent,
+        };
+    }, [governmentDiscountPercent]);
 
     const updateForm = <K extends keyof ApplicationForm,>(key: K, value: ApplicationForm[K]) => {
+        setValidationError("");
         setForm((current) => ({
             ...current,
             [key]: value,
         }));
     };
 
-    const goToNextStep = () => {
+    const getStepValidationError = (): string | null => {
+        if (currentStep === "program" && !form.program.trim()) {
+            return "Please select a program before continuing.";
+        }
+
+        if (currentStep === "batchStart" && !form.batchStart.trim()) {
+            return "Please select your batch start before continuing.";
+        }
+
+        if (currentStep === "studentInfo") {
+            if (!form.firstName.trim()) {
+                return "Please enter your first name.";
+            }
+
+            if (!form.lastName.trim()) {
+                return "Please enter your last name.";
+            }
+
+            const email = form.email.trim();
+            const phone = form.phoneNumber.trim();
+
+            if (!email) {
+                return "Please enter your email address.";
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return "Please enter a valid email address.";
+            }
+
+            if (!phone) {
+                return "Please enter your cell phone number.";
+            }
+
+            if (!form.highestEducation.trim()) {
+                return "Please select your highest level of education.";
+            }
+
+            if (!form.interestLevel.trim()) {
+                return "Please select your level of interest.";
+            }
+
+            if (!form.interestArea.trim()) {
+                return "Please enter your area of interest.";
+            }
+        }
+
+        if (currentStep === "fees") {
+            if (!form.cardNumber.trim() || !form.cardExpiry.trim() || !form.cardCvv.trim()) {
+                return "Application fee payment is required before you can submit.";
+            }
+        }
+
+        return null;
+    };
+
+    const submitApplication = async () => {
+        if (isSubmittingApplication) {
+            return;
+        }
+
+        setSubmitError("");
+        setIsSubmittingApplication(true);
+        try {
+            const cardLast4 = form.cardNumber.replace(/\s+/g, "").slice(-4);
+            const response = await fetch("/api/apply/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    program: form.program,
+                    batchStart: form.batchStart,
+                    studentType: form.studentType,
+                    firstName: form.firstName.trim(),
+                    lastName: form.lastName.trim(),
+                    email: form.email.trim(),
+                    phoneNumber: form.phoneNumber.trim(),
+                    highestEducation: form.highestEducation.trim(),
+                    interestLevel: form.interestLevel.trim(),
+                    interestArea: form.interestArea.trim(),
+                    payment: {
+                        method: "card",
+                        amountUsd: applicationFeeSummary.finalAmount,
+                        cardLast4,
+                    },
+                }),
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok || !payload?.ok) {
+                setSubmitError(payload?.error || "Unable to submit application. Please try again.");
+                return;
+            }
+
+            setApplicationStatus("under_review");
+            setSubmissionSummary({
+                confirmationEmail: payload?.emails?.confirmationEmail ?? form.email.trim(),
+                instructionProgram: payload?.emails?.instructionProgram ?? form.program,
+                instructionChecklist: payload?.emails?.instructionChecklist ?? getInstructionChecklistForProgram(form.program),
+            });
+            setCurrentStep("submitted");
+        } catch {
+            setSubmitError("Unable to submit application. Please try again.");
+        } finally {
+            setIsSubmittingApplication(false);
+        }
+    };
+
+    const goToNextStep = async () => {
+        const stepError = getStepValidationError();
+        if (stepError) {
+            setValidationError(stepError);
+            return;
+        }
+
+        setValidationError("");
+
         if (currentStep === "dashboard") {
+            if (applicationStatus === "under_review") {
+                setCurrentStep("submitted");
+                return;
+            }
             setCurrentStep("program");
             return;
         }
 
         if (currentStep === "fees") {
-            setCurrentStep("submitted");
+            await submitApplication();
             return;
         }
 
-        const nextStep = applicationSteps[currentStepIndex + 1];
+        const nextStep = flowSteps[currentStepIndex + 1];
         if (nextStep) {
             setCurrentStep(nextStep);
         }
@@ -354,7 +595,7 @@ export default function ApplyPageContent() {
             return;
         }
 
-        const previousStep = applicationSteps[currentStepIndex - 1];
+        const previousStep = flowSteps[currentStepIndex - 1];
         if (previousStep) {
             setCurrentStep(previousStep);
         }
@@ -396,18 +637,14 @@ export default function ApplyPageContent() {
                         <p className="text-[40px] font-semibold leading-[0.95]" style={{ fontFamily: '"EB Garamond", serif' }}>
                             Admissions Open
                         </p>
-                        <p className="mt-2 text-[55px] font-semibold leading-[0.95]">Fall 2026</p>
+                        <p className="mt-2 text-[55px] font-semibold leading-[0.95]">September, January, May</p>
                     </div>
 
                     <div className="rounded-[6px] bg-white px-4 py-2 text-[#2F2F2F]">
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-2">
                             <div>
-                                <p className="text-[13px] font-medium text-[#33333380]">Early Decision</p>
-                                <p className="text-[15px] font-semibold">August 1, 2026</p>
-                            </div>
-                            <div>
-                                <p className="text-[13px] font-medium text-[#33333380]">Regular</p>
-                                <p className="text-[15px] font-semibold">November 15, 2026</p>
+                                <p className="text-[13px] font-medium text-[#33333380]">Available Intake Batches</p>
+                                <p className="text-[15px] font-semibold">September • January • May</p>
                             </div>
                         </div>
                     </div>
@@ -428,7 +665,7 @@ export default function ApplyPageContent() {
     );
 
     const renderProgramStep = () => (
-        <FormCard active>
+        <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
                 Program
             </h2>
@@ -441,37 +678,51 @@ export default function ApplyPageContent() {
                     className="h-[40px] rounded-[3px] border-[#A7A7A7] px-3 text-[14px] text-[#8E8E8E]"
                 >
                     <option value="">Choose your Program</option>
-                    <option value="Data Science">Data Science</option>
-                    <option value="Business Administration">Business Administration</option>
-                    <option value="Public Health">Public Health</option>
+                    {availableProgramOptions.map((programOption) => (
+                        <option key={programOption} value={programOption}>
+                            {programOption}
+                        </option>
+                    ))}
                 </Select>
             </div>
 
-            <ActionRow backLabel="Back to Portal" nextLabel="Save and Next" onBack={goToPreviousStep} onNext={goToNextStep} />
+            <ActionRow
+                backLabel="Back to Portal"
+                nextLabel="Save and Next"
+                onBack={goToPreviousStep}
+                onNext={goToNextStep}
+                errorMessage={validationError}
+            />
         </FormCard>
     );
 
-    const renderTermStep = () => (
+    const renderBatchStartStep = () => (
         <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Term
+                Batch Start
             </h2>
 
             <div className="mt-7">
-                <FieldLabel spacingClass="mb-5">Select Your Start Term</FieldLabel>
+                <FieldLabel spacingClass="mb-5">Select Your Intake Batch</FieldLabel>
                 <div className="space-y-4">
-                    {termOptions.map((term) => (
+                    {batchStartOptions.map((batchStartOption) => (
                         <RadioOption
-                            key={term}
-                            checked={form.term === term}
-                            title={term}
-                            onClick={() => updateForm("term", term)}
+                            key={batchStartOption}
+                            checked={form.batchStart === batchStartOption}
+                            title={batchStartOption}
+                            onClick={() => updateForm("batchStart", batchStartOption)}
                         />
                     ))}
                 </div>
             </div>
 
-            <ActionRow backLabel="Back" nextLabel="Save and Next" onBack={goToPreviousStep} onNext={goToNextStep} />
+            <ActionRow
+                backLabel="Back"
+                nextLabel="Save and Next"
+                onBack={goToPreviousStep}
+                onNext={goToNextStep}
+                errorMessage={validationError}
+            />
         </FormCard>
     );
 
@@ -482,118 +733,133 @@ export default function ApplyPageContent() {
             </h2>
 
             <div className="mt-6">
-                <FieldLabel spacingClass="mb-5">Are you a National or International student?</FieldLabel>
+                <FieldLabel spacingClass="mb-5">Are you a local or international student?</FieldLabel>
                 <div className="space-y-4">
                     <RadioOption
                         checked={form.studentType === "national"}
-                        title="National Student"
-                        description="Cameroonian citizen or permanent resident"
+                        title="Local Student"
+                        description="Applying as a local applicant"
                         onClick={() => updateForm("studentType", "national")}
                     />
                     <RadioOption
                         checked={form.studentType === "international"}
                         title="International Student"
-                        description="Applying from outside Cameroon (application fee required)"
+                        description="Applying as an international applicant"
                         onClick={() => updateForm("studentType", "international")}
                     />
                 </div>
             </div>
 
-            <ActionRow backLabel="Back" nextLabel="Save and Next" onBack={goToPreviousStep} onNext={goToNextStep} />
+            <ActionRow
+                backLabel="Back"
+                nextLabel="Save and Next"
+                onBack={goToPreviousStep}
+                onNext={goToNextStep}
+                errorMessage={validationError}
+            />
         </FormCard>
     );
 
-    const renderContactInfoStep = () => (
+    const renderStudentInfoStep = () => (
         <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Contact Info
+                Student Information
             </h2>
 
             <div className="mt-6">
-                <FieldLabel spacingClass="mb-5">Are you a National or International student?</FieldLabel>
-
-                <div className="mt-4">
-                    <label className="mb-2 block text-sm font-medium text-[#333333]">Email Address</label>
-                    <div className="relative">
-                        <span className="absolute left-[1px] top-[1px] flex h-[38px] w-[38px] items-center justify-center rounded-l-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M20.125 19.5H3.875C2.8375 19.5 2 18.6625 2 17.625V6.375C2 5.3375 2.8375 4.5 3.875 4.5H20.125C21.1625 4.5 22 5.3375 22 6.375V17.625C22 18.6625 21.1625 19.5 20.125 19.5ZM3.875 5.75C3.525 5.75 3.25 6.025 3.25 6.375V17.625C3.25 17.975 3.525 18.25 3.875 18.25H20.125C20.475 18.25 20.75 17.975 20.75 17.625V6.375C20.75 6.025 20.475 5.75 20.125 5.75H3.875Z" fill="#333333" fillOpacity="0.5"/>
-                                <path d="M12 13.4875C11.1258 13.4875 10.3265 13.1388 9.72704 12.5037L3.17043 5.55421C2.93314 5.30512 2.94563 4.90659 3.19541 4.66996C3.44518 4.43333 3.84482 4.44578 4.08211 4.69487L10.6387 11.6443C11.3506 12.404 12.6494 12.404 13.3613 11.6443L19.9179 4.70732C20.1552 4.45824 20.5548 4.44578 20.8046 4.68241C21.0544 4.91904 21.0669 5.31758 20.8296 5.56666L14.273 12.5161C13.6735 13.1513 12.8742 13.5 12 13.5V13.4875Z" fill="#333333" fillOpacity="0.5"/>
-                            </svg>
-                        </span>
-                        <input
-                            type="email"
-                            value={form.email}
-                            onChange={(event) => updateForm("email", event.target.value)}
-                            placeholder="you@example.com"
-                            className="h-[40px] w-full rounded-[3px] border border-[#A7A7A7] bg-white pl-12 pr-3 text-[14px] text-[#8E8E8E] outline-none placeholder:text-[18px] placeholder:font-normal placeholder:text-[#33333380]"
-                        />
-                    </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                    <Input
+                        labelText="First Name"
+                        type="text"
+                        value={form.firstName}
+                        onChange={(event) => updateForm("firstName", event.target.value)}
+                        placeholder="John"
+                        className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
+                    />
+                    <Input
+                        labelText="Last Name"
+                        type="text"
+                        value={form.lastName}
+                        onChange={(event) => updateForm("lastName", event.target.value)}
+                        placeholder="Doe"
+                        className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
+                    />
                 </div>
 
                 <div className="mt-4">
-                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Phone Number</FieldLabel>
-                    <div className="flex flex-col gap-2 md:flex-row">
-                        <Select
-                            value={form.phoneCode}
-                            onChange={(event) => updateForm("phoneCode", event.target.value)}
-                            className="h-[40px] w-full rounded-[3px] border-[#A7A7A7] px-3 text-[14px] text-[#6F6F6F] md:w-[122px]"
-                        >
-                            <option>CM +237</option>
-                            <option>NG +234</option>
-                            <option>GH +233</option>
-                        </Select>
-                        <Input
-                            type="text"
-                            value={form.phoneNumber}
-                            onChange={(event) => updateForm("phoneNumber", event.target.value)}
-                            prependText="📞"
-                            placeholder="123 456 XXX"
-                            className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
-                        />
-                    </div>
+                    <Input
+                        labelText="Email Address"
+                        type="email"
+                        value={form.email}
+                        onChange={(event) => updateForm("email", event.target.value)}
+                        placeholder="you@example.com"
+                        className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
+                    />
+                </div>
+
+                <div className="mt-4">
+                    <Input
+                        labelText="Cell Phone"
+                        type="text"
+                        value={form.phoneNumber}
+                        onChange={(event) => updateForm("phoneNumber", event.target.value)}
+                        prependText="📞"
+                        placeholder="+1 234 567 8900"
+                        className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
+                    />
+                </div>
+
+                <div className="mt-4">
+                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Highest Level of Education</FieldLabel>
+                    <Select
+                        value={form.highestEducation}
+                        onChange={(event) => updateForm("highestEducation", event.target.value)}
+                        className="h-[40px] rounded-[3px] border-[#A7A7A7] px-3 text-[14px] text-[#6F6F6F]"
+                    >
+                        <option value="">Select highest education</option>
+                        {highestEducationOptions.map((educationOption) => (
+                            <option key={educationOption} value={educationOption}>
+                                {educationOption}
+                            </option>
+                        ))}
+                    </Select>
+                </div>
+
+                <div className="mt-4">
+                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Level of Interest</FieldLabel>
+                    <Select
+                        value={form.interestLevel}
+                        onChange={(event) => updateForm("interestLevel", event.target.value)}
+                        className="h-[40px] rounded-[3px] border-[#A7A7A7] px-3 text-[14px] text-[#6F6F6F]"
+                    >
+                        <option value="">Select level of interest</option>
+                        {interestLevelOptions.map((interestLevelOption) => (
+                            <option key={interestLevelOption} value={interestLevelOption}>
+                                {interestLevelOption}
+                            </option>
+                        ))}
+                    </Select>
+                </div>
+
+                <div className="mt-4">
+                    <Input
+                        labelText="Area of Interest"
+                        type="text"
+                        value={form.interestArea}
+                        onChange={(event) => updateForm("interestArea", event.target.value)}
+                        placeholder="AI, Public Health, Business Strategy..."
+                        className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
+                    />
                 </div>
             </div>
 
-            <ActionRow backLabel="Back" nextLabel="Save and Next" onBack={goToPreviousStep} onNext={goToNextStep} />
-        </FormCard>
-    );
-
-    const renderTranscriptStep = () => (
-        <FormCard>
-            <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Transcript
-            </h2>
-
-            <div className="mt-8">
-                <h3 className="text-[18px] font-semibold text-[#2F2F2F]" style={{ fontFamily: '"Teachers", sans-serif' }}>Upload Unofficial Transcript</h3>
-                <p className="mt-3 text-[14px] font-medium text-[#33333380]">Accepted formats: PDF, JPG, PNG (max 10MB)</p>
-
-                <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="mt-2 flex min-h-[134px] w-full cursor-pointer flex-col items-center justify-center rounded-[4px] border border-dashed border-[#D2D2D2] px-4 text-center transition-opacity duration-200 hover:opacity-80"
-                >
-                    <Upload className="h-7 w-7 text-[#33333380]" />
-                    <p className="mt-3 text-[18px] font-semibold text-[#2F2F2F]">Click to upload</p>
-                    <p className="mt-1 text-[14px] text-[#33333380]">
-                        {form.transcriptFileName || "or drag and drop your file here"}
-                    </p>
-                </button>
-                <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    onChange={(event) => {
-                        const file = event.target.files?.[0];
-                        if (file) {
-                            updateForm("transcriptFileName", file.name);
-                        }
-                    }}
-                />
-            </div>
-
-            <ActionRow backLabel="Back" nextLabel="Save and Next" onBack={goToPreviousStep} onNext={goToNextStep} />
+            <ActionRow
+                backLabel="Back"
+                nextLabel="Save and Next"
+                onBack={goToPreviousStep}
+                onNext={goToNextStep}
+                errorMessage={validationError}
+            />
         </FormCard>
     );
 
@@ -608,18 +874,24 @@ export default function ApplyPageContent() {
 
             <div className="mt-4 overflow-hidden rounded-[4px] border border-[#33333340]">
                 {[
-                    ["Program", form.program || "Data Science"],
-                    ["Term", form.term],
+                    ["Program", form.program || availableProgramOptions[0] || "N/A"],
+                    ["Batch Start", form.batchStart],
                     ["Student Type", form.studentType === "international" ? "International" : "National"],
-                    ["Email", form.email || "user.@gmail.com"],
-                    ["Phone", `${form.phoneCode} ${form.phoneNumber}`],
-                    ["Transcript", form.transcriptFileName || "documentall.pdf"],
+                    ["First Name", form.firstName || "N/A"],
+                    ["Last Name", form.lastName || "N/A"],
+                    ["Email", form.email || "N/A"],
+                    ["Cell Phone", form.phoneNumber || "N/A"],
+                    ["Highest Education", form.highestEducation || "N/A"],
+                    ["Level of Interest", form.interestLevel || "N/A"],
+                    ["Area of Interest", form.interestArea || "N/A"],
                 ].map(([label, value]) => (
                     <div
                         key={label}
                         className={cn(
                             "grid grid-cols-[1fr_auto] gap-4 border-b border-[#33333340] px-4 py-4 last:border-b-0",
-                            (label === "Term" || label === "Email" || label === "Transcript") ? "bg-[#FAFAFA]" : "bg-[#FFFFFF]"
+                            (label === "Batch Start" || label === "Email" || label === "Highest Education" || label === "Area of Interest")
+                                ? "bg-[#FAFAFA]"
+                                : "bg-[#FFFFFF]"
                         )}
                     >
                         <p className="text-[18px] font-medium text-[#333333]">{label}</p>
@@ -633,7 +905,9 @@ export default function ApplyPageContent() {
                     <path d="M12.0229 13.0564C11.824 13.0564 11.6333 12.9598 11.4926 12.7879C11.352 12.616 11.2729 12.3829 11.2729 12.1398V7.86198C11.2729 7.61886 11.352 7.38571 11.4926 7.2138C11.6333 7.04189 11.824 6.94531 12.0229 6.94531C12.2219 6.94531 12.4126 7.04189 12.5533 7.2138C12.6939 7.38571 12.7729 7.61886 12.7729 7.86198V12.1398C12.7729 12.3829 12.6939 12.616 12.5533 12.7879C12.4126 12.9598 12.2219 13.0564 12.0229 13.0564ZM11.0229 16.7231C11.0229 16.3989 11.1283 16.0881 11.3158 15.8588C11.5034 15.6296 11.7577 15.5009 12.0229 15.5009C12.2882 15.5009 12.5425 15.6296 12.7301 15.8588C12.9176 16.0881 13.0229 16.3989 13.0229 16.7231C13.0229 17.0472 12.9176 17.3581 12.7301 17.5873C12.5425 17.8165 12.2882 17.9453 12.0229 17.9453C11.7577 17.9453 11.5034 17.8165 11.3158 17.5873C11.1283 17.3581 11.0229 17.0472 11.0229 16.7231Z" fill="#FAAE14"/>
                     <path fillRule="evenodd" clipRule="evenodd" d="M2.39046 16.4928L8.67832 3.9994C10.0561 1.26062 13.9516 1.26062 15.3294 3.9994L21.6173 16.4928C22.8699 18.9939 21.0712 21.9453 18.2855 21.9453H5.75985C2.97916 21.9453 1.17547 18.9939 2.42803 16.4928H2.39046ZM3.51025 17.0543L9.79811 4.56091C10.7162 2.73506 13.2928 2.73506 14.2071 4.56091L20.495 17.0543C21.3417 18.7426 20.118 20.6935 18.2905 20.6935H5.76486C3.93612 20.6935 2.70861 18.7301 3.56035 17.0543H3.51025Z" fill="#FAAE14"/>
                 </svg>
-                <p className="min-w-0 leading-[1.45]">International students are required to pay an application fee after submission.</p>
+                <p className="min-w-0 leading-[1.45]">
+                    Application fee payment is required before this application can be submitted.
+                </p>
             </div>
 
             <div className="mt-15 flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
@@ -645,9 +919,15 @@ export default function ApplyPageContent() {
                     Back
                 </button>
                 <Button type="button" onClick={goToNextStep} className="min-w-[128px] px-5 py-[11px] text-[14px]">
-                    Submit Application
+                    Continue to Payment
                 </Button>
             </div>
+            {validationError ? (
+                <p className="mt-4 text-sm font-medium text-[#B92A2A]">{validationError}</p>
+            ) : null}
+            {!validationError && submitError ? (
+                <p className="mt-4 text-sm font-medium text-[#B92A2A]">{submitError}</p>
+            ) : null}
         </FormCard>
     );
 
@@ -656,110 +936,66 @@ export default function ApplyPageContent() {
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
                 Pay Application Fee
             </h2>
-            <p className="mt-5 text-[18px] font-medium text-[#333333]">A one-time non-refundable fee of $50 USD</p>
+            <p className="mt-5 text-[18px] font-medium text-[#333333]">
+                Application fee is required to submit this form.
+            </p>
 
             <div className="mt-6 rounded-[4px] border border-[#D8D8D8] px-4 py-4">
                 <div className="flex items-center justify-between gap-4">
-                    <p className="text-[18px] font-medium text-[#333333]">Application Fee</p>
-                    <p className="text-[18px] text-[#33333380]">$50.00</p>
+                    <p className="text-[18px] font-medium text-[#333333]">Base Application Fee</p>
+                    <p className="text-[18px] text-[#33333380]">${applicationFeeSummary.baseFee.toFixed(2)}</p>
                 </div>
+                {applicationFeeSummary.discountPercent > 0 ? (
+                    <>
+                        <div className="mt-2 flex items-center justify-between gap-4 border-t border-[#D8D8D8] pt-2">
+                            <p className="text-[18px] font-medium text-[#333333]">
+                                Government Employee Discount ({applicationFeeSummary.discountPercent}%)
+                            </p>
+                            <p className="text-[18px] text-[#1E73BE]">-${applicationFeeSummary.discountAmount.toFixed(2)}</p>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between gap-4 border-t border-[#D8D8D8] pt-2">
+                            <p className="text-[18px] font-semibold text-[#333333]">Total Due</p>
+                            <p className="text-[18px] font-semibold text-[#333333]">${applicationFeeSummary.finalAmount.toFixed(2)}</p>
+                        </div>
+                    </>
+                ) : null}
             </div>
 
             <div className="mt-6">
-                <FieldLabel>Payment Method</FieldLabel>
-                <div className="space-y-3">
-                    <RadioOption
-                        checked={form.paymentMethod === "card"}
-                        title="Credit / Debit Card"
-                        onClick={() => updateForm("paymentMethod", "card")}
-                    />
-                    {form.paymentMethod === "card" ? (
-                        <div className="rounded-[4px] border border-[#CFCFCF] px-3 py-3">
-                            <div>
-                                <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Card Number</FieldLabel>
-                                <Input
-                                    type="text"
-                                    value={form.cardNumber}
-                                    onChange={(event) => updateForm("cardNumber", event.target.value)}
-                                    placeholder="1234 5678 9012 3456"
-                                    className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
-                                />
-                            </div>
-                            <div className="mt-3 grid gap-3 md:grid-cols-2">
-                                <div>
-                                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Expiry</FieldLabel>
-                                    <Input
-                                        type="text"
-                                        value={form.cardExpiry}
-                                        onChange={(event) => updateForm("cardExpiry", event.target.value)}
-                                        placeholder="MM/YY"
-                                        className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
-                                    />
-                                </div>
-                                <div>
-                                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">CVV</FieldLabel>
-                                    <Input
-                                        type="text"
-                                        value={form.cardCvv}
-                                        onChange={(event) => updateForm("cardCvv", event.target.value)}
-                                        placeholder="123"
-                                        className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
-                                    />
-                                </div>
-                            </div>
+                <FieldLabel>Integrated Card Payment</FieldLabel>
+                <div className="rounded-[4px] border border-[#CFCFCF] px-3 py-3">
+                    <div>
+                        <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Card Number</FieldLabel>
+                        <Input
+                            type="text"
+                            value={form.cardNumber}
+                            onChange={(event) => updateForm("cardNumber", event.target.value)}
+                            placeholder="1234 5678 9012 3456"
+                            className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
+                        />
+                    </div>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                        <div>
+                            <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Expiry</FieldLabel>
+                            <Input
+                                type="text"
+                                value={form.cardExpiry}
+                                onChange={(event) => updateForm("cardExpiry", event.target.value)}
+                                placeholder="MM/YY"
+                                className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
+                            />
                         </div>
-                    ) : null}
-
-                    <RadioOption
-                        checked={form.paymentMethod === "bank"}
-                        title="Bank Transfer"
-                        onClick={() => updateForm("paymentMethod", "bank")}
-                    />
-                    {form.paymentMethod === "bank" ? (
-                        <div className="rounded-[4px] border border-[#CFCFCF] px-3 py-3">
-                            <p className="text-[14px] font-medium text-[#333333]">Bank Transfer Details</p>
-                            <p className="mt-3 text-[18px]">
-                                <span className="font-medium text-[#333333]">Bank:</span>{" "}
-                                <span className="font-normal text-[#33333380]">National Bank of Cameroon</span>
-                            </p>
-                            <p className="text-[18px]">
-                                <span className="font-medium text-[#333333]">Account Name:</span>{" "}
-                                <span className="font-normal text-[#33333380]">St. Austin University</span>
-                            </p>
-                            <p className="text-[18px]">
-                                <span className="font-medium text-[#333333]">Account Number:</span>{" "}
-                                <span className="font-normal text-[#33333380]">0012-3456-7890</span>
-                            </p>
-                            <p className="text-[18px]">
-                                <span className="font-medium text-[#333333]">Reference:</span>{" "}
-                                <span className="font-normal text-[#33333380]">APP-2025-INTL</span>
-                            </p>
-                            <p className="mt-3 text-[14px] font-medium text-[#33333380]">Please use the reference code when making your transfer.</p>
+                        <div>
+                            <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">CVV</FieldLabel>
+                            <Input
+                                type="text"
+                                value={form.cardCvv}
+                                onChange={(event) => updateForm("cardCvv", event.target.value)}
+                                placeholder="123"
+                                className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
+                            />
                         </div>
-                    ) : null}
-
-                    <RadioOption
-                        checked={form.paymentMethod === "mobile"}
-                        title="Mobile Money"
-                        onClick={() => updateForm("paymentMethod", "mobile")}
-                    />
-                    {form.paymentMethod === "mobile" ? (
-                        <div className="rounded-[4px] border border-[#CFCFCF] px-3 py-3">
-                            <p className="text-[14px] font-medium text-[#333333]">Mobile Money Payment</p>
-                            <p className="mt-3 text-[18px]">
-                                <span className="font-medium text-[#333333]">MTN MoMo:</span>{" "}
-                                <span className="font-normal text-[#33333380]">+237 6XX XXX XXX</span>
-                            </p>
-                            <p className="text-[18px]">
-                                <span className="font-medium text-[#333333]">Orange Money:</span>{" "}
-                                <span className="font-normal text-[#33333380]">St. Austin University</span>
-                            </p>
-                            <p className="text-[18px]">
-                                <span className="font-medium text-[#333333]">Reference:</span>{" "}
-                                <span className="font-normal text-[#33333380]">APP-2025-INTL</span>
-                            </p>
-                        </div>
-                    ) : null}
+                    </div>
                 </div>
             </div>
 
@@ -779,10 +1015,23 @@ export default function ApplyPageContent() {
                 >
                     Back
                 </button>
-                <Button type="button" onClick={goToNextStep} className="min-w-[126px] px-5 py-[11px] text-[14px]">
-                    Pay $50 USD
+                <Button
+                    type="button"
+                    onClick={goToNextStep}
+                    disabled={isSubmittingApplication}
+                    className="min-w-[126px] px-5 py-[11px] text-[14px]"
+                >
+                    {isSubmittingApplication
+                        ? "Submitting..."
+                        : `Pay $${applicationFeeSummary.finalAmount.toFixed(2)} USD and Submit`}
                 </Button>
             </div>
+            {submitError ? (
+                <p className="mt-4 text-sm font-medium text-[#B92A2A]">{submitError}</p>
+            ) : null}
+            {!submitError && validationError ? (
+                <p className="mt-4 text-sm font-medium text-[#B92A2A]">{validationError}</p>
+            ) : null}
         </FormCard>
     );
 
@@ -802,21 +1051,23 @@ export default function ApplyPageContent() {
                     {[
                         {
                             title: "Application Submitted",
-                            description: "Your application has been received and is pending review.",
+                            description: "Your application form and required fee were submitted successfully.",
+                            meta: `Confirmation email sent to ${submissionSummary?.confirmationEmail ?? form.email}.`,
+                            active: true,
+                        },
+                        {
+                            title: "Instruction Email Sent",
+                            description: `Required document instructions were sent for ${submissionSummary?.instructionProgram ?? form.program}.`,
                             meta: "Estimated review time: 3-5 business days",
                             active: true,
                         },
                         {
                             title: "Document Verification",
-                            description: "Our admissions team is reviewing your documents. This may take 3-5 business days.",
+                            description: "Our admissions team will review your submitted documents after you complete the checklist.",
                         },
                         {
-                            title: "Admission & Payment",
-                            description: "Congratulations! You have been admitted. Complete your tuition payment to enroll.",
-                        },
-                        {
-                            title: "Enrolled",
-                            description: "You are officially enrolled! Your student dashboard is now active.",
+                            title: "Admission Decision",
+                            description: "You will receive your admission decision by email after review is complete.",
                         },
                     ].map((item, index) => (
                         <div key={item.title} className="grid grid-cols-[44px_1fr] gap-5 pb-10 last:pb-0 md:grid-cols-[64px_1fr]">
@@ -843,14 +1094,28 @@ export default function ApplyPageContent() {
                 </div>
             </div>
 
+            <div className="mt-6 rounded-[8px] border border-[#DADADA] bg-white px-6 py-5">
+                <p className="text-[18px] font-semibold text-[#333333]">Instruction Email Checklist</p>
+                <ul className="mt-3 space-y-2 text-[16px] text-[#33333380]">
+                    {(submissionSummary?.instructionChecklist ?? getInstructionChecklistForProgram(form.program)).map((item) => (
+                        <li key={item} className="flex gap-2">
+                            <span className="text-[#1E73BE]">•</span>
+                            <span>{item}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
             <div className="mt-6 rounded-[8px] border border-[#DADADA] bg-white px-6 py-5 text-center text-[16px] text-[#33333380]">
-                <span className="inline-block max-w-[528px]">Your application is being reviewed. We&apos;ll notify you by email once your documents are verified.</span>
+                <span className="inline-block max-w-[528px]">
+                    Your application is now in review. We&apos;ll notify you by email once your documents are verified.
+                </span>
             </div>
 
             <div className="mt-6 flex justify-center">
                 <button
                     type="button"
-                    onClick={() => setCurrentStep("dashboard")}
+                    onClick={() => router.push("/portal")}
                     className="h-[40px] w-[155px] cursor-pointer rounded-[5px] border border-[#33333340] bg-white px-5 py-0 text-[18px] font-medium leading-none text-[#333333] transition-opacity duration-200 hover:opacity-80"
                 >
                     Back to Portal 
@@ -870,15 +1135,21 @@ export default function ApplyPageContent() {
                         description="Complete your application in a few simple steps."
                     />
                     {currentStep !== "submitted" ? (
-                        <Stepper activeStep={currentStep as Exclude<StepId, "dashboard" | "submitted">} />
+                        <Stepper
+                            activeStep={currentStep as Exclude<StepId, "dashboard" | "submitted">}
+                            steps={flowSteps}
+                        />
                     ) : (
-                        <Stepper activeStep="fees" allCompleted />
+                        <Stepper
+                            activeStep="fees"
+                            steps={flowSteps}
+                            allCompleted
+                        />
                     )}
                     {currentStep === "program" && renderProgramStep()}
-                    {currentStep === "term" && renderTermStep()}
+                    {currentStep === "batchStart" && renderBatchStartStep()}
                     {currentStep === "studentType" && renderStudentTypeStep()}
-                    {currentStep === "contactInfo" && renderContactInfoStep()}
-                    {currentStep === "transcript" && renderTranscriptStep()}
+                    {currentStep === "studentInfo" && renderStudentInfoStep()}
                     {currentStep === "review" && renderReviewStep()}
                     {currentStep === "fees" && renderFeesStep()}
                     {currentStep === "submitted" && renderSubmittedStep()}

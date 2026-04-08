@@ -3,34 +3,63 @@ import "server-only";
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { getSql } from "@/lib/postgres";
+import {
+    GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT,
+    normalizeGovernmentEmployeeGroup,
+    type GovernmentEmployeeGroup,
+} from "@/lib/government-benefits";
 
 const SESSION_COOKIE_NAME = "st_austin_portal_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 const PASSWORD_RESET_TTL_SECONDS = 60 * 30;
 const PASSWORD_MIN_LENGTH = 8;
-const AUTH_SCHEMA_VERSION = 2;
+const AUTH_SCHEMA_VERSION = 5;
+
+export type ApplicationStatus = "not_started" | "under_review";
 
 type UserRow = {
     id: number;
     full_name: string;
     email: string;
     password_hash: string;
+    is_enrolled: boolean;
+    is_government_employee: boolean;
+    government_employee_group: string | null;
+    government_discount_percent: number;
 };
 
 type SessionUserRow = {
     id: number;
     full_name: string;
     email: string;
+    is_enrolled: boolean;
+    is_government_employee: boolean;
+    government_employee_group: string | null;
+    government_discount_percent: number;
 };
 
 type PasswordResetRow = {
     user_id: number;
 };
 
+type ApplicationStatusRow = {
+    application_status: string;
+};
+
 export type AuthUser = {
     id: number;
     fullName: string;
     email: string;
+    isEnrolled: boolean;
+    isGovernmentEmployee: boolean;
+    governmentEmployeeGroup: GovernmentEmployeeGroup | null;
+    governmentDiscountPercent: number;
+};
+
+export type GovernmentBenefit = {
+    isGovernmentEmployee: boolean;
+    governmentEmployeeGroup: GovernmentEmployeeGroup | null;
+    governmentDiscountPercent: number;
 };
 
 declare global {
@@ -48,6 +77,10 @@ function isValidEmail(value: string): boolean {
 
 function hashToken(value: string): string {
     return createHash("sha256").update(value).digest("hex");
+}
+
+function normalizeApplicationStatus(value: string | null | undefined): ApplicationStatus {
+    return value === "under_review" ? "under_review" : "not_started";
 }
 
 function hashPassword(password: string): string {
@@ -73,11 +106,28 @@ function verifyPassword(password: string, storedHash: string): boolean {
     return timingSafeEqual(expectedBuffer, actualBuffer);
 }
 
-function toAuthUser(user: { id: number; full_name: string; email: string }): AuthUser {
+function toAuthUser(user: {
+    id: number;
+    full_name: string;
+    email: string;
+    is_enrolled?: boolean | null;
+    is_government_employee?: boolean | null;
+    government_employee_group?: string | null;
+    government_discount_percent?: number | null;
+}): AuthUser {
+    const isGovernmentEmployee = Boolean(user.is_government_employee);
+    const governmentEmployeeGroup = normalizeGovernmentEmployeeGroup(user.government_employee_group);
+
     return {
         id: Number(user.id),
         fullName: user.full_name,
         email: user.email,
+        isEnrolled: Boolean(user.is_enrolled),
+        isGovernmentEmployee,
+        governmentEmployeeGroup: isGovernmentEmployee ? governmentEmployeeGroup : null,
+        governmentDiscountPercent: isGovernmentEmployee
+            ? Number(user.government_discount_percent ?? GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT)
+            : 0,
     };
 }
 
@@ -129,6 +179,31 @@ async function ensureAuthSchema(): Promise<void> {
         `;
 
         await sql`
+            ALTER TABLE "user-web"
+            ADD COLUMN IF NOT EXISTS is_enrolled BOOLEAN NOT NULL DEFAULT FALSE;
+        `;
+
+        await sql`
+            ALTER TABLE "user-web"
+            ADD COLUMN IF NOT EXISTS application_status TEXT NOT NULL DEFAULT 'not_started';
+        `;
+
+        await sql`
+            ALTER TABLE "user-web"
+            ADD COLUMN IF NOT EXISTS is_government_employee BOOLEAN NOT NULL DEFAULT FALSE;
+        `;
+
+        await sql`
+            ALTER TABLE "user-web"
+            ADD COLUMN IF NOT EXISTS government_employee_group TEXT;
+        `;
+
+        await sql`
+            ALTER TABLE "user-web"
+            ADD COLUMN IF NOT EXISTS government_discount_percent INTEGER NOT NULL DEFAULT 0;
+        `;
+
+        await sql`
             CREATE TABLE IF NOT EXISTS portal_sessions (
                 token_hash TEXT PRIMARY KEY,
                 user_id BIGINT NOT NULL REFERENCES "user-web"(id) ON DELETE CASCADE,
@@ -162,7 +237,7 @@ async function getUserByEmail(email: string): Promise<UserRow | null> {
     await ensureAuthSchema();
     const sql = getSql();
     const rows = await sql<UserRow[]>`
-        SELECT id, full_name, email, password_hash
+        SELECT id, full_name, email, password_hash, is_enrolled, is_government_employee, government_employee_group, government_discount_percent
         FROM "user-web"
         WHERE email = ${normalizeEmail(email)}
         LIMIT 1;
@@ -251,7 +326,7 @@ export async function signupUser(input: {
         const rows = await sql<UserRow[]>`
             INSERT INTO "user-web" (full_name, email, password_hash)
             VALUES (${fullName}, ${email}, ${passwordHash})
-            RETURNING id, full_name, email, password_hash;
+            RETURNING id, full_name, email, password_hash, is_enrolled, is_government_employee, government_employee_group, government_discount_percent;
         `;
 
         const createdUser = rows[0];
@@ -313,7 +388,14 @@ export async function getCurrentSessionUser(): Promise<AuthUser | null> {
     const tokenHash = hashToken(rawToken);
 
     const rows = await sql<SessionUserRow[]>`
-        SELECT u.id, u.full_name, u.email
+        SELECT
+            u.id,
+            u.full_name,
+            u.email,
+            u.is_enrolled,
+            u.is_government_employee,
+            u.government_employee_group,
+            u.government_discount_percent
         FROM portal_sessions s
         INNER JOIN "user-web" u ON u.id = s.user_id
         WHERE s.token_hash = ${tokenHash}
@@ -329,6 +411,172 @@ export async function getCurrentSessionUser(): Promise<AuthUser | null> {
     }
 
     return toAuthUser(user);
+}
+
+export async function getCurrentUserApplicationStatus(): Promise<ApplicationStatus> {
+    await ensureAuthSchema();
+    const cookieStore = await cookies();
+    const rawToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+
+    if (!rawToken) {
+        return "not_started";
+    }
+
+    const sql = getSql();
+    const tokenHash = hashToken(rawToken);
+
+    const rows = await sql<ApplicationStatusRow[]>`
+        SELECT u.application_status
+        FROM portal_sessions s
+        INNER JOIN "user-web" u ON u.id = s.user_id
+        WHERE s.token_hash = ${tokenHash}
+          AND s.expires_at > NOW()
+        LIMIT 1;
+    `;
+
+    const row = rows[0];
+    if (!row) {
+        await clearSessionCookieAndData(rawToken);
+        return "not_started";
+    }
+
+    return normalizeApplicationStatus(row.application_status);
+}
+
+export async function setCurrentUserApplicationStatus(status: ApplicationStatus): Promise<void> {
+    await ensureAuthSchema();
+    const cookieStore = await cookies();
+    const rawToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+
+    if (!rawToken) {
+        throw new Error("Unauthorized.");
+    }
+
+    const sql = getSql();
+    const tokenHash = hashToken(rawToken);
+
+    const rows = await sql<{ id: number }[]>`
+        UPDATE "user-web" u
+        SET application_status = ${status},
+            updated_at = NOW()
+        FROM portal_sessions s
+        WHERE s.user_id = u.id
+          AND s.token_hash = ${tokenHash}
+          AND s.expires_at > NOW()
+        RETURNING u.id;
+    `;
+
+    if (!rows[0]) {
+        await clearSessionCookieAndData(rawToken);
+        throw new Error("Unauthorized.");
+    }
+}
+
+export async function getCurrentUserGovernmentBenefit(): Promise<GovernmentBenefit> {
+    await ensureAuthSchema();
+    const cookieStore = await cookies();
+    const rawToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+
+    if (!rawToken) {
+        throw new Error("Unauthorized.");
+    }
+
+    const sql = getSql();
+    const tokenHash = hashToken(rawToken);
+
+    const rows = await sql<
+        Array<{
+            is_government_employee: boolean;
+            government_employee_group: string | null;
+            government_discount_percent: number;
+        }>
+    >`
+        SELECT
+            u.is_government_employee,
+            u.government_employee_group,
+            u.government_discount_percent
+        FROM portal_sessions s
+        INNER JOIN "user-web" u ON u.id = s.user_id
+        WHERE s.token_hash = ${tokenHash}
+          AND s.expires_at > NOW()
+        LIMIT 1;
+    `;
+
+    const row = rows[0];
+    if (!row) {
+        await clearSessionCookieAndData(rawToken);
+        throw new Error("Unauthorized.");
+    }
+
+    const isGovernmentEmployee = Boolean(row.is_government_employee);
+    return {
+        isGovernmentEmployee,
+        governmentEmployeeGroup: isGovernmentEmployee
+            ? normalizeGovernmentEmployeeGroup(row.government_employee_group)
+            : null,
+        governmentDiscountPercent: isGovernmentEmployee
+            ? Number(row.government_discount_percent ?? GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT)
+            : 0,
+    };
+}
+
+export async function setCurrentUserGovernmentBenefit(input: {
+    isGovernmentEmployee: boolean;
+    governmentEmployeeGroup?: string | null;
+}): Promise<GovernmentBenefit> {
+    await ensureAuthSchema();
+    const cookieStore = await cookies();
+    const rawToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+
+    if (!rawToken) {
+        throw new Error("Unauthorized.");
+    }
+
+    const isGovernmentEmployee = Boolean(input.isGovernmentEmployee);
+    const governmentEmployeeGroup = isGovernmentEmployee
+        ? normalizeGovernmentEmployeeGroup(input.governmentEmployeeGroup)
+        : null;
+
+    if (isGovernmentEmployee && !governmentEmployeeGroup) {
+        throw new Error("Please select your government employee category.");
+    }
+
+    const discountPercent = isGovernmentEmployee ? GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT : 0;
+
+    const sql = getSql();
+    const tokenHash = hashToken(rawToken);
+
+    const rows = await sql<
+        Array<{
+            id: number;
+            is_government_employee: boolean;
+            government_employee_group: string | null;
+            government_discount_percent: number;
+        }>
+    >`
+        UPDATE "user-web" u
+        SET is_government_employee = ${isGovernmentEmployee},
+            government_employee_group = ${governmentEmployeeGroup},
+            government_discount_percent = ${discountPercent},
+            updated_at = NOW()
+        FROM portal_sessions s
+        WHERE s.user_id = u.id
+          AND s.token_hash = ${tokenHash}
+          AND s.expires_at > NOW()
+        RETURNING u.id, u.is_government_employee, u.government_employee_group, u.government_discount_percent;
+    `;
+
+    const updated = rows[0];
+    if (!updated) {
+        await clearSessionCookieAndData(rawToken);
+        throw new Error("Unauthorized.");
+    }
+
+    return {
+        isGovernmentEmployee: Boolean(updated.is_government_employee),
+        governmentEmployeeGroup: normalizeGovernmentEmployeeGroup(updated.government_employee_group),
+        governmentDiscountPercent: Number(updated.government_discount_percent ?? 0),
+    };
 }
 
 export async function requestPasswordReset(emailInput: string): Promise<{ devResetToken?: string }> {

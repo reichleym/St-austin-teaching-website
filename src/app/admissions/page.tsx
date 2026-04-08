@@ -47,19 +47,25 @@ export default function AdmissionsPage() {
 
     const deadlineItem = [
         {
-            title: "Fall 2026",
-            headingOne: "Early Decision",
-            headingTwo: "Regular",
-            dateOne: "March 1, 2026",
-            dateTwo: "June 15, 2026",
+            title: "September Intake",
+            headingOne: "Priority Deadline",
+            headingTwo: "Final Deadline",
+            dateOne: "July 15",
+            dateTwo: "August 31",
         },
-
         {
-            title: "Spring 2027",
-            headingOne: "Early Decision",
-            headingTwo: "Regular",
-            dateOne: "August 1, 2026",
-            dateTwo: "November 15, 2026",
+            title: "January Intake",
+            headingOne: "Priority Deadline",
+            headingTwo: "Final Deadline",
+            dateOne: "November 1",
+            dateTwo: "December 15",
+        },
+        {
+            title: "May Intake",
+            headingOne: "Priority Deadline",
+            headingTwo: "Final Deadline",
+            dateOne: "March 1",
+            dateTwo: "April 15",
         },
     ];
 

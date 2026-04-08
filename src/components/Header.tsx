@@ -1,21 +1,47 @@
 'use client';
 
 import { useCallback, useEffect, useState } from "react";
-import { Menu, Search, X } from "lucide-react";
+import { ChevronDown, CircleUserRound, LogOut, Menu, Search, X } from "lucide-react";
 import { RxCross2 } from "react-icons/rx";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Button from "./Button";
 import Modal, { AuthModalView, AuthUser } from "./modal";
 
-export default function Header() {
+function getSafeRedirectPath(value: string | null): string | null {
+    if (!value) {
+        return null;
+    }
+
+    if (!value.startsWith("/") || value.startsWith("//")) {
+        return null;
+    }
+
+    return value;
+}
+
+function getFirstName(value: string): string {
+    const parts = value.trim().split(/\s+/);
+    return parts[0] || value;
+}
+
+type HeaderProps = {
+    initialSessionUser?: AuthUser | null;
+};
+
+export default function Header({ initialSessionUser = null }: HeaderProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [searchInput, setIsSearchInput] = useState(false);
     const [activeAuthView, setActiveAuthView] = useState<AuthModalView | null>(null);
-    const [sessionUser, setSessionUser] = useState<AuthUser | null>(null);
-    const [isSessionLoading, setIsSessionLoading] = useState(true);
+    const [sessionUser, setSessionUser] = useState<AuthUser | null>(initialSessionUser);
+    const [isSessionLoading, setIsSessionLoading] = useState(false);
+    const [postAuthRedirect, setPostAuthRedirect] = useState<string | null>(null);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+    const canAccessPortal = Boolean(sessionUser?.isEnrolled);
+    const firstName = sessionUser ? getFirstName(sessionUser.fullName) : "";
 
     const loadSession = useCallback(async () => {
         setIsSessionLoading(true);
@@ -25,13 +51,16 @@ export default function Header() {
                 cache: "no-store",
             });
             const payload = await response.json().catch(() => ({}));
-            if (response.ok && payload?.ok && payload?.user) {
-                setSessionUser(payload.user as AuthUser);
-            } else {
+
+            if (response.ok && payload?.ok) {
+                if (payload?.user) {
+                    setSessionUser(payload.user as AuthUser);
+                    return;
+                }
                 setSessionUser(null);
             }
         } catch {
-            setSessionUser(null);
+            // Keep current UI state on transient fetch/network failures.
         } finally {
             setIsSessionLoading(false);
         }
@@ -41,6 +70,34 @@ export default function Header() {
         void loadSession();
     }, [loadSession]);
 
+    useEffect(() => {
+        setIsUserMenuOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
+        if (pathname !== "/portal") {
+            setPostAuthRedirect(null);
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const authView = params.get("auth");
+        const redirectPath = getSafeRedirectPath(params.get("redirect"));
+        setPostAuthRedirect(redirectPath);
+
+        if (sessionUser) {
+            if (redirectPath) {
+                router.replace(redirectPath);
+                router.refresh();
+            }
+            return;
+        }
+
+        if (authView === "login" || authView === "signup") {
+            setActiveAuthView(authView);
+        }
+    }, [pathname, router, sessionUser]);
+
     function handleSearchInput() {
         setIsSearchInput((current) => !current);
     }
@@ -49,10 +106,17 @@ export default function Header() {
         setIsMenuOpen((current) => !current);
     };
 
+    const goToPortal = () => {
+        setIsMenuOpen(false);
+        setIsUserMenuOpen(false);
+        router.push(canAccessPortal ? "/portal/dashboard" : "/apply");
+    };
+
     const openPortalModal = (view: AuthModalView = "login") => {
+        setPostAuthRedirect(null);
+
         if (sessionUser) {
-            setIsMenuOpen(false);
-            router.push("/portal/dashboard");
+            goToPortal();
             return;
         }
 
@@ -64,7 +128,11 @@ export default function Header() {
         setSessionUser(user);
         setActiveAuthView(null);
         setIsMenuOpen(false);
-        router.push("/portal/dashboard");
+        setIsUserMenuOpen(false);
+
+        const nextPath = postAuthRedirect ?? (user.isEnrolled ? "/portal/dashboard" : "/apply");
+        setPostAuthRedirect(null);
+        router.push(nextPath);
         router.refresh();
     };
 
@@ -80,6 +148,7 @@ export default function Header() {
         setSessionUser(null);
         setActiveAuthView(null);
         setIsMenuOpen(false);
+        setIsUserMenuOpen(false);
 
         if (pathname?.startsWith("/portal/dashboard")) {
             router.push("/portal");
@@ -97,7 +166,7 @@ export default function Header() {
 
     const topMenuItem = [
         { label: "Government Employees", href: "/government-employees" },
-        { label: "Request Info", href: "#" },
+        { label: "Request Info", href: "/request-info" },
         { label: "Donations", href: "/donations" },
     ];
 
@@ -114,7 +183,9 @@ export default function Header() {
                             {topItem.label}
                         </Link>
                     ))}
-                    <Button variant="white" className="px-4">Apply Now</Button>
+                    <Link href="/apply" className="inline-flex">
+                        <Button variant="white" className="px-4">Apply Now</Button>
+                    </Link>
                 </div>
             </div>
 
@@ -158,24 +229,51 @@ export default function Header() {
                             </div>
 
                             {sessionUser ? (
-                                <>
-                                    <Link
-                                        href="/portal/dashboard"
-                                        className="rounded-[5px] border border-[#1E73BE] px-4 py-2 text-[16px] font-medium text-[#1E73BE] transition-colors duration-200 hover:bg-[#1E73BE] hover:text-white"
+                                <div className="relative">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsUserMenuOpen((current) => !current)}
+                                        className="flex min-w-[260px] items-center gap-2 rounded-lg border border-[#1E73BE4D] bg-white px-3 py-2 text-left"
                                     >
-                                        Dashboard
-                                    </Link>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={isSessionLoading}
-                                        onClick={() => {
-                                            void handleLogout();
-                                        }}
-                                    >
-                                        Log Out
-                                    </Button>
-                                </>
+                                        <CircleUserRound className="h-8 w-8 text-[#1E73BE]" />
+                                        <span className="min-w-0 flex-1">
+                                            <span className="block truncate text-[14px] font-semibold text-[#1D1D1D]">{firstName}</span>
+                                            <span className="block truncate text-[12px] text-[#5F5F5F]">{sessionUser.email}</span>
+                                        </span>
+                                        <ChevronDown className={`h-4 w-4 text-[#1E73BE] transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
+                                    </button>
+
+                                    {isUserMenuOpen ? (
+                                        <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-[280px] rounded-lg border border-[#E4E4E4] bg-white p-3 shadow-md">
+                                            <div className="flex items-center gap-2 rounded-md bg-[#F6F9FD] px-3 py-2">
+                                                <CircleUserRound className="h-8 w-8 text-[#1E73BE]" />
+                                                <span className="min-w-0">
+                                                    <span className="block truncate text-[14px] font-semibold text-[#1D1D1D]">{firstName}</span>
+                                                    <span className="block truncate text-[12px] text-[#5F5F5F]">{sessionUser.email}</span>
+                                                </span>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={goToPortal}
+                                                className="mt-3 w-full rounded-md border border-[#1E73BE] px-3 py-2 text-[14px] font-medium text-[#1E73BE] transition-colors duration-200 hover:bg-[#1E73BE] hover:text-white"
+                                            >
+                                                Portal
+                                            </button>
+                                            <button
+                                                type="button"
+                                                disabled={isSessionLoading}
+                                                onClick={() => {
+                                                    void handleLogout();
+                                                }}
+                                                className="mt-2 flex w-full items-center justify-center gap-2 rounded-md bg-[#1E73BE] px-3 py-2 text-[14px] font-medium text-white transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+                                            >
+                                                <LogOut className="h-4 w-4" />
+                                                Log Out
+                                            </button>
+                                        </div>
+                                    ) : null}
+                                </div>
                             ) : (
                                 <Button onClick={() => openPortalModal("login")}>Portal</Button>
                             )}
@@ -216,23 +314,35 @@ export default function Header() {
                             </div>
 
                             {sessionUser ? (
-                                <>
-                                    <Link
-                                        href="/portal/dashboard"
-                                        className="w-full rounded-lg border border-[#1E73BE] px-6 py-2 text-center font-medium text-[#1E73BE]"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            void handleLogout();
-                                        }}
-                                        className="w-full cursor-pointer rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors duration-200 hover:bg-blue-700"
-                                    >
-                                        Log out
-                                    </button>
-                                </>
+                                <div className="rounded-lg border border-[#1E73BE40] p-3">
+                                    <div className="flex items-center gap-2">
+                                        <CircleUserRound className="h-8 w-8 text-[#1E73BE]" />
+                                        <div className="min-w-0">
+                                            <p className="truncate text-[14px] font-semibold text-[#1D1D1D]">{firstName}</p>
+                                            <p className="truncate text-[12px] text-[#5F5F5F]">{sessionUser.email}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 space-y-2">
+                                        <button
+                                            type="button"
+                                            onClick={goToPortal}
+                                            className="w-full rounded-lg border border-[#1E73BE] px-4 py-2 text-center text-[14px] font-medium text-[#1E73BE]"
+                                        >
+                                            Portal
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                void handleLogout();
+                                            }}
+                                            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-[14px] font-medium text-white transition-colors duration-200 hover:bg-blue-700"
+                                        >
+                                            <LogOut className="h-4 w-4" />
+                                            Log Out
+                                        </button>
+                                    </div>
+                                </div>
                             ) : (
                                 <button
                                     type="button"

@@ -194,7 +194,9 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
                     ))}
                 </div>
                 <div className="flex gap-5 mt-11">
-                    <Button variant="primary">Apply Now</Button>
+                    <Link href="/apply" className="inline-flex">
+                        <Button variant="primary">Apply Now</Button>
+                    </Link>
                     <Button variant="outline">Request Info</Button>
                 </div>
             </BannerSection>
@@ -270,9 +272,11 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
                             <div className="bg-[#1E73BE] p-7 rounded-lg text-white text-center">
                                 <h3 className="font-semibold text-[28px] leading-tight mb-5">Start Your Application</h3>
                                 <p>The next cohort begins Fall 2026</p>
-                                <Button variant="white" className="mt-10 w-full">
-                                    Apply Now
-                                </Button>
+                                <Link href="/apply" className="inline-flex w-full">
+                                    <Button variant="white" className="mt-10 w-full">
+                                        Apply Now
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </div>

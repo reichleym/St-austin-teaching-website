@@ -12,7 +12,7 @@ export default function Footer() {
         { label: 'About', href: '#' },
     ];
        const recordMenuItems = [
-        { label: 'Request Info', href: '#' },
+        { label: 'Request Info', href: '/request-info' },
         { label: 'Talk to Advisor', href: '#' },
         { label: 'Government Employee', href: '#' },
     ];

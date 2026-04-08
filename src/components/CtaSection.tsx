@@ -1,4 +1,5 @@
 import Button from "./Button";
+import Link from "next/link";
 
 export default function CtaSection({ className }: { className?: string }) {
     return (
@@ -11,8 +12,12 @@ export default function CtaSection({ className }: { className?: string }) {
                                 <h2 className="font-semibold text-4xl md:text-[50px] leading-tight mb-[10px]">Ready to Start Your Journey?</h2>
                                 <p className="text-[15px] mb-6 md:w-[80%]">Take the next step toward your future. Our admissions team is here to guide you through every step of the process.</p>
                                 <div className="flex flex-wrap gap-5">
-                                    <Button variant="white">Apply Now</Button>
-                                    <Button variant="whiteOutline">Request Info</Button>
+                                    <Link href="/apply" className="inline-flex">
+                                        <Button variant="white">Apply Now</Button>
+                                    </Link>
+                                    <Link href="/request-info" className="inline-flex">
+                                        <Button variant="whiteOutline">Request Info</Button>
+                                    </Link>
                                     <Button variant="whiteOutline">Talk to an Advisor</Button>
                                 </div>
                             </div>

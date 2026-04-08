@@ -3,14 +3,28 @@ import Accreditation from "@/components/sections/Accreditation";
 import Button from "@/components/Button";
 import IconCard from "@/components/IconCard";
 import Link from "next/link";
+import ProgramCard from "@/components/ProgramCard";
+import { getCourses, type CourseCardItem } from "@/lib/course-catalog";
+import { isDatabaseConfigured } from "@/lib/postgres";
 
 
 
-export default function portalPage() {
+export default async function portalPage() {
     const bannerContent = {
-        title: "Access Your Learning Dashboard",
+        title: "Access Your Learning Portal",
         description: "Your portal to courses, assignments, discussions, and everything you need to succeed.",
         bgImg: "/bannerImg.jpg"
+    }
+
+    let dynamicPrograms: CourseCardItem[] = [];
+
+    if (isDatabaseConfigured) {
+        try {
+            const courses = await getCourses({});
+            dynamicPrograms = courses.slice(0, 4);
+        } catch (error) {
+            console.error("Failed to load dynamic programs for portal page:", error);
+        }
     }
 
 const blockContent = [
@@ -79,15 +93,25 @@ const blockContent = [
             </section>
 
             <Accreditation blockContent={blockFeatures} title="Platform Features" description="Everything you need for a seamless learning experience" className="bg-[#F5F5F5] py-25" classNameCard="items-center text-center md:gap-x-15" />
+
+            <section className="py-25">
+                <div className="container">
+                    <div className="mb-8 text-center">
+                        <h2 className="text-3xl font-bold">Programs You Can Explore</h2>
+                        <p className="mt-2 text-lg text-[#333333CC]">These programs are loaded dynamically from the database.</p>
+                    </div>
+                    <ProgramCard programCardContent={dynamicPrograms.length > 0 ? dynamicPrograms : undefined} />
+                </div>
+            </section>
             
             <section className="py-25">
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10 items-center">
                         <div className="md:col-span-1">
-                            <h2 className="text-3xl font-bold mb-[10px]">Intuitive Dashboard</h2>
-                            <p className="text-lg">Navigate your academic journey with ease. Our dashboard puts everything at your fingertips — from upcoming assignments to live class schedules.</p>
+                            <h2 className="text-3xl font-bold mb-[10px]">Intuitive Portal</h2>
+                            <p className="text-lg">Navigate your academic journey with ease. Our portal puts everything at your fingertips — from upcoming assignments to live class schedules.</p>
                             <Link href="/portal/dashboard" className="inline-flex">
-                                <Button className="mt-6" variant="primary">Go to your dashboard</Button>
+                                <Button className="mt-6" variant="primary">Go to Portal</Button>
                             </Link>
                         </div>
                         <div className="md:col-span-1">

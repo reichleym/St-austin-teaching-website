@@ -1,5 +1,6 @@
 import Button from "../Button";
 import { FaAngleRight } from "react-icons/fa6";
+import Link from "next/link";
 
 
 export default function HeroSection() {
@@ -15,8 +16,12 @@ export default function HeroSection() {
                             Learn practical skills and gain real experience that prepares you to step directly into your career with confidence.
                         </p>
                         <div className="flex gap-4">
-                            <Button>Apply Now</Button>
-                            <Button variant="icon" icon={<FaAngleRight />}>Apply Now</Button>
+                            <Link href="/apply" className="inline-flex">
+                                <Button>Apply Now</Button>
+                            </Link>
+                            <Link href="/apply" className="inline-flex">
+                                <Button variant="icon" icon={<FaAngleRight />}>Apply Now</Button>
+                            </Link>
                         </div>
                     </div>
                 </div>
