@@ -18,6 +18,7 @@ export type AuthUser = {
     id: number;
     fullName: string;
     email: string;
+    isEmailVerified?: boolean;
     isEnrolled: boolean;
 };
 
@@ -56,6 +57,24 @@ const initialFormState: AuthFormState = {
 
 const fieldClassName =
     "h-[44px] rounded-[6px] border-[#8F8F8F] px-4 text-[18px] text-[#333333] placeholder:text-[#A0A0A0]";
+
+function getFriendlyApiMessage(input: unknown, fallback: string): string {
+    if (typeof input !== "string") {
+        return fallback;
+    }
+
+    const message = input.trim();
+    if (!message) {
+        return fallback;
+    }
+
+    const looksTechnical =
+        /column\s+".+"\s+does not exist/i.test(message) ||
+        /relation\s+".+"\s+does not exist/i.test(message) ||
+        /postgres|sqlstate|syntax error|constraint/i.test(message);
+
+    return looksTechnical ? fallback : message;
+}
 
 function IconBadge({
     children,
@@ -241,7 +260,12 @@ export default function Modal({
 
                 const payload = await response.json().catch(() => ({}));
                 if (!response.ok || !payload?.ok) {
-                    setErrorMessage(payload?.error || "Unable to log in.");
+                    setErrorMessage(
+                        getFriendlyApiMessage(
+                            payload?.error,
+                            "Unable to log in right now. Please try again."
+                        )
+                    );
                     return;
                 }
 
@@ -277,10 +301,18 @@ export default function Modal({
 
                 const payload = await response.json().catch(() => ({}));
                 if (!response.ok || !payload?.ok) {
-                    setErrorMessage(payload?.error || "Unable to create account.");
+                    setErrorMessage(
+                        getFriendlyApiMessage(
+                            payload?.error,
+                            "Unable to create your account right now. Please try again."
+                        )
+                    );
                     return;
                 }
 
+                if (typeof payload?.message === "string" && payload.message.trim()) {
+                    setInfoMessage(payload.message.trim());
+                }
                 onAuthSuccess?.(payload.user as AuthUser);
                 closeAndReset();
             } catch {
@@ -311,13 +343,23 @@ export default function Modal({
 
                 const payload = await response.json().catch(() => ({}));
                 if (!response.ok || !payload?.ok) {
-                    setErrorMessage(payload?.error || "Unable to process password reset.");
+                    setErrorMessage(
+                        getFriendlyApiMessage(
+                            payload?.error,
+                            "Unable to process password reset right now. Please try again."
+                        )
+                    );
                     return;
                 }
 
+                if (typeof payload?.message === "string" && payload.message.trim()) {
+                    setInfoMessage(payload.message.trim());
+                }
                 if (typeof payload?.devResetToken === "string" && payload.devResetToken.trim()) {
                     updateField("resetToken", payload.devResetToken);
-                    setInfoMessage("Development mode: reset token auto-filled for this flow.");
+                    setInfoMessage(
+                        "Password reset link sent. Development mode token has been auto-filled."
+                    );
                 }
             } catch {
                 setErrorMessage("Unable to connect to the server. Please try again.");
@@ -368,7 +410,12 @@ export default function Modal({
 
                 const payload = await response.json().catch(() => ({}));
                 if (!response.ok || !payload?.ok) {
-                    setErrorMessage(payload?.error || "Unable to reset password.");
+                    setErrorMessage(
+                        getFriendlyApiMessage(
+                            payload?.error,
+                            "Unable to reset password right now. Please try again."
+                        )
+                    );
                     return;
                 }
             } catch {

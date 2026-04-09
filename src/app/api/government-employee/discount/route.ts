@@ -34,6 +34,8 @@ export async function GET() {
                 benefit: {
                     isGovernmentEmployee: false,
                     governmentEmployeeGroup: null,
+                    governmentEmployeeId: null,
+                    governmentVerificationStatus: "not_submitted",
                     governmentDiscountPercent: 0,
                 },
             });
@@ -69,10 +71,13 @@ export async function POST(request: Request) {
         const isGovernmentEmployee = Boolean(body?.isGovernmentEmployee);
         const governmentEmployeeGroup =
             typeof body?.governmentEmployeeGroup === "string" ? body.governmentEmployeeGroup : null;
+        const governmentEmployeeId =
+            typeof body?.governmentEmployeeId === "string" ? body.governmentEmployeeId : null;
 
         const benefit = await setCurrentUserGovernmentBenefit({
             isGovernmentEmployee,
             governmentEmployeeGroup,
+            governmentEmployeeId,
         });
 
         return NextResponse.json({

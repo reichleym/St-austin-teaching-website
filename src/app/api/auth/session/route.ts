@@ -17,6 +17,17 @@ export async function GET() {
         );
     }
 
-    const user = await getCurrentSessionUser();
-    return NextResponse.json({ ok: true, user });
+    try {
+        const user = await getCurrentSessionUser();
+        return NextResponse.json({ ok: true, user });
+    } catch (error) {
+        console.error("[api/auth/session] failed", error);
+        return NextResponse.json(
+            {
+                ok: false,
+                error: "Unable to load your session right now. Please refresh and try again.",
+            },
+            { status: 500 }
+        );
+    }
 }

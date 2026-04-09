@@ -9,7 +9,7 @@ type PaymentMethod =
     | "cash"
     | "mtn_mobile_money"
     | "orange_money";
-type DonationFrequency = "one_time" | "monthly";
+type DonationFrequency = "one_time";
 
 type DonationRow = {
     id: string;
@@ -26,6 +26,10 @@ type DonationRow = {
     created_at: Date;
 };
 
+declare global {
+    var __stAustinDonationsSchemaReady: Promise<void> | undefined;
+}
+
 function isValidEmail(value: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
@@ -41,7 +45,7 @@ function isValidPaymentMethod(value: string): value is PaymentMethod {
 }
 
 function isValidFrequency(value: string): value is DonationFrequency {
-    return value === "one_time" || value === "monthly";
+    return value === "one_time";
 }
 
 function getBaseUrl(request: NextRequest): string {
@@ -49,23 +53,31 @@ function getBaseUrl(request: NextRequest): string {
 }
 
 async function ensureDonationsTable(): Promise<void> {
-    const sql = getSql();
-    await sql`
-        create table if not exists donations (
-            id text primary key,
-            first_name text not null,
-            last_name text not null,
-            email text not null,
-            amount_cents integer not null,
-            frequency text not null,
-            designation text,
-            payment_method text not null,
-            payment_status text not null default 'submitted',
-            payment_provider text,
-            payment_reference text,
-            created_at timestamptz not null default now()
-        )
-    `;
+    if (globalThis.__stAustinDonationsSchemaReady) {
+        return globalThis.__stAustinDonationsSchemaReady;
+    }
+
+    globalThis.__stAustinDonationsSchemaReady = (async () => {
+        const sql = getSql();
+        await sql`
+            create table if not exists donations (
+                id text primary key,
+                first_name text not null,
+                last_name text not null,
+                email text not null,
+                amount_cents integer not null,
+                frequency text not null,
+                designation text,
+                payment_method text not null,
+                payment_status text not null default 'submitted',
+                payment_provider text,
+                payment_reference text,
+                created_at timestamptz not null default now()
+            )
+        `;
+    })();
+
+    return globalThis.__stAustinDonationsSchemaReady;
 }
 
 export async function POST(request: NextRequest) {
@@ -85,7 +97,8 @@ export async function POST(request: NextRequest) {
         const lastName = body.lastName?.trim() || "";
         const email = body.email?.trim().toLowerCase() || "";
         const phoneNumber = body.phoneNumber?.trim() || "";
-        const frequency = body.frequency || "one_time";
+        const requestedFrequency = body.frequency;
+        const frequency: DonationFrequency = "one_time";
         const designation = body.designation?.trim() || null;
         const paymentMethod = body.paymentMethod || "credit_card";
         const useGatewayCheckout =
@@ -116,8 +129,11 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        if (!isValidFrequency(frequency)) {
-            return Response.json({ ok: false, error: "Invalid donation frequency." }, { status: 400 });
+        if (requestedFrequency && !isValidFrequency(requestedFrequency)) {
+            return Response.json(
+                { ok: false, error: "Only one-time donations are currently available." },
+                { status: 400 }
+            );
         }
 
         if (!isValidPaymentMethod(paymentMethod)) {
@@ -189,28 +205,55 @@ export async function POST(request: NextRequest) {
         }
 
         const baseUrl = getBaseUrl(request);
-        const checkout = await createCheckoutSession({
-            amountCents,
-            currency: "usd",
-            description: "St. Austin Donation",
-            customerEmail: email,
-            customerPhone: phoneNumber || undefined,
-            metadata: {
-                donationId,
-                frequency,
-                paymentMethod,
-            },
-            successUrl: `${baseUrl}/donations?status=success`,
-            cancelUrl: `${baseUrl}/donations?status=cancelled`,
-            paymentMethodTypes:
-                paymentMethod === "mtn_mobile_money"
-                    ? ["mtn_mobile_money"]
-                    : paymentMethod === "orange_money"
-                      ? ["orange_money"]
-                      : paymentMethod === "bank_transfer"
-                        ? ["us_bank_account"]
-                        : ["card"],
-        });
+        let checkout: Awaited<ReturnType<typeof createCheckoutSession>>;
+        try {
+            checkout = await createCheckoutSession({
+                amountCents,
+                currency: "XAF",
+                description: "St. Austin Donation",
+                customerEmail: email,
+                customerPhone: phoneNumber || undefined,
+                metadata: {
+                    reference: donationId,
+                    donationId,
+                    frequency,
+                    paymentMethod,
+                },
+                successUrl: `${baseUrl}/donations?status=success`,
+                cancelUrl: `${baseUrl}/donations?status=cancelled`,
+                paymentMethodTypes:
+                    paymentMethod === "mtn_mobile_money"
+                        ? ["mtn_mobile_money"]
+                        : paymentMethod === "orange_money"
+                          ? ["orange_money"]
+                          : paymentMethod === "bank_transfer"
+                            ? ["us_bank_account"]
+                            : ["card"],
+            });
+        } catch (error) {
+            const checkoutErrorMessage =
+                error instanceof Error ? error.message : "Unable to start payment checkout.";
+            const isCampayCredentialError =
+                /CamPay authentication failed/i.test(checkoutErrorMessage) ||
+                /Unable to log in with provided credentials/i.test(checkoutErrorMessage) ||
+                /CamPay authentication request failed/i.test(checkoutErrorMessage);
+
+            await sql`
+                update donations
+                set payment_status = 'checkout_failed'
+                where id = ${donationId}
+            `;
+
+            return Response.json(
+                {
+                    ok: false,
+                    error: isCampayCredentialError
+                        ? "Payment service is unavailable due to CamPay credential configuration. Please contact support."
+                        : checkoutErrorMessage,
+                },
+                { status: isCampayCredentialError ? 502 : 400 }
+            );
+        }
 
         if (!checkout) {
             await sql`
@@ -226,7 +269,7 @@ export async function POST(request: NextRequest) {
                     payment_status: "gateway_not_configured",
                 },
                 message:
-                    "Donation was recorded, but payment gateway is not configured yet. Please set JENGUPAY_* or STRIPE_SECRET_KEY.",
+                    "Donation was recorded, but payment gateway is not configured yet. Please set CAMPAY_* credentials (and STRIPE_SECRET_KEY for bank payments if needed).",
             });
         }
 
@@ -247,7 +290,8 @@ export async function POST(request: NextRequest) {
         });
     } catch (error) {
         console.error("[api/donations] failed", error);
-        return Response.json({ ok: false, error: "Failed to submit donation." }, { status: 500 });
+        const message = error instanceof Error ? error.message : "Failed to submit donation.";
+        return Response.json({ ok: false, error: message }, { status: 500 });
     }
 }
 

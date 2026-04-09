@@ -3,14 +3,13 @@
 import { useState } from "react";
 import BannerSection from "@/components/sections/BannerSection";
 import Button from "@/components/Button";
-import Tabs from "@/components/Tabs";
 import Accreditation from "@/components/sections/Accreditation";
 import { FaAngleRight, FaGift, FaHeart } from "react-icons/fa6";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import CtaSection from "@/components/CtaSection";
 import MatchingGiftSection from "@/components/sections/EmployerMatchingGift";
 
-type DonationFrequency = "one_time" | "monthly";
+type DonationFrequency = "one_time";
 type PaymentMethod =
     | "credit_card"
     | "bank_transfer"
@@ -29,15 +28,13 @@ export default function DonationsPage() {
     const bannerContent = {
         title: "Make Your Gift to St. Austin University",
         description:
-            "When you support St. Austin through student scholarships, you help others succeed. Every dollar donated funds scholarships and programs to help more students achieve their degrees.",
+            "When you support St. Austin through student scholarships, you help others succeed. Every donation funds scholarships and programs to help more students achieve their degrees.",
         bgImg: "/bannerImg.jpg",
     };
 
-    const oneTimeAmounts = ["$25", "$50", "$100", "$250", "$500", "$1000"];
-    const monthlyAmounts = ["$10", "$25", "$50", "$100", "$250", "$500"];
-
-    const [selectedAmount, setSelectedAmount] = useState("$50");
-    const [frequency, setFrequency] = useState<DonationFrequency>("one_time");
+    const oneTimeAmounts = ["XAF 2,500", "XAF 5,000", "XAF 10,000", "XAF 25,000", "XAF 50,000", "XAF 100,000"];
+    const [selectedAmount, setSelectedAmount] = useState("XAF 5,000");
+    const frequency: DonationFrequency = "one_time";
     const [customAmount, setCustomAmount] = useState("");
     const [designation, setDesignation] = useState("Where It's Needed Most");
     const [firstName, setFirstName] = useState("");
@@ -77,11 +74,11 @@ export default function DonationsPage() {
         },
     ];
 
-    const renderAmountGrid = (amounts: string[], mode: DonationFrequency) => (
+    const renderAmountGrid = (amounts: string[]) => (
         <div className="space-y-6 pt-2">
             <div className="grid grid-cols-2 gap-4 md:gap-[6] md:[grid-template-columns:repeat(auto-fit,minmax(150px,200px))]">
                 {amounts.map((amount) => {
-                    const isActive = selectedAmount === amount && frequency === mode;
+                    const isActive = selectedAmount === amount;
 
                     return (
                         <button
@@ -89,7 +86,7 @@ export default function DonationsPage() {
                             type="button"
                             onClick={() => {
                                 setSelectedAmount(amount);
-                                setFrequency(mode);
+                                setCustomAmount("");
                             }}
                             className={`min-h-[50px] cursor-pointer border border-[#1E73BE] text-lg font-semibold transition-colors duration-200 ${
                                 isActive
@@ -116,7 +113,9 @@ export default function DonationsPage() {
         setFormError(null);
         setFormSuccess(null);
 
-        const amountCents = parseAmountToCents(customAmount || selectedAmount);
+        const customAmountValue = customAmount.trim();
+        const amountSource = customAmountValue.length > 0 ? customAmountValue : selectedAmount;
+        const amountCents = parseAmountToCents(amountSource);
         if (!amountCents) {
             setFormError("Please enter a valid donation amount.");
             return;
@@ -199,19 +198,7 @@ export default function DonationsPage() {
                                 <p className="text-[#333333]">Select a suggested amount or enter your own.</p>
                             </div>
 
-                            <Tabs
-                                defaultActiveTab="One Time"
-                                tabs={[
-                                    {
-                                        label: "One Time",
-                                        content: renderAmountGrid(oneTimeAmounts, "one_time"),
-                                    },
-                                    {
-                                        label: "Monthly",
-                                        content: renderAmountGrid(monthlyAmounts, "monthly"),
-                                    },
-                                ]}
-                            />
+                            {renderAmountGrid(oneTimeAmounts)}
 
                             <div className="space-y-5 pt-2">
                                 <div>
@@ -219,10 +206,10 @@ export default function DonationsPage() {
                                         Enter a custom amount
                                     </label>
                                     <div className="flex items-center rounded-[5px] border border-[#BDBDBD] px-4">
-                                        <span className="text-lg font-semibold text-[#333333]">$</span>
+                                        <span className="text-lg font-semibold text-[#333333]">XAF</span>
                                         <input
                                             type="text"
-                                            placeholder={selectedAmount.replace("$", "")}
+                                            placeholder={selectedAmount.replace(/[^0-9.]/g, "")}
                                             className="h-12 w-full bg-transparent px-2 outline-none"
                                             value={customAmount}
                                             onChange={(event) => setCustomAmount(event.target.value)}
@@ -302,13 +289,13 @@ export default function DonationsPage() {
                                             onChange={(event) => setPaymentMethod(event.target.value as PaymentMethod)}
                                         >
                                             <option value="mtn_mobile_money">
-                                                MTN Mobile Money (Jengupay)
+                                                MTN Mobile Money (CamPay)
                                             </option>
                                             <option value="orange_money">
-                                                Orange Money (Jengupay)
+                                                Orange Money (CamPay)
                                             </option>
-                                            <option value="credit_card">Credit Card (Jengupay/Stripe)</option>
-                                            <option value="bank_transfer">Bank Payment (Stripe)</option>
+                                            <option value="credit_card">Credit Card (CamPay)</option>
+                                            <option value="bank_transfer">Bank Payment</option>
                                         </select>
                                     </div>
 

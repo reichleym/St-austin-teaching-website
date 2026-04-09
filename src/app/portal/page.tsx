@@ -117,7 +117,6 @@ const blockContent = [
                         <div className="md:col-span-1">
                             <img src="cta-img.png" className="max-w-[500px] ml-auto h-full max-h-[400px] object-cover rounded-[8px]" alt="" />
                         </div>
-
                     </div>
                 </div>
             </section>

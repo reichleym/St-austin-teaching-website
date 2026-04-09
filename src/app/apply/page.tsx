@@ -1,8 +1,10 @@
 import ApplyPageContent from "./apply";
 import {
+  getCurrentSessionUser,
   getCurrentUserApplicationStatus,
   getCurrentUserGovernmentBenefit,
   type ApplicationStatus,
+  type AuthUser,
   type GovernmentBenefit,
 } from "@/lib/auth/server";
 import { isDatabaseConfigured } from "@/lib/postgres";
@@ -13,13 +15,22 @@ const FALLBACK_PROGRAM_OPTIONS = ["Data Science", "Business Administration", "Pu
 export default async function ApplyPage() {
   let initialApplicationStatus: ApplicationStatus = "not_started";
   let programOptions = FALLBACK_PROGRAM_OPTIONS;
+  let initialSessionUser: AuthUser | null = null;
   let initialGovernmentBenefit: GovernmentBenefit = {
     isGovernmentEmployee: false,
     governmentEmployeeGroup: null,
+    governmentEmployeeId: null,
+    governmentVerificationStatus: "not_submitted",
     governmentDiscountPercent: 0,
   };
 
   if (isDatabaseConfigured) {
+    try {
+      initialSessionUser = await getCurrentSessionUser();
+    } catch {
+      initialSessionUser = null;
+    }
+
     try {
       initialApplicationStatus = await getCurrentUserApplicationStatus();
     } catch {
@@ -32,6 +43,8 @@ export default async function ApplyPage() {
       initialGovernmentBenefit = {
         isGovernmentEmployee: false,
         governmentEmployeeGroup: null,
+        governmentEmployeeId: null,
+        governmentVerificationStatus: "not_submitted",
         governmentDiscountPercent: 0,
       };
     }
@@ -58,6 +71,7 @@ export default async function ApplyPage() {
     <ApplyPageContent
       initialApplicationStatus={initialApplicationStatus}
       programOptions={programOptions}
+      initialSessionUser={initialSessionUser}
       initialGovernmentBenefit={initialGovernmentBenefit}
     />
   );

@@ -1,6 +1,10 @@
-import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
+import { NextRequest, NextResponse } from "next/server";
 import { databaseEnvKeys, isDatabaseConfigured } from "@/lib/postgres";
-import { setCurrentUserApplicationStatus } from "@/lib/auth/server";
+import { createCheckoutSession } from "@/lib/payment-gateway";
+import { getCurrentSessionUser, getCurrentUserGovernmentBenefit } from "@/lib/auth/server";
+
+type FeePaymentMethod = "card" | "mtn_mobile_money" | "orange_money";
 
 type SubmitApplicationBody = {
     program?: string;
@@ -14,13 +18,14 @@ type SubmitApplicationBody = {
     interestLevel?: string;
     interestArea?: string;
     payment?: {
-        method?: string;
-        amountUsd?: number;
-        cardLast4?: string;
+        method?: FeePaymentMethod;
+        amountXaf?: number;
+        phoneNumber?: string;
     };
 };
 
 const ALLOWED_BATCHES = new Set(["September", "January", "May"]);
+const BASE_APPLICATION_FEE_XAF = 25;
 
 function serviceUnavailableResponse() {
     return NextResponse.json(
@@ -33,44 +38,6 @@ function serviceUnavailableResponse() {
     );
 }
 
-function getInstructionChecklistForProgram(program: string): string[] {
-    const normalizedProgram = program.trim().toLowerCase();
-
-    if (normalizedProgram.includes("data")) {
-        return [
-            "Most recent transcript",
-            "Current resume/CV",
-            "Short statement of learning goals",
-            "Proof of identity document",
-        ];
-    }
-
-    if (normalizedProgram.includes("business")) {
-        return [
-            "Most recent transcript",
-            "Current resume/CV",
-            "Personal statement",
-            "Proof of identity document",
-        ];
-    }
-
-    if (normalizedProgram.includes("public")) {
-        return [
-            "Most recent transcript",
-            "Current resume/CV",
-            "Statement of purpose",
-            "Proof of identity document",
-        ];
-    }
-
-    return [
-        "Most recent transcript",
-        "Current resume/CV",
-        "Personal statement",
-        "Proof of identity document",
-    ];
-}
-
 function hasRequiredString(value: unknown): value is string {
     return typeof value === "string" && value.trim().length > 0;
 }
@@ -79,10 +46,46 @@ function isValidEmail(value: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function getBaseUrl(request: NextRequest): string {
+    return process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+}
+
+function isValidPaymentMethod(value: string): value is FeePaymentMethod {
+    return value === "card" || value === "mtn_mobile_money" || value === "orange_money";
+}
+
+function normalizeDiscountPercent(value: number): number {
+    if (!Number.isFinite(value) || Number.isNaN(value) || value <= 0) {
+        return 0;
+    }
+
+    return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function splitFullName(fullName: string): { firstName: string; lastName: string } {
+    const parts = fullName
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+    if (parts.length === 0) {
+        return { firstName: "", lastName: "" };
+    }
+
+    if (parts.length === 1) {
+        return { firstName: parts[0], lastName: "" };
+    }
+
+    return {
+        firstName: parts[0],
+        lastName: parts.slice(1).join(" "),
+    };
+}
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     if (!isDatabaseConfigured) {
         return serviceUnavailableResponse();
     }
@@ -103,17 +106,27 @@ export async function POST(request: Request) {
             payment,
         } = body;
 
+        const sessionUser = await getCurrentSessionUser().catch(() => null);
+        const sessionUserName = splitFullName(sessionUser?.fullName || "");
+        const normalizedFirstName = hasRequiredString(firstName)
+            ? firstName.trim()
+            : sessionUserName.firstName.trim();
+        const normalizedLastName = hasRequiredString(lastName)
+            ? lastName.trim()
+            : sessionUserName.lastName.trim();
+        const normalizedEmail = (sessionUser?.email?.trim() || email?.trim() || "").toLowerCase();
+
         if (
             !hasRequiredString(program) ||
             !hasRequiredString(batchStart) ||
             !hasRequiredString(studentType) ||
-            !hasRequiredString(firstName) ||
-            !hasRequiredString(lastName) ||
-            !hasRequiredString(email) ||
             !hasRequiredString(phoneNumber) ||
             !hasRequiredString(highestEducation) ||
             !hasRequiredString(interestLevel) ||
-            !hasRequiredString(interestArea)
+            !hasRequiredString(interestArea) ||
+            !normalizedFirstName ||
+            !normalizedLastName ||
+            !normalizedEmail
         ) {
             return NextResponse.json(
                 { ok: false, error: "Missing required application fields." },
@@ -128,67 +141,130 @@ export async function POST(request: Request) {
             );
         }
 
-        if (!isValidEmail(email.trim())) {
+        if (!isValidEmail(normalizedEmail)) {
             return NextResponse.json(
                 { ok: false, error: "Invalid email address." },
                 { status: 400 }
             );
         }
 
-        if (
-            payment?.method !== "card" ||
-            typeof payment.amountUsd !== "number" ||
-            !Number.isFinite(payment.amountUsd) ||
-            payment.amountUsd <= 0 ||
-            !hasRequiredString(payment.cardLast4) ||
-            payment.cardLast4.trim().length < 4
-        ) {
+        if (!payment?.method || !isValidPaymentMethod(payment.method)) {
             return NextResponse.json(
-                { ok: false, error: "Application fee payment is required before submission." },
+                { ok: false, error: "Please choose a valid payment method." },
                 { status: 400 }
             );
         }
 
-        const instructionChecklist = getInstructionChecklistForProgram(program);
+        let approvedDiscountPercent = 0;
+        try {
+            const governmentBenefit = await getCurrentUserGovernmentBenefit();
+            approvedDiscountPercent = normalizeDiscountPercent(
+                Number(governmentBenefit.governmentDiscountPercent || 0)
+            );
+        } catch {
+            approvedDiscountPercent = 0;
+        }
 
-        await setCurrentUserApplicationStatus("under_review");
+        const expectedDiscountAmount = Math.round((BASE_APPLICATION_FEE_XAF * approvedDiscountPercent) / 100);
+        const expectedAmountXaf = Math.max(0, BASE_APPLICATION_FEE_XAF - expectedDiscountAmount);
+        const submittedAmountXaf =
+            typeof payment.amountXaf === "number" && Number.isFinite(payment.amountXaf) && payment.amountXaf > 0
+                ? Math.round(payment.amountXaf)
+                : null;
 
-        console.log("[Apply Submit]", {
-            program: program.trim(),
-            batchStart: batchStart.trim(),
-            studentType: studentType.trim(),
-            applicant: {
-                firstName: firstName.trim(),
-                lastName: lastName.trim(),
-                email: email.trim(),
-                phoneNumber: phoneNumber.trim(),
+        if (submittedAmountXaf !== null && submittedAmountXaf !== expectedAmountXaf) {
+            console.warn("[api/apply/submit] Ignoring stale client fee amount.", {
+                submittedAmountXaf,
+                expectedAmountXaf,
+                sessionUserId: sessionUser?.id ?? null,
+            });
+        }
+
+        const paymentPhone = (payment.phoneNumber || phoneNumber).trim();
+        if ((payment.method === "mtn_mobile_money" || payment.method === "orange_money") && !paymentPhone) {
+            return NextResponse.json(
+                { ok: false, error: "Phone number is required for mobile money payments." },
+                { status: 400 }
+            );
+        }
+
+        const paymentMethodTypes =
+            payment.method === "mtn_mobile_money"
+                ? (["mtn_mobile_money"] as const)
+                : payment.method === "orange_money"
+                  ? (["orange_money"] as const)
+                  : (["card"] as const);
+
+        const applicationReference = `apply_${randomUUID().replace(/-/g, "")}`;
+        const baseUrl = getBaseUrl(request);
+        const checkout = await createCheckoutSession({
+            amountCents: Math.round(expectedAmountXaf * 100),
+            currency: "XAF",
+            description: `St. Austin Application Fee - ${program.trim()}`,
+            customerEmail: normalizedEmail,
+            customerPhone: paymentPhone || undefined,
+            successUrl: `${baseUrl}/apply?payment=success`,
+            cancelUrl: `${baseUrl}/apply?payment=cancelled`,
+            metadata: {
+                applicationReference,
+                program: program.trim(),
+                batchStart: batchStart.trim(),
+                studentType: studentType.trim(),
+                email: normalizedEmail,
+                firstName: normalizedFirstName,
+                lastName: normalizedLastName,
+                paymentMethod: payment.method,
             },
-            profile: {
-                highestEducation: highestEducation.trim(),
-                interestLevel: interestLevel.trim(),
-                interestArea: interestArea.trim(),
-            },
-            payment: {
-                method: payment.method,
-                amountUsd: Number(payment.amountUsd.toFixed(2)),
-                cardLast4: payment.cardLast4.trim().slice(-4),
-            },
-            emailsQueued: ["confirmation", "instruction"],
-            instructionChecklist,
+            paymentMethodTypes: [...paymentMethodTypes],
         });
+
+        if (!checkout) {
+            return NextResponse.json(
+                {
+                    ok: false,
+                    error: "Payment gateway is not configured. Please configure CamPay credentials.",
+                },
+                { status: 500 }
+            );
+        }
+
+        if (checkout.provider !== "campay") {
+            return NextResponse.json(
+                {
+                    ok: false,
+                    error: "CamPay is required for application fee payments. Please configure CAMPAY_APP_USERNAME and CAMPAY_APP_PASSWORD.",
+                },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
             ok: true,
-            status: "under_review",
-            emails: {
-                confirmationEmail: email.trim(),
-                instructionProgram: program.trim(),
-                instructionChecklist,
+            payment: {
+                provider: checkout.provider,
+                reference: checkout.reference,
+                checkoutUrl: checkout.checkoutUrl,
+                applicationReference,
+                amountXaf: expectedAmountXaf,
             },
         });
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Unable to submit application.";
-        const statusCode = message === "Unauthorized." ? 401 : 400;
-        return NextResponse.json({ ok: false, error: message }, { status: statusCode });
+        const message = error instanceof Error ? error.message : "Unable to initiate payment.";
+        const isCampayCredentialError =
+            /CamPay authentication failed/i.test(message) ||
+            /Unable to log in with provided credentials/i.test(message) ||
+            /CamPay authentication request failed/i.test(message);
+
+        if (isCampayCredentialError) {
+            return NextResponse.json(
+                {
+                    ok: false,
+                    error: "Payment service is unavailable due to CamPay credential configuration. Please contact support.",
+                },
+                { status: 502 }
+            );
+        }
+
+        return NextResponse.json({ ok: false, error: message }, { status: 400 });
     }
 }

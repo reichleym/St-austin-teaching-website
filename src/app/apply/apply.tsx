@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     Check,
 } from "lucide-react";
@@ -22,21 +22,46 @@ type StepId =
 
 type StudentType = "national" | "international";
 type ApplicationStatus = "not_started" | "under_review";
+type FeePaymentMethod = "card" | "mtn_mobile_money" | "orange_money";
 type SubmissionSummary = {
     confirmationEmail: string;
     instructionProgram: string;
     instructionChecklist: string[];
 };
+type PendingPaymentContext = {
+    reference: string;
+    application: {
+        program: string;
+        batchStart: string;
+        studentType: StudentType;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phoneNumber: string;
+        highestEducation: string;
+        interestLevel: string;
+        interestArea: string;
+    };
+};
 
 type GovernmentBenefitState = {
     isGovernmentEmployee: boolean;
     governmentEmployeeGroup: string | null;
+    governmentEmployeeId: string | null;
+    governmentVerificationStatus: "not_submitted" | "pending_review" | "approved" | "rejected";
     governmentDiscountPercent: number;
+};
+
+type SessionUserSnapshot = {
+    id: number;
+    fullName: string;
+    email: string;
 };
 
 type ApplyPageContentProps = {
     initialApplicationStatus?: ApplicationStatus;
     programOptions?: string[];
+    initialSessionUser?: SessionUserSnapshot | null;
     initialGovernmentBenefit?: GovernmentBenefitState;
 };
 
@@ -48,12 +73,11 @@ type ApplicationForm = {
     lastName: string;
     email: string;
     phoneNumber: string;
+    paymentPhoneNumber: string;
+    paymentMethod: FeePaymentMethod;
     highestEducation: string;
     interestLevel: string;
     interestArea: string;
-    cardNumber: string;
-    cardExpiry: string;
-    cardCvv: string;
 };
 
 const fullApplicationSteps: Exclude<StepId, "dashboard" | "submitted">[] = [
@@ -85,7 +109,8 @@ const highestEducationOptions = [
 ];
 const interestLevelOptions = ["Exploring options", "Interested", "Very interested", "Ready to apply"];
 const defaultProgramOptions = ["Data Science", "Business Administration", "Public Health"];
-const baseApplicationFeeUSD = 50;
+const baseApplicationFeeXAF = 25;
+const APPLY_PAYMENT_SESSION_KEY = "st_austin_apply_pending_payment";
 
 const initialForm: ApplicationForm = {
     program: "",
@@ -95,13 +120,32 @@ const initialForm: ApplicationForm = {
     lastName: "",
     email: "",
     phoneNumber: "",
+    paymentPhoneNumber: "",
+    paymentMethod: "card",
     highestEducation: "",
     interestLevel: "",
     interestArea: "",
-    cardNumber: "",
-    cardExpiry: "",
-    cardCvv: "",
 };
+
+function splitFullName(fullName: string): { firstName: string; lastName: string } {
+    const parts = fullName
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+    if (parts.length === 0) {
+        return { firstName: "", lastName: "" };
+    }
+
+    if (parts.length === 1) {
+        return { firstName: parts[0], lastName: "" };
+    }
+
+    return {
+        firstName: parts[0],
+        lastName: parts.slice(1).join(" "),
+    };
+}
 
 function getInstructionChecklistForProgram(program: string): string[] {
     const normalizedProgram = program.trim().toLowerCase();
@@ -376,19 +420,36 @@ function ActionRow({
 export default function ApplyPageContent({
     initialApplicationStatus = "not_started",
     programOptions = defaultProgramOptions,
+    initialSessionUser = null,
     initialGovernmentBenefit = {
         isGovernmentEmployee: false,
         governmentEmployeeGroup: null,
+        governmentEmployeeId: null,
+        governmentVerificationStatus: "not_submitted",
         governmentDiscountPercent: 0,
     },
 }: ApplyPageContentProps) {
     const router = useRouter();
+    const hasHandledPaymentReturnRef = useRef(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const userNameParts = useMemo(
+        () => splitFullName(initialSessionUser?.fullName || ""),
+        [initialSessionUser?.fullName]
+    );
+    const hasSessionEmail = Boolean(initialSessionUser?.email?.trim());
+    const welcomeName = userNameParts.firstName || "Student";
     const [applicationStatus, setApplicationStatus] = useState<ApplicationStatus>(initialApplicationStatus);
     const [currentStep, setCurrentStep] = useState<StepId>(
         initialApplicationStatus === "under_review" ? "submitted" : "dashboard"
     );
-    const [form, setForm] = useState<ApplicationForm>(initialForm);
+    const [form, setForm] = useState<ApplicationForm>(() => ({
+        ...initialForm,
+        firstName: userNameParts.firstName,
+        lastName: userNameParts.lastName,
+        email: initialSessionUser?.email?.trim() || "",
+    }));
     const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
+    const [isConfirmingPayment, setIsConfirmingPayment] = useState(false);
     const [submitError, setSubmitError] = useState("");
     const [validationError, setValidationError] = useState("");
     const [submissionSummary, setSubmissionSummary] = useState<SubmissionSummary | null>(null);
@@ -415,7 +476,10 @@ export default function ApplyPageContent({
     }, [programOptions]);
 
     const governmentDiscountPercent = useMemo(() => {
-        if (!initialGovernmentBenefit.isGovernmentEmployee) {
+        if (
+            !initialGovernmentBenefit.isGovernmentEmployee ||
+            initialGovernmentBenefit.governmentVerificationStatus !== "approved"
+        ) {
             return 0;
         }
 
@@ -425,12 +489,16 @@ export default function ApplyPageContent({
         }
 
         return Math.min(100, Math.max(0, percentage));
-    }, [initialGovernmentBenefit.governmentDiscountPercent, initialGovernmentBenefit.isGovernmentEmployee]);
+    }, [
+        initialGovernmentBenefit.governmentDiscountPercent,
+        initialGovernmentBenefit.governmentVerificationStatus,
+        initialGovernmentBenefit.isGovernmentEmployee,
+    ]);
 
     const applicationFeeSummary = useMemo(() => {
-        const baseFee = baseApplicationFeeUSD;
-        const discountAmount = Number(((baseFee * governmentDiscountPercent) / 100).toFixed(2));
-        const finalAmount = Number(Math.max(0, baseFee - discountAmount).toFixed(2));
+        const baseFee = baseApplicationFeeXAF;
+        const discountAmount = Math.round((baseFee * governmentDiscountPercent) / 100);
+        const finalAmount = Math.max(0, baseFee - discountAmount);
 
         return {
             baseFee,
@@ -440,6 +508,25 @@ export default function ApplyPageContent({
         };
     }, [governmentDiscountPercent]);
 
+    const governmentDiscountNotice = useMemo(() => {
+        if (!initialGovernmentBenefit.isGovernmentEmployee) {
+            return "";
+        }
+
+        if (initialGovernmentBenefit.governmentVerificationStatus === "pending_review") {
+            return "Government employee discount is pending admin approval. Email your ID details to govtservices@staustin.edu.";
+        }
+
+        if (initialGovernmentBenefit.governmentVerificationStatus === "rejected") {
+            return "Your previous government employee discount request was not approved. Update your details on the Government Employees page and resubmit.";
+        }
+
+        return "";
+    }, [
+        initialGovernmentBenefit.governmentVerificationStatus,
+        initialGovernmentBenefit.isGovernmentEmployee,
+    ]);
+
     const updateForm = <K extends keyof ApplicationForm,>(key: K, value: ApplicationForm[K]) => {
         setValidationError("");
         setForm((current) => ({
@@ -447,6 +534,130 @@ export default function ApplyPageContent({
             [key]: value,
         }));
     };
+
+    const buildApplicationPayload = () => ({
+        program: form.program.trim(),
+        batchStart: form.batchStart.trim(),
+        studentType: form.studentType,
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: (initialSessionUser?.email?.trim() || form.email.trim()).toLowerCase(),
+        phoneNumber: form.phoneNumber.trim(),
+        highestEducation: form.highestEducation.trim(),
+        interestLevel: form.interestLevel.trim(),
+        interestArea: form.interestArea.trim(),
+    });
+
+    const savePendingPaymentContext = (context: PendingPaymentContext) => {
+        if (typeof window === "undefined") {
+            return;
+        }
+        window.sessionStorage.setItem(APPLY_PAYMENT_SESSION_KEY, JSON.stringify(context));
+    };
+
+    const readPendingPaymentContext = (): PendingPaymentContext | null => {
+        if (typeof window === "undefined") {
+            return null;
+        }
+
+        const rawValue = window.sessionStorage.getItem(APPLY_PAYMENT_SESSION_KEY);
+        if (!rawValue) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(rawValue) as PendingPaymentContext;
+        } catch {
+            return null;
+        }
+    };
+
+    const clearPendingPaymentContext = () => {
+        if (typeof window === "undefined") {
+            return;
+        }
+        window.sessionStorage.removeItem(APPLY_PAYMENT_SESSION_KEY);
+    };
+
+    const cleanPaymentQueryParam = () => {
+        if (typeof window === "undefined") {
+            return;
+        }
+        const url = new URL(window.location.href);
+        url.searchParams.delete("payment");
+        window.history.replaceState({}, "", url.toString());
+    };
+
+    useEffect(() => {
+        if (typeof window === "undefined" || hasHandledPaymentReturnRef.current) {
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const paymentResult = params.get("payment");
+        if (!paymentResult) {
+            return;
+        }
+
+        hasHandledPaymentReturnRef.current = true;
+        const context = readPendingPaymentContext();
+
+        if (paymentResult === "cancelled") {
+            setSubmitError("Payment was cancelled. Please complete the payment to submit your application.");
+            clearPendingPaymentContext();
+            cleanPaymentQueryParam();
+            setCurrentStep("fees");
+            return;
+        }
+
+        if (!context) {
+            setSubmitError("We couldn't find your payment reference. Please try paying again.");
+            cleanPaymentQueryParam();
+            setCurrentStep("fees");
+            return;
+        }
+
+        const verifyPayment = async () => {
+            setSubmitError("");
+            setIsConfirmingPayment(true);
+            try {
+                const response = await fetch("/api/apply/payment/confirm", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        reference: context.reference,
+                        application: context.application,
+                    }),
+                });
+                const payload = await response.json().catch(() => ({}));
+
+                if (!response.ok || !payload?.ok) {
+                    setSubmitError(payload?.error || "Payment could not be confirmed. Please try again.");
+                    return;
+                }
+
+                setApplicationStatus("under_review");
+                setSubmissionSummary({
+                    confirmationEmail: payload?.emails?.confirmationEmail ?? context.application.email,
+                    instructionProgram: payload?.emails?.instructionProgram ?? context.application.program,
+                    instructionChecklist:
+                        payload?.emails?.instructionChecklist ??
+                        getInstructionChecklistForProgram(context.application.program),
+                });
+                setCurrentStep("submitted");
+                clearPendingPaymentContext();
+                cleanPaymentQueryParam();
+            } catch {
+                setSubmitError("Unable to confirm payment right now. Please try again.");
+            } finally {
+                setIsConfirmingPayment(false);
+            }
+        };
+
+        void verifyPayment();
+    }, []);
 
     const getStepValidationError = (): string | null => {
         if (currentStep === "program" && !form.program.trim()) {
@@ -495,8 +706,15 @@ export default function ApplyPageContent({
         }
 
         if (currentStep === "fees") {
-            if (!form.cardNumber.trim() || !form.cardExpiry.trim() || !form.cardCvv.trim()) {
-                return "Application fee payment is required before you can submit.";
+            if (!form.paymentMethod) {
+                return "Please choose a payment method.";
+            }
+
+            if (
+                (form.paymentMethod === "mtn_mobile_money" || form.paymentMethod === "orange_money") &&
+                !form.paymentPhoneNumber.trim()
+            ) {
+                return "Please enter the mobile money phone number.";
             }
         }
 
@@ -511,27 +729,18 @@ export default function ApplyPageContent({
         setSubmitError("");
         setIsSubmittingApplication(true);
         try {
-            const cardLast4 = form.cardNumber.replace(/\s+/g, "").slice(-4);
+            const application = buildApplicationPayload();
             const response = await fetch("/api/apply/submit", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    program: form.program,
-                    batchStart: form.batchStart,
-                    studentType: form.studentType,
-                    firstName: form.firstName.trim(),
-                    lastName: form.lastName.trim(),
-                    email: form.email.trim(),
-                    phoneNumber: form.phoneNumber.trim(),
-                    highestEducation: form.highestEducation.trim(),
-                    interestLevel: form.interestLevel.trim(),
-                    interestArea: form.interestArea.trim(),
+                    ...application,
                     payment: {
-                        method: "card",
-                        amountUsd: applicationFeeSummary.finalAmount,
-                        cardLast4,
+                        method: form.paymentMethod,
+                        amountXaf: applicationFeeSummary.finalAmount,
+                        phoneNumber: form.paymentPhoneNumber.trim() || application.phoneNumber,
                     },
                 }),
             });
@@ -541,17 +750,40 @@ export default function ApplyPageContent({
                 return;
             }
 
-            setApplicationStatus("under_review");
-            setSubmissionSummary({
-                confirmationEmail: payload?.emails?.confirmationEmail ?? form.email.trim(),
-                instructionProgram: payload?.emails?.instructionProgram ?? form.program,
-                instructionChecklist: payload?.emails?.instructionChecklist ?? getInstructionChecklistForProgram(form.program),
+            if (!payload?.payment?.checkoutUrl || !payload?.payment?.reference) {
+                setSubmitError("Unable to initiate CamPay checkout. Please try again.");
+                return;
+            }
+
+            savePendingPaymentContext({
+                reference: payload.payment.reference as string,
+                application,
             });
-            setCurrentStep("submitted");
+
+            window.location.href = payload.payment.checkoutUrl as string;
         } catch {
             setSubmitError("Unable to submit application. Please try again.");
         } finally {
             setIsSubmittingApplication(false);
+        }
+    };
+
+    const handleLogout = async () => {
+        if (isLoggingOut) {
+            return;
+        }
+
+        setIsLoggingOut(true);
+        try {
+            await fetch("/api/auth/logout", {
+                method: "POST",
+            });
+        } catch {
+            // Clear client navigation even if request fails.
+        } finally {
+            setIsLoggingOut(false);
+            router.push("/portal?auth=login");
+            router.refresh();
         }
     };
 
@@ -607,26 +839,31 @@ export default function ApplyPageContent({
                 <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                     <div>
                         <h2 className="text-[32px] font-semibold leading-none text-[#2F2F2F]" style={{ fontFamily: '"EB Garamond", serif' }}>
-                            Hi Welcome Username
+                            Hi Welcome {welcomeName}
                         </h2>
                     </div>
-                    <Button type="button" className="min-w-[84px] self-start px-4 py-[10px] text-[14px]">
-                        Log Out
+                    <Button
+                        type="button"
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                        className="min-w-[84px] self-start px-4 py-[10px] text-[14px]"
+                    >
+                        {isLoggingOut ? "Logging Out..." : "Log Out"}
                     </Button>
                 </div>
 
                 <div className="mt-11 grid gap-6 text-[#2F2F2F] md:grid-cols-3">
                     <div>
                         <p className="text-[20px] font-semibold">Email</p>
-                        <p className="mt-1 text-[18px]">Username@gmail.com</p>
+                        <p className="mt-1 text-[18px]">{initialSessionUser?.email || form.email || "--"}</p>
                     </div>
                     <div>
                         <p className="text-[20px] font-semibold">Phone Number</p>
-                        <p className="mt-1 text-[18px] text-[#9C9C9C]">--</p>
+                        <p className="mt-1 text-[18px] text-[#9C9C9C]">{form.phoneNumber || "--"}</p>
                     </div>
                     <div>
                         <p className="text-[20px] font-semibold">User Since</p>
-                        <p className="mt-1 text-[18px] text-[#9C9C9C]">--</p>
+                        <p className="mt-1 text-[18px] text-[#9C9C9C]">Portal Member</p>
                     </div>
                 </div>
             </div>
@@ -792,9 +1029,18 @@ export default function ApplyPageContent({
                         type="email"
                         value={form.email}
                         onChange={(event) => updateForm("email", event.target.value)}
+                        readOnly={hasSessionEmail}
                         placeholder="you@example.com"
-                        className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
+                        className={cn(
+                            "h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]",
+                            hasSessionEmail ? "bg-[#F2F5FA] text-[#5F5F5F]" : ""
+                        )}
                     />
+                    {hasSessionEmail ? (
+                        <p className="mt-2 text-[13px] text-[#1E73BE]">
+                            Email is synced from your portal account.
+                        </p>
+                    ) : null}
                 </div>
 
                 <div className="mt-4">
@@ -937,67 +1183,71 @@ export default function ApplyPageContent({
                 Pay Application Fee
             </h2>
             <p className="mt-5 text-[18px] font-medium text-[#333333]">
-                Application fee is required to submit this form.
+                You will be redirected to CamPay secure checkout to enter your payment details and complete your application fee.
             </p>
 
             <div className="mt-6 rounded-[4px] border border-[#D8D8D8] px-4 py-4">
                 <div className="flex items-center justify-between gap-4">
                     <p className="text-[18px] font-medium text-[#333333]">Base Application Fee</p>
-                    <p className="text-[18px] text-[#33333380]">${applicationFeeSummary.baseFee.toFixed(2)}</p>
+                    <p className="text-[18px] text-[#33333380]">{applicationFeeSummary.baseFee.toLocaleString()} XAF</p>
                 </div>
+                {governmentDiscountNotice ? (
+                    <p className="mt-2 border-t border-[#D8D8D8] pt-2 text-[14px] text-[#1E73BE]">
+                        {governmentDiscountNotice}
+                    </p>
+                ) : null}
                 {applicationFeeSummary.discountPercent > 0 ? (
                     <>
                         <div className="mt-2 flex items-center justify-between gap-4 border-t border-[#D8D8D8] pt-2">
                             <p className="text-[18px] font-medium text-[#333333]">
                                 Government Employee Discount ({applicationFeeSummary.discountPercent}%)
                             </p>
-                            <p className="text-[18px] text-[#1E73BE]">-${applicationFeeSummary.discountAmount.toFixed(2)}</p>
+                            <p className="text-[18px] text-[#1E73BE]">-{applicationFeeSummary.discountAmount.toLocaleString()} XAF</p>
                         </div>
                         <div className="mt-2 flex items-center justify-between gap-4 border-t border-[#D8D8D8] pt-2">
                             <p className="text-[18px] font-semibold text-[#333333]">Total Due</p>
-                            <p className="text-[18px] font-semibold text-[#333333]">${applicationFeeSummary.finalAmount.toFixed(2)}</p>
+                            <p className="text-[18px] font-semibold text-[#333333]">{applicationFeeSummary.finalAmount.toLocaleString()} XAF</p>
                         </div>
                     </>
                 ) : null}
             </div>
 
             <div className="mt-6">
-                <FieldLabel>Integrated Card Payment</FieldLabel>
-                <div className="rounded-[4px] border border-[#CFCFCF] px-3 py-3">
-                    <div>
-                        <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Card Number</FieldLabel>
-                        <Input
-                            type="text"
-                            value={form.cardNumber}
-                            onChange={(event) => updateForm("cardNumber", event.target.value)}
-                            placeholder="1234 5678 9012 3456"
-                            className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
-                        />
-                    </div>
-                    <div className="mt-3 grid gap-3 md:grid-cols-2">
-                        <div>
-                            <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Expiry</FieldLabel>
-                            <Input
-                                type="text"
-                                value={form.cardExpiry}
-                                onChange={(event) => updateForm("cardExpiry", event.target.value)}
-                                placeholder="MM/YY"
-                                className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
-                            />
-                        </div>
-                        <div>
-                            <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">CVV</FieldLabel>
-                            <Input
-                                type="text"
-                                value={form.cardCvv}
-                                onChange={(event) => updateForm("cardCvv", event.target.value)}
-                                placeholder="123"
-                                className="h-[38px] rounded-[2px] border-[#A7A7A7] text-[13px] text-[#A0A0A0]"
-                            />
-                        </div>
-                    </div>
+                <FieldLabel>Choose Payment Method</FieldLabel>
+                <div className="space-y-3">
+                    <RadioOption
+                        checked={form.paymentMethod === "card"}
+                        title="Card (CamPay Checkout)"
+                        description="Pay online using card through CamPay secure checkout."
+                        onClick={() => updateForm("paymentMethod", "card")}
+                    />
+                    <RadioOption
+                        checked={form.paymentMethod === "mtn_mobile_money"}
+                        title="MTN Mobile Money"
+                        description="You will confirm on your MTN mobile money phone."
+                        onClick={() => updateForm("paymentMethod", "mtn_mobile_money")}
+                    />
+                    <RadioOption
+                        checked={form.paymentMethod === "orange_money"}
+                        title="Orange Money"
+                        description="You will confirm on your Orange money phone."
+                        onClick={() => updateForm("paymentMethod", "orange_money")}
+                    />
                 </div>
             </div>
+
+            {(form.paymentMethod === "mtn_mobile_money" || form.paymentMethod === "orange_money") ? (
+                <div className="mt-4">
+                    <Input
+                        labelText="Payment Phone Number"
+                        type="text"
+                        value={form.paymentPhoneNumber}
+                        onChange={(event) => updateForm("paymentPhoneNumber", event.target.value)}
+                        placeholder="2376XXXXXXXX"
+                        className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
+                    />
+                </div>
+            ) : null}
 
             <div className="mt-4 flex items-center gap-3 rounded-[4px] border border-[#FAAE14] bg-[#FAAE141A] px-4 py-3 text-[16px] text-[#333333] md:text-[18px]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 md:mt-0 md:h-6 md:w-6">
@@ -1018,12 +1268,12 @@ export default function ApplyPageContent({
                 <Button
                     type="button"
                     onClick={goToNextStep}
-                    disabled={isSubmittingApplication}
+                    disabled={isSubmittingApplication || isConfirmingPayment}
                     className="min-w-[126px] px-5 py-[11px] text-[14px]"
                 >
-                    {isSubmittingApplication
+                    {isSubmittingApplication || isConfirmingPayment
                         ? "Submitting..."
-                        : `Pay $${applicationFeeSummary.finalAmount.toFixed(2)} USD and Submit`}
+                        : `Pay ${applicationFeeSummary.finalAmount.toLocaleString()} XAF with CamPay`}
                 </Button>
             </div>
             {submitError ? (
@@ -1050,14 +1300,14 @@ export default function ApplyPageContent({
                 <div className="mt-8 space-y-0">
                     {[
                         {
-                            title: "Application Submitted",
-                            description: "Your application form and required fee were submitted successfully.",
+                            title: "Application Fee Submitted",
+                            description: "Your application fee was submitted successfully through CamPay.",
                             meta: `Confirmation email sent to ${submissionSummary?.confirmationEmail ?? form.email}.`,
                             active: true,
                         },
                         {
-                            title: "Instruction Email Sent",
-                            description: `Required document instructions were sent for ${submissionSummary?.instructionProgram ?? form.program}.`,
+                            title: "Application Under Review",
+                            description: `Your application for ${submissionSummary?.instructionProgram ?? form.program} is now under review.`,
                             meta: "Estimated review time: 3-5 business days",
                             active: true,
                         },
@@ -1108,7 +1358,7 @@ export default function ApplyPageContent({
 
             <div className="mt-6 rounded-[8px] border border-[#DADADA] bg-white px-6 py-5 text-center text-[16px] text-[#33333380]">
                 <span className="inline-block max-w-[528px]">
-                    Your application is now in review. We&apos;ll notify you by email once your documents are verified.
+                    Application fee submitted successfully. Your application is under review and we will contact you soon.
                 </span>
             </div>
 

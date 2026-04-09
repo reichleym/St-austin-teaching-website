@@ -1,4 +1,5 @@
 import "server-only";
+import { createCampayPaymentLink, hasCampayCredentials } from "@/lib/campay";
 
 type CreateCheckoutInput = {
     amountCents: number;
@@ -13,7 +14,7 @@ type CreateCheckoutInput = {
 };
 
 export type CheckoutSessionResult = {
-    provider: "stripe" | "jengupay";
+    provider: "stripe" | "jengupay" | "campay";
     checkoutUrl: string;
     reference: string;
 };
@@ -46,6 +47,66 @@ type JengupayCheckoutResponse = {
 
 function hasJengupayCredentials(): boolean {
     return Boolean(process.env.JENGUPAY_SECRET_KEY || process.env.JENGUPAY_API_KEY);
+}
+
+function resolveCampayPaymentOptions(
+    paymentMethodTypes: CreateCheckoutInput["paymentMethodTypes"]
+): "MOMO" | "CARD" | "MOMO,CARD" {
+    const method = paymentMethodTypes?.[0];
+    if (method === "mtn_mobile_money" || method === "orange_money") {
+        return "MOMO";
+    }
+    if (method === "card") {
+        return "CARD";
+    }
+    return "MOMO,CARD";
+}
+
+function getFirstAndLastNameFromEmail(email?: string): { firstName: string; lastName: string } {
+    if (!email || !email.includes("@")) {
+        return { firstName: "Applicant", lastName: "" };
+    }
+
+    const local = email.split("@")[0]?.trim() || "";
+    if (!local) {
+        return { firstName: "Applicant", lastName: "" };
+    }
+
+    const rawParts = local.split(/[._-]+/).filter(Boolean);
+    const firstName = rawParts[0] || "Applicant";
+    const lastName = rawParts.length > 1 ? rawParts.slice(1).join(" ") : "";
+
+    return { firstName, lastName };
+}
+
+async function createCampayCheckoutSession(input: CreateCheckoutInput): Promise<CheckoutSessionResult> {
+    const paymentOptions = resolveCampayPaymentOptions(input.paymentMethodTypes);
+    const referenceFallback =
+        input.metadata?.reference ||
+        input.metadata?.applicationId ||
+        input.metadata?.donationId ||
+        "campay-payment";
+    const firstAndLast = getFirstAndLastNameFromEmail(input.customerEmail);
+
+    const paymentLink = await createCampayPaymentLink({
+        amountCents: input.amountCents,
+        currency: input.currency,
+        description: input.description,
+        successUrl: input.successUrl,
+        cancelUrl: input.cancelUrl,
+        externalReference: referenceFallback,
+        paymentOptions,
+        customerPhone: input.customerPhone,
+        customerEmail: input.customerEmail,
+        customerFirstName: firstAndLast.firstName,
+        customerLastName: firstAndLast.lastName,
+    });
+
+    return {
+        provider: "campay",
+        checkoutUrl: paymentLink.link,
+        reference: paymentLink.reference,
+    };
 }
 
 function resolveJengupayMethod(
@@ -206,6 +267,14 @@ async function createJengupayCheckoutSession(input: CreateCheckoutInput): Promis
 }
 
 export async function createCheckoutSession(input: CreateCheckoutInput): Promise<CheckoutSessionResult | null> {
+    if (
+        hasCampayCredentials() &&
+        !input.paymentMethodTypes?.includes("us_bank_account") &&
+        input.currency.toUpperCase() === "XAF"
+    ) {
+        return createCampayCheckoutSession(input);
+    }
+
     const needsJengupay =
         input.paymentMethodTypes?.includes("mtn_mobile_money") ||
         input.paymentMethodTypes?.includes("orange_money");

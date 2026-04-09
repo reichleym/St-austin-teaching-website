@@ -8,6 +8,7 @@ import { getCurrentSessionUser } from "@/lib/auth/server";
 import {
     GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT,
     type GovernmentEmployeeGroup,
+    type GovernmentVerificationStatus,
 } from "@/lib/government-benefits";
 
 type EmployeeGroup = {
@@ -19,6 +20,8 @@ type EmployeeGroup = {
 type GovernmentBenefitState = {
     isGovernmentEmployee: boolean;
     governmentEmployeeGroup: GovernmentEmployeeGroup | null;
+    governmentEmployeeId: string | null;
+    governmentVerificationStatus: GovernmentVerificationStatus;
     governmentDiscountPercent: number;
 };
 
@@ -27,6 +30,8 @@ export default async function GovernmentEmployeesPage() {
     let initialBenefit: GovernmentBenefitState = {
         isGovernmentEmployee: false,
         governmentEmployeeGroup: null,
+        governmentEmployeeId: null,
+        governmentVerificationStatus: "not_submitted",
         governmentDiscountPercent: 0,
     };
 
@@ -38,6 +43,8 @@ export default async function GovernmentEmployeesPage() {
                 initialBenefit = {
                     isGovernmentEmployee: sessionUser.isGovernmentEmployee,
                     governmentEmployeeGroup: sessionUser.governmentEmployeeGroup,
+                    governmentEmployeeId: sessionUser.governmentEmployeeId,
+                    governmentVerificationStatus: sessionUser.governmentVerificationStatus,
                     governmentDiscountPercent: sessionUser.governmentDiscountPercent,
                 };
             }
@@ -145,18 +152,18 @@ export default async function GovernmentEmployeesPage() {
                                 <ul className="space-y-2 text-[17px] text-[#333333CC]">
                                     <li className="flex gap-2">
                                         <span className="text-[#1E73BE] mt-0.5">•</span>
-                                        <span>Sign in and confirm your government employee category.</span>
+                                        <span>Sign in, select your category, and submit your government employee ID.</span>
                                     </li>
                                     <li className="flex gap-2">
                                         <span className="text-[#1E73BE] mt-0.5">•</span>
                                         <span>
                                             Receive <strong>{GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT}% off</strong> the
-                                            application fee in the Apply flow.
+                                            application fee only after admin approval.
                                         </span>
                                     </li>
                                     <li className="flex gap-2">
                                         <span className="text-[#1E73BE] mt-0.5">•</span>
-                                        <span>Your discount status is saved to your account and can be updated anytime.</span>
+                                        <span>Email your ID details to govtservices@staustin.edu for review before discount activation.</span>
                                     </li>
                                 </ul>
                             </div>

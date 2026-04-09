@@ -6,14 +6,17 @@ import { getSql } from "@/lib/postgres";
 import {
     GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT,
     normalizeGovernmentEmployeeGroup,
+    normalizeGovernmentVerificationStatus,
     type GovernmentEmployeeGroup,
+    type GovernmentVerificationStatus,
 } from "@/lib/government-benefits";
 
 const SESSION_COOKIE_NAME = "st_austin_portal_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 const PASSWORD_RESET_TTL_SECONDS = 60 * 30;
+const EMAIL_VERIFICATION_TTL_SECONDS = 60 * 60 * 24 * 3;
 const PASSWORD_MIN_LENGTH = 8;
-const AUTH_SCHEMA_VERSION = 5;
+const AUTH_SCHEMA_VERSION = 8;
 
 export type ApplicationStatus = "not_started" | "under_review";
 
@@ -22,9 +25,12 @@ type UserRow = {
     full_name: string;
     email: string;
     password_hash: string;
+    is_email_verified: boolean;
     is_enrolled: boolean;
     is_government_employee: boolean;
     government_employee_group: string | null;
+    government_employee_id: string | null;
+    government_verification_status: string;
     government_discount_percent: number;
 };
 
@@ -32,13 +38,20 @@ type SessionUserRow = {
     id: number;
     full_name: string;
     email: string;
+    is_email_verified: boolean;
     is_enrolled: boolean;
     is_government_employee: boolean;
     government_employee_group: string | null;
+    government_employee_id: string | null;
+    government_verification_status: string;
     government_discount_percent: number;
 };
 
 type PasswordResetRow = {
+    user_id: number;
+};
+
+type EmailVerificationRow = {
     user_id: number;
 };
 
@@ -50,15 +63,20 @@ export type AuthUser = {
     id: number;
     fullName: string;
     email: string;
+    isEmailVerified: boolean;
     isEnrolled: boolean;
     isGovernmentEmployee: boolean;
     governmentEmployeeGroup: GovernmentEmployeeGroup | null;
+    governmentEmployeeId: string | null;
+    governmentVerificationStatus: GovernmentVerificationStatus;
     governmentDiscountPercent: number;
 };
 
 export type GovernmentBenefit = {
     isGovernmentEmployee: boolean;
     governmentEmployeeGroup: GovernmentEmployeeGroup | null;
+    governmentEmployeeId: string | null;
+    governmentVerificationStatus: GovernmentVerificationStatus;
     governmentDiscountPercent: number;
 };
 
@@ -81,6 +99,15 @@ function hashToken(value: string): string {
 
 function normalizeApplicationStatus(value: string | null | undefined): ApplicationStatus {
     return value === "under_review" ? "under_review" : "not_started";
+}
+
+function normalizeGovernmentEmployeeId(value: string | null | undefined): string | null {
+    if (typeof value !== "string") {
+        return null;
+    }
+
+    const normalized = value.trim();
+    return normalized.length > 0 ? normalized : null;
 }
 
 function hashPassword(password: string): string {
@@ -110,22 +137,33 @@ function toAuthUser(user: {
     id: number;
     full_name: string;
     email: string;
+    is_email_verified?: boolean | null;
     is_enrolled?: boolean | null;
     is_government_employee?: boolean | null;
     government_employee_group?: string | null;
+    government_employee_id?: string | null;
+    government_verification_status?: string | null;
     government_discount_percent?: number | null;
 }): AuthUser {
     const isGovernmentEmployee = Boolean(user.is_government_employee);
     const governmentEmployeeGroup = normalizeGovernmentEmployeeGroup(user.government_employee_group);
+    const governmentEmployeeId = normalizeGovernmentEmployeeId(user.government_employee_id);
+    const governmentVerificationStatus = normalizeGovernmentVerificationStatus(
+        user.government_verification_status
+    );
+    const hasApprovedGovernmentDiscount = isGovernmentEmployee && governmentVerificationStatus === "approved";
 
     return {
         id: Number(user.id),
         fullName: user.full_name,
         email: user.email,
+        isEmailVerified: Boolean(user.is_email_verified),
         isEnrolled: Boolean(user.is_enrolled),
         isGovernmentEmployee,
         governmentEmployeeGroup: isGovernmentEmployee ? governmentEmployeeGroup : null,
-        governmentDiscountPercent: isGovernmentEmployee
+        governmentEmployeeId: isGovernmentEmployee ? governmentEmployeeId : null,
+        governmentVerificationStatus: isGovernmentEmployee ? governmentVerificationStatus : "not_submitted",
+        governmentDiscountPercent: hasApprovedGovernmentDiscount
             ? Number(user.government_discount_percent ?? GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT)
             : 0,
     };
@@ -190,6 +228,11 @@ async function ensureAuthSchema(): Promise<void> {
 
         await sql`
             ALTER TABLE "user-web"
+            ADD COLUMN IF NOT EXISTS is_email_verified BOOLEAN NOT NULL DEFAULT FALSE;
+        `;
+
+        await sql`
+            ALTER TABLE "user-web"
             ADD COLUMN IF NOT EXISTS is_government_employee BOOLEAN NOT NULL DEFAULT FALSE;
         `;
 
@@ -200,7 +243,28 @@ async function ensureAuthSchema(): Promise<void> {
 
         await sql`
             ALTER TABLE "user-web"
+            ADD COLUMN IF NOT EXISTS government_employee_id TEXT;
+        `;
+
+        await sql`
+            ALTER TABLE "user-web"
+            ADD COLUMN IF NOT EXISTS government_verification_status TEXT NOT NULL DEFAULT 'not_submitted';
+        `;
+
+        await sql`
+            ALTER TABLE "user-web"
             ADD COLUMN IF NOT EXISTS government_discount_percent INTEGER NOT NULL DEFAULT 0;
+        `;
+
+        await sql`
+            UPDATE "user-web"
+            SET government_verification_status = CASE
+                WHEN is_government_employee = TRUE AND COALESCE(government_discount_percent, 0) > 0 THEN 'approved'
+                WHEN is_government_employee = TRUE THEN 'pending_review'
+                ELSE 'not_submitted'
+            END
+            WHERE is_government_employee = TRUE
+              AND government_verification_status = 'not_submitted';
         `;
 
         await sql`
@@ -228,6 +292,19 @@ async function ensureAuthSchema(): Promise<void> {
         await sql`
             CREATE INDEX IF NOT EXISTS portal_password_resets_user_id_idx ON portal_password_resets(user_id);
         `;
+
+        await sql`
+            CREATE TABLE IF NOT EXISTS portal_email_verifications (
+                token_hash TEXT PRIMARY KEY,
+                user_id BIGINT NOT NULL REFERENCES "user-web"(id) ON DELETE CASCADE,
+                expires_at TIMESTAMPTZ NOT NULL,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+        `;
+
+        await sql`
+            CREATE INDEX IF NOT EXISTS portal_email_verifications_user_id_idx ON portal_email_verifications(user_id);
+        `;
     })();
 
     return globalThis.__stAustinAuthSchemaReady;
@@ -237,9 +314,20 @@ async function getUserByEmail(email: string): Promise<UserRow | null> {
     await ensureAuthSchema();
     const sql = getSql();
     const rows = await sql<UserRow[]>`
-        SELECT id, full_name, email, password_hash, is_enrolled, is_government_employee, government_employee_group, government_discount_percent
-        FROM "user-web"
-        WHERE email = ${normalizeEmail(email)}
+        SELECT
+            u.id,
+            u.full_name,
+            u.email,
+            u.password_hash,
+            COALESCE((to_jsonb(u) ->> 'is_email_verified')::boolean, FALSE) AS is_email_verified,
+            u.is_enrolled,
+            u.is_government_employee,
+            u.government_employee_group,
+            u.government_employee_id,
+            u.government_verification_status,
+            u.government_discount_percent
+        FROM "user-web" u
+        WHERE u.email = ${normalizeEmail(email)}
         LIMIT 1;
     `;
 
@@ -326,7 +414,17 @@ export async function signupUser(input: {
         const rows = await sql<UserRow[]>`
             INSERT INTO "user-web" (full_name, email, password_hash)
             VALUES (${fullName}, ${email}, ${passwordHash})
-            RETURNING id, full_name, email, password_hash, is_enrolled, is_government_employee, government_employee_group, government_discount_percent;
+            RETURNING
+                id,
+                full_name,
+                email,
+                password_hash,
+                is_enrolled,
+                is_government_employee,
+                government_employee_group,
+                government_employee_id,
+                government_verification_status,
+                government_discount_percent;
         `;
 
         const createdUser = rows[0];
@@ -392,9 +490,12 @@ export async function getCurrentSessionUser(): Promise<AuthUser | null> {
             u.id,
             u.full_name,
             u.email,
+            COALESCE((to_jsonb(u) ->> 'is_email_verified')::boolean, FALSE) AS is_email_verified,
             u.is_enrolled,
             u.is_government_employee,
             u.government_employee_group,
+            u.government_employee_id,
+            u.government_verification_status,
             u.government_discount_percent
         FROM portal_sessions s
         INNER JOIN "user-web" u ON u.id = s.user_id
@@ -488,12 +589,16 @@ export async function getCurrentUserGovernmentBenefit(): Promise<GovernmentBenef
         Array<{
             is_government_employee: boolean;
             government_employee_group: string | null;
+            government_employee_id: string | null;
+            government_verification_status: string;
             government_discount_percent: number;
         }>
     >`
         SELECT
             u.is_government_employee,
             u.government_employee_group,
+            u.government_employee_id,
+            u.government_verification_status,
             u.government_discount_percent
         FROM portal_sessions s
         INNER JOIN "user-web" u ON u.id = s.user_id
@@ -509,12 +614,24 @@ export async function getCurrentUserGovernmentBenefit(): Promise<GovernmentBenef
     }
 
     const isGovernmentEmployee = Boolean(row.is_government_employee);
+    const governmentVerificationStatus = normalizeGovernmentVerificationStatus(
+        row.government_verification_status
+    );
+    const hasApprovedGovernmentDiscount =
+        isGovernmentEmployee && governmentVerificationStatus === "approved";
+
     return {
         isGovernmentEmployee,
         governmentEmployeeGroup: isGovernmentEmployee
             ? normalizeGovernmentEmployeeGroup(row.government_employee_group)
             : null,
-        governmentDiscountPercent: isGovernmentEmployee
+        governmentEmployeeId: isGovernmentEmployee
+            ? normalizeGovernmentEmployeeId(row.government_employee_id)
+            : null,
+        governmentVerificationStatus: isGovernmentEmployee
+            ? governmentVerificationStatus
+            : "not_submitted",
+        governmentDiscountPercent: hasApprovedGovernmentDiscount
             ? Number(row.government_discount_percent ?? GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT)
             : 0,
     };
@@ -523,6 +640,7 @@ export async function getCurrentUserGovernmentBenefit(): Promise<GovernmentBenef
 export async function setCurrentUserGovernmentBenefit(input: {
     isGovernmentEmployee: boolean;
     governmentEmployeeGroup?: string | null;
+    governmentEmployeeId?: string | null;
 }): Promise<GovernmentBenefit> {
     await ensureAuthSchema();
     const cookieStore = await cookies();
@@ -536,12 +654,17 @@ export async function setCurrentUserGovernmentBenefit(input: {
     const governmentEmployeeGroup = isGovernmentEmployee
         ? normalizeGovernmentEmployeeGroup(input.governmentEmployeeGroup)
         : null;
+    const governmentEmployeeId = isGovernmentEmployee
+        ? normalizeGovernmentEmployeeId(input.governmentEmployeeId)
+        : null;
 
     if (isGovernmentEmployee && !governmentEmployeeGroup) {
         throw new Error("Please select your government employee category.");
     }
 
-    const discountPercent = isGovernmentEmployee ? GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT : 0;
+    if (isGovernmentEmployee && !governmentEmployeeId) {
+        throw new Error("Please provide your government employee ID.");
+    }
 
     const sql = getSql();
     const tokenHash = hashToken(rawToken);
@@ -551,19 +674,45 @@ export async function setCurrentUserGovernmentBenefit(input: {
             id: number;
             is_government_employee: boolean;
             government_employee_group: string | null;
+            government_employee_id: string | null;
+            government_verification_status: string;
             government_discount_percent: number;
         }>
     >`
         UPDATE "user-web" u
         SET is_government_employee = ${isGovernmentEmployee},
             government_employee_group = ${governmentEmployeeGroup},
-            government_discount_percent = ${discountPercent},
+            government_employee_id = ${governmentEmployeeId},
+            government_verification_status = CASE
+                WHEN ${isGovernmentEmployee} = FALSE THEN 'not_submitted'
+                WHEN u.is_government_employee = TRUE
+                    AND u.government_verification_status = 'approved'
+                    AND u.government_employee_group IS NOT DISTINCT FROM ${governmentEmployeeGroup}
+                    AND u.government_employee_id IS NOT DISTINCT FROM ${governmentEmployeeId}
+                THEN 'approved'
+                ELSE 'pending_review'
+            END,
+            government_discount_percent = CASE
+                WHEN ${isGovernmentEmployee} = FALSE THEN 0
+                WHEN u.is_government_employee = TRUE
+                    AND u.government_verification_status = 'approved'
+                    AND u.government_employee_group IS NOT DISTINCT FROM ${governmentEmployeeGroup}
+                    AND u.government_employee_id IS NOT DISTINCT FROM ${governmentEmployeeId}
+                THEN COALESCE(NULLIF(u.government_discount_percent, 0), ${GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT})
+                ELSE 0
+            END,
             updated_at = NOW()
         FROM portal_sessions s
         WHERE s.user_id = u.id
           AND s.token_hash = ${tokenHash}
           AND s.expires_at > NOW()
-        RETURNING u.id, u.is_government_employee, u.government_employee_group, u.government_discount_percent;
+        RETURNING
+            u.id,
+            u.is_government_employee,
+            u.government_employee_group,
+            u.government_employee_id,
+            u.government_verification_status,
+            u.government_discount_percent;
     `;
 
     const updated = rows[0];
@@ -575,11 +724,188 @@ export async function setCurrentUserGovernmentBenefit(input: {
     return {
         isGovernmentEmployee: Boolean(updated.is_government_employee),
         governmentEmployeeGroup: normalizeGovernmentEmployeeGroup(updated.government_employee_group),
+        governmentEmployeeId: normalizeGovernmentEmployeeId(updated.government_employee_id),
+        governmentVerificationStatus: normalizeGovernmentVerificationStatus(
+            updated.government_verification_status
+        ),
         governmentDiscountPercent: Number(updated.government_discount_percent ?? 0),
     };
 }
 
-export async function requestPasswordReset(emailInput: string): Promise<{ devResetToken?: string }> {
+export async function reviewGovernmentBenefitByEmail(input: {
+    email: string;
+    decision: "approve" | "reject";
+}): Promise<GovernmentBenefit> {
+    const email = normalizeEmail(input.email);
+    if (!isValidEmail(email)) {
+        throw new Error("Please provide a valid email address.");
+    }
+
+    await ensureAuthSchema();
+    const sql = getSql();
+
+    const userRows = await sql<
+        Array<{
+            id: number;
+            is_government_employee: boolean;
+            government_employee_group: string | null;
+            government_employee_id: string | null;
+        }>
+    >`
+        SELECT id, is_government_employee, government_employee_group, government_employee_id
+        FROM "user-web"
+        WHERE email = ${email}
+        LIMIT 1;
+    `;
+
+    const existing = userRows[0];
+    if (!existing) {
+        throw new Error("No user account found for that email address.");
+    }
+
+    if (
+        !existing.is_government_employee ||
+        !normalizeGovernmentEmployeeGroup(existing.government_employee_group) ||
+        !normalizeGovernmentEmployeeId(existing.government_employee_id)
+    ) {
+        throw new Error("This user has not submitted a valid government employee discount request.");
+    }
+
+    const verificationStatus: GovernmentVerificationStatus =
+        input.decision === "approve" ? "approved" : "rejected";
+    const discountPercent =
+        verificationStatus === "approved" ? GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT : 0;
+
+    const rows = await sql<
+        Array<{
+            is_government_employee: boolean;
+            government_employee_group: string | null;
+            government_employee_id: string | null;
+            government_verification_status: string;
+            government_discount_percent: number;
+        }>
+    >`
+        UPDATE "user-web"
+        SET government_verification_status = ${verificationStatus},
+            government_discount_percent = ${discountPercent},
+            updated_at = NOW()
+        WHERE id = ${existing.id}::bigint
+        RETURNING
+            is_government_employee,
+            government_employee_group,
+            government_employee_id,
+            government_verification_status,
+            government_discount_percent;
+    `;
+
+    const updated = rows[0];
+    if (!updated) {
+        throw new Error("Unable to update government discount review status.");
+    }
+
+    return {
+        isGovernmentEmployee: Boolean(updated.is_government_employee),
+        governmentEmployeeGroup: normalizeGovernmentEmployeeGroup(updated.government_employee_group),
+        governmentEmployeeId: normalizeGovernmentEmployeeId(updated.government_employee_id),
+        governmentVerificationStatus: normalizeGovernmentVerificationStatus(
+            updated.government_verification_status
+        ),
+        governmentDiscountPercent:
+            normalizeGovernmentVerificationStatus(updated.government_verification_status) ===
+            "approved"
+                ? Number(updated.government_discount_percent ?? GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT)
+                : 0,
+    };
+}
+
+async function createEmailVerificationTokenForUserId(userId: number): Promise<string> {
+    await ensureAuthSchema();
+    const sql = getSql();
+
+    await sql`
+        DELETE FROM portal_email_verifications
+        WHERE user_id = ${userId}::bigint;
+    `;
+
+    const verificationToken = randomBytes(32).toString("hex");
+    const verificationTokenHash = hashToken(verificationToken);
+    const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TTL_SECONDS * 1000);
+
+    await sql`
+        INSERT INTO portal_email_verifications (token_hash, user_id, expires_at)
+        VALUES (${verificationTokenHash}, ${userId}::bigint, ${expiresAt.toISOString()}::timestamptz);
+    `;
+
+    return verificationToken;
+}
+
+export async function createEmailVerificationTokenForUser(emailInput: string): Promise<string | null> {
+    const email = normalizeEmail(emailInput);
+    if (!isValidEmail(email)) {
+        throw new Error("Please provide a valid email address.");
+    }
+
+    const user = await getUserByEmail(email);
+    if (!user) {
+        return null;
+    }
+
+    return createEmailVerificationTokenForUserId(Number(user.id));
+}
+
+export async function verifyEmailAddress(input: { email: string; token: string }): Promise<void> {
+    const email = normalizeEmail(input.email);
+    const token = input.token.trim();
+
+    if (!isValidEmail(email)) {
+        throw new Error("Please provide a valid email address.");
+    }
+
+    if (!token) {
+        throw new Error("Verification token is required.");
+    }
+
+    const user = await getUserByEmail(email);
+    if (!user) {
+        throw new Error("Invalid verification token or email.");
+    }
+
+    await ensureAuthSchema();
+    const sql = getSql();
+    const tokenHash = hashToken(token);
+
+    const verificationRows = await sql<EmailVerificationRow[]>`
+        SELECT user_id
+        FROM portal_email_verifications
+        WHERE token_hash = ${tokenHash}
+          AND user_id = ${user.id}::bigint
+          AND expires_at > NOW()
+        LIMIT 1;
+    `;
+
+    if (!verificationRows[0]) {
+        throw new Error("Invalid or expired verification token.");
+    }
+
+    await sql`
+        UPDATE "user-web"
+        SET is_email_verified = TRUE,
+            updated_at = NOW()
+        WHERE id = ${user.id}::bigint;
+    `;
+
+    await sql`
+        DELETE FROM portal_email_verifications
+        WHERE user_id = ${user.id}::bigint;
+    `;
+}
+
+export async function requestPasswordReset(emailInput: string): Promise<{
+    resetToken?: string;
+    devResetToken?: string;
+    userEmail?: string;
+    userFullName?: string;
+}> {
     const email = normalizeEmail(emailInput);
 
     if (!isValidEmail(email)) {
@@ -608,11 +934,22 @@ export async function requestPasswordReset(emailInput: string): Promise<{ devRes
         VALUES (${resetTokenHash}, ${user.id}::bigint, ${expiresAt.toISOString()}::timestamptz);
     `;
 
+    const result: {
+        resetToken?: string;
+        devResetToken?: string;
+        userEmail?: string;
+        userFullName?: string;
+    } = {
+        resetToken,
+        userEmail: user.email,
+        userFullName: user.full_name,
+    };
+
     if (process.env.NODE_ENV !== "production") {
-        return { devResetToken: resetToken };
+        result.devResetToken = resetToken;
     }
 
-    return {};
+    return result;
 }
 
 export async function confirmPasswordReset(input: {

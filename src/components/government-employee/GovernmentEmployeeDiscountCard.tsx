@@ -3,16 +3,20 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Button from "@/components/Button";
+import Input from "@/components/Input";
 import Select from "@/components/Select";
 import {
     GOVERNMENT_EMPLOYEE_GROUPS,
     GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT,
     type GovernmentEmployeeGroup,
+    type GovernmentVerificationStatus,
 } from "@/lib/government-benefits";
 
 type GovernmentBenefitState = {
     isGovernmentEmployee: boolean;
     governmentEmployeeGroup: GovernmentEmployeeGroup | null;
+    governmentEmployeeId: string | null;
+    governmentVerificationStatus: GovernmentVerificationStatus;
     governmentDiscountPercent: number;
 };
 
@@ -25,6 +29,25 @@ function getSafeDefaultGroup(value: GovernmentEmployeeGroup | null): GovernmentE
     return value ?? GOVERNMENT_EMPLOYEE_GROUPS[0];
 }
 
+const GOVERNMENT_SUPPORT_EMAIL = "govtservices@staustin.edu";
+
+function getStatusLabel(benefit: GovernmentBenefitState): string {
+    if (!benefit.isGovernmentEmployee) {
+        return "Not claimed";
+    }
+
+    if (benefit.governmentVerificationStatus === "pending_review") {
+        return "Pending admin approval";
+    }
+
+    if (benefit.governmentVerificationStatus === "rejected") {
+        return "Rejected (resubmit required)";
+    }
+
+    const activeDiscount = benefit.governmentDiscountPercent || GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT;
+    return `Approved (${activeDiscount}% discount active)`;
+}
+
 export default function GovernmentEmployeeDiscountCard({
     isLoggedIn,
     initialBenefit,
@@ -33,13 +56,17 @@ export default function GovernmentEmployeeDiscountCard({
     const [selectedGroup, setSelectedGroup] = useState<GovernmentEmployeeGroup>(
         getSafeDefaultGroup(initialBenefit.governmentEmployeeGroup)
     );
+    const [governmentEmployeeId, setGovernmentEmployeeId] = useState(initialBenefit.governmentEmployeeId ?? "");
     const [currentBenefit, setCurrentBenefit] = useState(initialBenefit);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
     const activeDiscount = useMemo(() => {
-        if (!currentBenefit.isGovernmentEmployee) {
+        if (
+            !currentBenefit.isGovernmentEmployee ||
+            currentBenefit.governmentVerificationStatus !== "approved"
+        ) {
             return 0;
         }
         return currentBenefit.governmentDiscountPercent || GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT;
@@ -58,6 +85,11 @@ export default function GovernmentEmployeeDiscountCard({
             return;
         }
 
+        if (isGovernmentEmployee && !governmentEmployeeId.trim()) {
+            setErrorMessage("Please provide your government employee ID.");
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             const response = await fetch("/api/government-employee/discount", {
@@ -68,6 +100,7 @@ export default function GovernmentEmployeeDiscountCard({
                 body: JSON.stringify({
                     isGovernmentEmployee,
                     governmentEmployeeGroup: isGovernmentEmployee ? selectedGroup : null,
+                    governmentEmployeeId: isGovernmentEmployee ? governmentEmployeeId.trim() : null,
                 }),
             });
 
@@ -81,9 +114,12 @@ export default function GovernmentEmployeeDiscountCard({
             setCurrentBenefit(nextBenefit);
             setIsGovernmentEmployee(nextBenefit.isGovernmentEmployee);
             setSelectedGroup(getSafeDefaultGroup(nextBenefit.governmentEmployeeGroup));
+            setGovernmentEmployeeId(nextBenefit.governmentEmployeeId ?? "");
             setSuccessMessage(
                 nextBenefit.isGovernmentEmployee
-                    ? `Government employee discount activated (${nextBenefit.governmentDiscountPercent}% off application fee).`
+                    ? nextBenefit.governmentVerificationStatus === "approved"
+                        ? `Government employee discount approved (${nextBenefit.governmentDiscountPercent}% off application fee).`
+                        : `Request submitted. Email your government ID to ${GOVERNMENT_SUPPORT_EMAIL}. Discount is activated after admin approval.`
                     : "Government employee discount removed."
             );
         } catch {
@@ -98,7 +134,7 @@ export default function GovernmentEmployeeDiscountCard({
             <div className="rounded-lg border border-[#33333333] bg-white p-6">
                 <h3 className="text-[28px] font-bold leading-tight text-[#2F2F2F]">Claim Government Employee Discount</h3>
                 <p className="mt-3 text-[18px] text-[#333333CC]">
-                    Sign in to verify your status and unlock your application fee discount.
+                    Sign in to submit your government ID for admin review and unlock your application fee discount after approval.
                 </p>
                 <div className="mt-5">
                     <Link
@@ -117,19 +153,35 @@ export default function GovernmentEmployeeDiscountCard({
             <h3 className="text-[28px] font-bold leading-tight text-[#2F2F2F]">Government Employee Discount</h3>
             <p className="mt-3 text-[18px] text-[#333333CC]">
                 Eligible government employees receive {GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT}% off the
-                application fee.
+                application fee after admin approval.
             </p>
 
             <div className="mt-6 rounded-md border border-[#D9E7F8] bg-[#F5F9FF] px-4 py-3">
                 <p className="text-[16px] text-[#1E73BE]">
                     Current status:{" "}
                     <span className="font-semibold">
-                        {currentBenefit.isGovernmentEmployee ? `Active (${activeDiscount}% discount)` : "Not claimed"}
+                        {getStatusLabel(currentBenefit)}
                     </span>
                 </p>
                 {currentBenefit.isGovernmentEmployee && currentBenefit.governmentEmployeeGroup ? (
                     <p className="mt-1 text-[14px] text-[#1E73BECC]">
                         Category: {currentBenefit.governmentEmployeeGroup}
+                    </p>
+                ) : null}
+                {currentBenefit.isGovernmentEmployee && currentBenefit.governmentEmployeeId ? (
+                    <p className="mt-1 text-[14px] text-[#1E73BECC]">
+                        Government ID: {currentBenefit.governmentEmployeeId}
+                    </p>
+                ) : null}
+                {currentBenefit.isGovernmentEmployee &&
+                currentBenefit.governmentVerificationStatus === "pending_review" ? (
+                    <p className="mt-1 text-[14px] text-[#1E73BECC]">
+                        Email your ID confirmation to {GOVERNMENT_SUPPORT_EMAIL} for approval.
+                    </p>
+                ) : null}
+                {activeDiscount > 0 ? (
+                    <p className="mt-1 text-[14px] text-[#1E73BECC]">
+                        Active discount: {activeDiscount}% off application fee.
                     </p>
                 ) : null}
             </div>
@@ -162,6 +214,19 @@ export default function GovernmentEmployeeDiscountCard({
                             </option>
                         ))}
                     </Select>
+                    <div className="mt-4">
+                        <Input
+                            type="text"
+                            labelText="Government Employee ID"
+                            value={governmentEmployeeId}
+                            onChange={(event) => setGovernmentEmployeeId(event.target.value)}
+                            placeholder="Enter your official government ID"
+                            className="h-[42px] rounded-[4px] border-[#A7A7A7] px-3 text-[14px] text-[#333333]"
+                        />
+                        <p className="mt-2 text-[13px] text-[#333333B3]">
+                            Submit the same ID by email to {GOVERNMENT_SUPPORT_EMAIL}. Discount is applied only after admin approval.
+                        </p>
+                    </div>
                 </div>
             ) : null}
 

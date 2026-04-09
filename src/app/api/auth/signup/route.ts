@@ -21,20 +21,19 @@ export async function POST(request: Request) {
         return serviceUnavailableResponse();
     }
 
-    console.log("signup", )
-
     try {
         const body = await request.json();
-        console.log(body, 'user')
         const user = await signupUser({
             fullName: typeof body?.fullName === "string" ? body.fullName : "",
             email: typeof body?.email === "string" ? body.email : "",
             password: typeof body?.password === "string" ? body.password : "",
         });
 
-         console.log(user, 'user')
-
-        return NextResponse.json({ ok: true, user });
+        return NextResponse.json({
+            ok: true,
+            user,
+            message: "Account created successfully.",
+        });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to create account.";
         const status = message === "An account with this email already exists." ? 409 : 400;
