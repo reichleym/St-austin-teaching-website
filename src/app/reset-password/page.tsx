@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function getFriendlyApiMessage(input: unknown, fallback: string): string {
@@ -22,7 +22,7 @@ function getFriendlyApiMessage(input: unknown, fallback: string): string {
     return looksTechnical ? fallback : message;
 }
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const initialEmail = searchParams.get("email") || "";
@@ -176,5 +176,24 @@ export default function ResetPasswordPage() {
                 </p>
             </div>
         </main>
+    );
+}
+
+function ResetPasswordFallback() {
+    return (
+        <main className="min-h-screen bg-[#F5F7FB] px-4 py-12">
+            <div className="mx-auto max-w-[520px] rounded-[8px] border border-[#DDDDDD] bg-white p-6 md:p-8">
+                <h1 className="text-[28px] font-semibold text-[#1D1D1D]">Reset Password</h1>
+                <p className="mt-2 text-[15px] text-[#555555]">Loading reset form...</p>
+            </div>
+        </main>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense fallback={<ResetPasswordFallback />}>
+            <ResetPasswordContent />
+        </Suspense>
     );
 }
