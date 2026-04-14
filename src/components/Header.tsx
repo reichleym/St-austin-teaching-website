@@ -1,12 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { ChevronDown, CircleUserRound, LogOut, Menu, Search, X } from "lucide-react";
 import { RxCross2 } from "react-icons/rx";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Button from "./Button";
 import Modal, { AuthModalView, AuthUser } from "./modal";
+import { useTranslations } from "@/lib/useTranslations";
+import { LanguageContext } from "@/contexts/LanguageProvider";
+
 
 function getSafeRedirectPath(value: string | null): string | null {
     if (!value) {
@@ -39,6 +42,13 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
     const [isSessionLoading, setIsSessionLoading] = useState(false);
     const [postAuthRedirect, setPostAuthRedirect] = useState<string | null>(null);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+
+    const { t } = useTranslations();
+    const languageCtx = useContext(LanguageContext)!;
+    const { lang, setLang } = languageCtx;
+
+
 
     const canAccessPortal = Boolean(sessionUser?.isEnrolled);
     const firstName = sessionUser ? getFirstName(sessionUser.fullName) : "";
@@ -157,18 +167,19 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
     };
 
     const menuItems = [
-        { label: "Programs", href: "/program" },
-        { label: "Admissions", href: "/admissions" },
-        { label: "Tuition & Aid", href: "/tuition" },
-        { label: "Student Experience", href: "/studentExperience" },
-        { label: "About", href: "/about" },
+        { label: t('header.menu.programs'), href: "/program" },
+        { label: t('header.menu.admissions'), href: "/admissions" },
+        { label: t('header.menu.tuition'), href: "/tuition" },
+        { label: t('header.menu.studentExperience'), href: "/studentExperience" },
+        { label: t('header.menu.about'), href: "/about" },
     ];
 
     const topMenuItem = [
-        { label: "Government Employees", href: "/government-employees" },
-        { label: "Request Info", href: "/request-info" },
-        { label: "Donations", href: "/donations" },
+        { label: t('header.topMenu.governmentEmployees'), href: "/government-employees" },
+        { label: t('header.topMenu.requestInfo'), href: "/request-info" },
+        { label: t('header.topMenu.donations'), href: "/donations" },
     ];
+
 
     return (
         <header className="bg-white">
@@ -183,9 +194,10 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                             {topItem.label}
                         </Link>
                     ))}
-                    <Link href="/apply" className="inline-flex">
-                        <Button variant="white" className="px-4">Apply Now</Button>
+<Link href="/apply" className="inline-flex">
+                        <Button variant="white" className="px-4">{t('header.applyNow')}</Button>
                     </Link>
+
                 </div>
             </div>
 
@@ -214,11 +226,12 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
 
                         <div className="hidden lg:flex items-center space-x-3">
                             <div className="flex items-cente border border-[#33333340] rounded-lg justify-content-end">
-                                <input
-                                    type="text"
-                                    placeholder="Search..."
-                                    className={`outline-none text-gray-700 placeholder-gray-500 ${searchInput ? "w-full px-2.5 py-2" : "w-0 "}`}
-                                />
+                            <input
+                                type="text"
+                                placeholder={t('header.search')}
+                                className={`outline-none text-gray-700 placeholder-gray-500 ${searchInput ? "w-full px-2.5 py-2" : "w-0 "}`}
+                            />
+
                                 <div className="cursor-pointer px-2.5 py-2" onClick={handleSearchInput}>
                                     {searchInput ? (
                                         <RxCross2 className="w-6 h-6 text-black" />
@@ -228,7 +241,44 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                 </div>
                             </div>
 
+                            {/* Language Switch */}
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsLangMenuOpen((prev) => !prev)}
+                                    className="flex items-center gap-2 rounded-lg border border-[#1E73BE4D] bg-white px-3 py-2 text-left transition-colors hover:bg-gray-50"
+                                >
+                                    <span className="text-sm font-medium">{t(`languages.${lang}`)}</span>
+                                    <ChevronDown className={`h-4 w-4 text-[#1E73BE] transition-transform ${isLangMenuOpen ? "rotate-180" : ""}`} />
+                                </button>
+                                {isLangMenuOpen && (
+                                    <div className="absolute right-0 top-[calc(100%+4px)] z-20 w-32 rounded-lg border border-[#E4E4E4] bg-white p-2 shadow-md">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setLang('en');
+                                                setIsLangMenuOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-100"
+                                        >
+                                            {t('languages.en')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setLang('fr');
+                                                setIsLangMenuOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-100"
+                                        >
+                                            {t('languages.fr')}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
                             {sessionUser ? (
+
                                 <div className="relative">
                                     <button
                                         type="button"
@@ -258,8 +308,9 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                                 onClick={goToPortal}
                                                 className="mt-3 w-full rounded-md border border-[#1E73BE] px-3 py-2 text-[14px] font-medium text-[#1E73BE] transition-colors duration-200 hover:bg-[#1E73BE] hover:text-white"
                                             >
-                                                Portal
+                                                {t('header.portal')}
                                             </button>
+
                                             <button
                                                 type="button"
                                                 disabled={isSessionLoading}
@@ -269,13 +320,15 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                                 className="mt-2 flex w-full items-center justify-center gap-2 rounded-md bg-[#1E73BE] px-3 py-2 text-[14px] font-medium text-white transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
                                             >
                                                 <LogOut className="h-4 w-4" />
-                                                Log Out
+                                                {t('header.logOut')}
                                             </button>
+
                                         </div>
                                     ) : null}
                                 </div>
                             ) : (
-                                <Button onClick={() => openPortalModal("login")}>Portal</Button>
+                                        <Button onClick={() => openPortalModal("login")}>{t('header.portal')}</Button>
+
                             )}
                         </div>
                     </div>
@@ -307,13 +360,49 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                             <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2">
                                 <input
                                     type="text"
-                                    placeholder="Search..."
+                                    placeholder={t('header.search')}
                                     className="bg-gray-100 outline-none text-gray-700 placeholder-gray-500 flex-1"
                                 />
-                                <Search className="w-5 h-5 text-gray-500 ml-2" />
+
+                            <Search className="w-5 h-5 text-gray-500 ml-2" />
+                            </div>
+
+                            {/* Mobile Language Switch */}
+                            <div className="relative mt-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsLangMenuOpen((prev) => !prev)}
+                                    className="flex items-center justify-between w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
+                                >
+                                    <span>{t(`languages.${lang}`)}</span>
+                                    <ChevronDown className={`h-4 w-4 transition-transform ${isLangMenuOpen ? "rotate-180" : ""}`} />
+                                </button>
+                                {isLangMenuOpen && (
+                                    <div className="absolute left-0 top-[calc(100%+4px)] z-20 w-full bg-white border border-gray-200 rounded-lg shadow-md p-2">
+                                        <button
+                                            onClick={() => {
+                                                setLang('en');
+                                                setIsLangMenuOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm"
+                                        >
+                                            {t('languages.en')}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setLang('fr');
+                                                setIsLangMenuOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm"
+                                        >
+                                            {t('languages.fr')}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             {sessionUser ? (
+
                                 <div className="rounded-lg border border-[#1E73BE40] p-3">
                                     <div className="flex items-center gap-2">
                                         <CircleUserRound className="h-8 w-8 text-[#1E73BE]" />
@@ -329,8 +418,9 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                             onClick={goToPortal}
                                             className="w-full rounded-lg border border-[#1E73BE] px-4 py-2 text-center text-[14px] font-medium text-[#1E73BE]"
                                         >
-                                            Portal
+                                            {t('header.portal')}
                                         </button>
+
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -339,8 +429,9 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                             className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-[14px] font-medium text-white transition-colors duration-200 hover:bg-blue-700"
                                         >
                                             <LogOut className="h-4 w-4" />
-                                            Log Out
+                                            {t('header.logOut')}
                                         </button>
+
                                     </div>
                                 </div>
                             ) : (

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/sections/Footer";
+import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { getCurrentSessionUser } from "@/lib/auth/server";
 import { isDatabaseConfigured } from "@/lib/postgres";
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,10 +33,15 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Teachers:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <Header initialSessionUser={initialSessionUser} />
-        {children}
-        <Footer />
+        <LanguageProvider suppressHydrationWarning>
+          <Header initialSessionUser={initialSessionUser} />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </LanguageProvider>
       </body>
+
     </html>
   );
 }

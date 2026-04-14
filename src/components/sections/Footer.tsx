@@ -1,21 +1,25 @@
+'use client';
+
 import { FaFacebookF, FaLinkedin, FaInstagram, FaYoutube} from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-
-
+import { useTranslations } from "@/lib/useTranslations";
 
 export default function Footer() {
+    const { t } = useTranslations();
+
     const campusMenuItems = [
-        { label: 'Programs', href: '#' },
-        { label: 'Admissions', href: '#' },
-        { label: 'Tuition & Aid', href: '#' },
-        { label: 'Student Experience', href: '#' },
-        { label: 'About', href: '#' },
+        { label: t('header.menu.programs'), href: '#' },
+        { label: t('header.menu.admissions'), href: '#' },
+        { label: t('header.menu.tuition'), href: '#' },
+        { label: t('header.menu.studentExperience'), href: '#' },
+        { label: t('header.menu.about'), href: '#' },
     ];
        const recordMenuItems = [
-        { label: 'Request Info', href: '/request-info' },
-        { label: 'Talk to Advisor', href: '#' },
-        { label: 'Government Employee', href: '#' },
+        { label: t('footer.requestInfo'), href: '/request-info' },
+        { label: t('footer.talkToAdvisor'), href: '#' },
+        { label: t('footer.governmentEmployee'), href: '#' },
     ];
+
     return (
         <>
             <footer className="bg-[#333333] text-white">
@@ -24,7 +28,8 @@ export default function Footer() {
                         <div className="md:col-span-2">
                             <div className="">
                                 <img src="/logo-white.png" width={210} alt="Austin Logo" />
-                                <p className="py-10 leading-tight">Empowering careers through accessible, high-quality education. Accredited and recognized for academic excellence.</p>
+                                <p className="py-10 leading-tight">{t('footer.desc')}</p>
+
                                 <div className="flex">
                                     <a href="#" className=" hover:opacity-80 transition-colors duration-200 me-4"><FaFacebookF size={24} /></a>
                                     <a href="#" className=" hover:opacity-80 transition-colors duration-200 me-4"><FaInstagram size={24} /></a>
@@ -37,7 +42,8 @@ export default function Footer() {
                         <div className="md:col-span-4">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                                 <div>
-                                    <div className="font-semibold text-[22px] leading-tight mb-5 uppercase">Our Campus</div>
+                                    <div className="font-semibold text-[22px] leading-tight mb-5 uppercase">{t('footer.campus')}</div>
+
                                     <ul className="space-y-1">
                                         {campusMenuItems.map((item) =>
                                             <li key={item.label}>
@@ -47,7 +53,8 @@ export default function Footer() {
                                     </ul>
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-[22px] leading-tight mb-5 uppercase">Resources</div>
+                                    <div className="font-semibold text-[22px] leading-tight mb-5 uppercase">{t('footer.resources')}</div>
+
                                     <ul className="space-y-1">
                                         {recordMenuItems.map((item) =>
                                             <li key={item.label}>
@@ -57,21 +64,23 @@ export default function Footer() {
                                     </ul>
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-[22px] leading-tight mb-5 uppercase">Contact Us</div>
-                                    <p className=" ">123 University Ave, Austin, TX 78701</p>
-                                    <p className=" ">(512) 555-0100</p>
-                                    <p className=" ">info@staustin.edu</p>
+                                    <div className="font-semibold text-[22px] leading-tight mb-5 uppercase">{t('footer.contactUs')}</div>
+                                    <p className=" ">{t('footer.address')}</p>
+                                    <p className=" ">{t('footer.phone')}</p>
+                                    <p className=" ">{t('footer.email')}</p>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="md:flex items-center md:space-y-0 space-y-5 justify-between border-t border-[#FFFFFF80] py-5 text-[16px]">
-                        <p className="">Copyright @ 2026. All Rights Reserved by St.Austin&apos;s International University</p>
+                        <p className="">{t('footer.copyright')}</p>
                         <ul className="flex gap-3">
-                            <li><a href="#" className="hover:opacity-80 transition-colors duration-200">Privacy Policy</a></li>
+                            <li><a href="#" className="hover:opacity-80 transition-colors duration-200">{t('footer.privacyPolicy')}</a></li>
                             <li aria-hidden="true" className="">|</li>
-                            <li><a href="#" className="hover:opacity-80 transition-colors duration-200">Terms of Service</a></li>
+                            <li><a href="#" className="hover:opacity-80 transition-colors duration-200">{t('footer.termsOfService')}</a></li>
                         </ul>
+
                     </div>
                 </div>
             </footer>

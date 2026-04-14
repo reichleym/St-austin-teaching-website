@@ -1,0 +1,90 @@
+{
+  "header": {
+    "topMenu": {
+      "governmentEmployees": "Government Employees",
+      "requestInfo": "Request Info",
+      "donations": "Donations"
+    },
+    "menu": {
+      "programs": "Programs",
+      "admissions": "Admissions",
+      "tuition": "Tuition & Aid",
+      "studentExperience": "Student Experience",
+      "about": "About"
+    },
+    "applyNow": "Apply Now",
+    "portal": "Portal",
+    "logOut": "Log Out",
+    "search": "Search..."
+  },
+  "hero": {
+    "title": "Education That Leads Directly To Your Career",
+    "desc": "Learn practical skills and gain real experience that prepares you to step directly into your career with confidence."
+  },
+  "footer": {
+    "campus": "Our Campus",
+    "resources": "Resources",
+    "contactUs": "Contact Us",
+    "requestInfo": "Request Info",
+    "talkToAdvisor": "Talk to Advisor",
+    "governmentEmployee": "Government Employee",
+    "address": "123 University Ave, Austin, TX 78701",
+    "phone": "(512) 555-0100",
+    "email": "info@staustin.edu",
+    "copyright": "Copyright @ 2026. All Rights Reserved by St.Austin's International University",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "desc": "Empowering careers through accessible, high-quality education. Accredited and recognized for academic excellence."
+  },
+  "languages": {
+    "en": "🇺🇸 EN",
+    "fr": "🇫🇷 FR"
+  },
+  "cta": {
+    "title": "Ready to Start Your Journey?",
+    "desc": "Take the next step toward your future. Our admissions team is here to guide you through every step of the process.",
+    "applyNow": "Apply Now",
+    "requestInfo": "Request Info",
+    "talkToAdvisor": "Talk to an Advisor"
+  },
+  "explorePrograms": {
+    "title": "Explore Programs",
+    "degreeLevel": "Select degree level",
+    "fieldOfStudy": "Field of study",
+    "allDegreeLevels": "All degree levels",
+    "allFieldsOfStudy": "All fields of study",
+    "search": "Search",
+    "searching": "Searching..."
+  },
+  "featuredPrograms": {
+    "title": "Featured Programs",
+    "desc": "Explore our most popular programs designed for career success",
+    "allTab": "All",
+    "defaultBadge": "Program",
+    "viewProgram": "View Program",
+    "viewMore": "View More",
+    "noCourses": "No courses found for this degree level.",
+    "fallbackPrograms": {
+      "businessAdministration": {
+        "title": "Business Administration",
+        "description": "Develop strategic thinking and leadership skills for the modern business world.",
+        "duration": "3 years"
+      },
+      "computerScience": {
+        "title": "Computer Science",
+        "description": "Master algorithms, software engineering, and cutting-edge technology.",
+        "duration": "4 years"
+      },
+      "dataScience": {
+        "title": "Data Science",
+        "description": "Analyze and interpret complex data to drive informed decision-making.",
+        "duration": "2 years"
+      },
+      "mba": {
+        "title": "Master of Business Administration",
+        "description": "Advance your career with executive-level business acumen and leadership training.",
+        "duration": "2 years"
+      }
+    }
+  }
+}

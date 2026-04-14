@@ -1,0 +1,90 @@
+{
+  "header": {
+    "topMenu": {
+      "governmentEmployees": "Fonctionnaires",
+      "requestInfo": "Demander des informations",
+      "donations": "Dons"
+    },
+    "menu": {
+      "programs": "Programmes",
+      "admissions": "Admissions",
+      "tuition": "Frais de scolarité et aide",
+      "studentExperience": "Expérience étudiante",
+      "about": "À propos"
+    },
+    "applyNow": "Postuler maintenant",
+    "portal": "Portail",
+    "logOut": "Se déconnecter",
+    "search": "Rechercher..."
+  },
+  "hero": {
+    "title": "Une éducation qui mène directement à votre carrière",
+    "desc": "Apprenez des compétences pratiques et acquérez une expérience réelle qui vous prépare à entrer directement dans votre carrière en toute confiance."
+  },
+  "footer": {
+    "campus": "Notre campus",
+    "resources": "Ressources",
+    "contactUs": "Contactez-nous",
+    "requestInfo": "Demander des informations",
+    "talkToAdvisor": "Parler à un conseiller",
+    "governmentEmployee": "Fonctionnaire",
+    "address": "123 University Ave, Austin, TX 78701",
+    "phone": "(512) 555-0100",
+    "email": "info@staustin.edu",
+    "copyright": "Copyright © 2026. Tous droits réservés par St. Austin's International University",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation",
+    "desc": "Autonomiser les carrières grâce à une éducation accessible et de haute qualité. Accréditée et reconnue pour l'excellence académique."
+  },
+  "languages": {
+    "en": "🇺🇸 EN",
+    "fr": "🇫🇷 FR"
+  },
+  "cta": {
+    "title": "Prêt à commencer votre parcours ?",
+    "desc": "Faites le prochain pas vers votre avenir. Notre équipe d'admissions est là pour vous guider à chaque étape du processus.",
+    "applyNow": "Postuler maintenant",
+    "requestInfo": "Demander des informations",
+    "talkToAdvisor": "Parler à un conseiller"
+  },
+  "explorePrograms": {
+    "title": "Explorer les programmes",
+    "degreeLevel": "Sélectionner le niveau d'études",
+    "fieldOfStudy": "Domaine d'études",
+    "allDegreeLevels": "Tous les niveaux d'études",
+    "allFieldsOfStudy": "Tous les domaines d'études",
+    "search": "Rechercher",
+    "searching": "Recherche en cours..."
+  },
+  "featuredPrograms": {
+    "title": "Programmes phares",
+    "desc": "Découvrez nos programmes les plus populaires conçus pour le succès professionnel",
+    "allTab": "Tous",
+    "defaultBadge": "Programme",
+    "viewProgram": "Voir le programme",
+    "viewMore": "Voir plus",
+    "noCourses": "Aucun cours trouvé pour ce niveau d'études.",
+    "fallbackPrograms": {
+      "businessAdministration": {
+        "title": "Administration des affaires",
+        "description": "Développez une pensée stratégique et des compétences en leadership pour le monde des affaires moderne.",
+        "duration": "3 ans"
+      },
+      "computerScience": {
+        "title": "Informatique",
+        "description": "Maîtrisez les algorithmes, l'ingénierie logicielle et les technologies de pointe.",
+        "duration": "4 ans"
+      },
+      "dataScience": {
+        "title": "Science des données",
+        "description": "Analysez et interprétez des données complexes pour éclairer la prise de décision.",
+        "duration": "2 ans"
+      },
+      "mba": {
+        "title": "Master en administration des affaires",
+        "description": "Faites évoluer votre carrière grâce à une formation en leadership et en stratégie d'entreprise de niveau exécutif.",
+        "duration": "2 ans"
+      }
+    }
+  }
+}
