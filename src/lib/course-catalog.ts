@@ -13,6 +13,7 @@ type CourseColumnMap = {
     image?: string;
     degreeLevel?: string;
     fieldOfStudy?: string;
+    visibility?: string;
 };
 
 export type CourseCardItem = {
@@ -31,7 +32,7 @@ export type CourseFilters = {
 };
 
 const TEXT_COLUMN_CANDIDATES = {
-    id: ["id", "course_id", "uuid", "slug"],
+    id: ["id", "code", "course_id", "program_id", "uuid", "slug"],
     title: ["title", "course_name", "name", "program_name", "program_title"],
     description: ["description", "summary", "overview", "details"],
     programContent: ["program_content", "programContent", "programcontent"],
@@ -39,6 +40,7 @@ const TEXT_COLUMN_CANDIDATES = {
     image: ["image", "image_url", "thumbnail", "cover_image", "banner_image"],
     degreeLevel: ["degree_level", "degree", "level", "program_level", "degree_type"],
     fieldOfStudy: ["field_of_study", "field", "study_field", "discipline", "major"],
+    visibility: ["visibility", "publish_status", "is_published"],
 } as const;
 
 function normalize(value: string): string {
@@ -71,10 +73,13 @@ async function getCourseColumns(): Promise<CourseColumnMap> {
         select table_name
         from information_schema.tables
         where table_schema = 'public'
-          and lower(table_name) in ('course', 'courses')
+          and lower(table_name) in ('program', 'programs', 'course', 'courses')
         order by case
-            when lower(table_name) = 'course' then 0
-            else 1
+            when lower(table_name) = 'program' then 0
+            when lower(table_name) = 'programs' then 1
+            when lower(table_name) = 'course' then 2
+            when lower(table_name) = 'courses' then 3
+            else 4
         end
         limit 1
     `;
@@ -82,7 +87,7 @@ async function getCourseColumns(): Promise<CourseColumnMap> {
     const tableName = tableRows[0]?.table_name;
 
     if (!tableName) {
-        throw new Error("Could not find a course table in the public schema.");
+        throw new Error("Could not find a program/course table in the public schema.");
     }
 
     const rows = await sql<
@@ -108,6 +113,7 @@ async function getCourseColumns(): Promise<CourseColumnMap> {
         image: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.image),
         degreeLevel: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
         fieldOfStudy: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.fieldOfStudy),
+        visibility: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.visibility),
     };
 }
 
@@ -165,6 +171,75 @@ function toProgramSlug(value: string): string {
         .replace(/^-+|-+$/g, "");
 }
 
+function getProgramContentObject(value: unknown): Record<string, unknown> | null {
+    if (!value) {
+        return null;
+    }
+
+    if (typeof value === "string") {
+        const trimmed = value.trim();
+        if (trimmed.length === 0) {
+            return null;
+        }
+
+        try {
+            const parsed: unknown = JSON.parse(trimmed);
+            if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+                return parsed as Record<string, unknown>;
+            }
+        } catch {
+            return null;
+        }
+
+        return null;
+    }
+
+    if (typeof value === "object" && !Array.isArray(value)) {
+        return value as Record<string, unknown>;
+    }
+
+    return null;
+}
+
+function pickProgramContentText(
+    content: Record<string, unknown> | null,
+    keys: readonly string[]
+): string {
+    if (!content) {
+        return "";
+    }
+
+    for (const key of keys) {
+        const value = getSafeString(content[key], "");
+        if (value.length > 0) {
+            return value;
+        }
+    }
+
+    return "";
+}
+
+function buildPublishedVisibilityCondition(column: string): string {
+    const quoted = quoteIdentifier(column);
+    return `(${quoted} is null or lower(${quoted}::text) in ('published', 'active', 'public', 'visible'))`;
+}
+
+function addPublishedVisibilityCondition(conditions: string[], columns: CourseColumnMap): void {
+    if (!columns.visibility) {
+        return;
+    }
+
+    conditions.push(buildPublishedVisibilityCondition(columns.visibility));
+}
+
+function getWhereClause(conditions: string[]): string {
+    if (conditions.length === 0) {
+        return "";
+    }
+
+    return `where ${conditions.join(" and ")}`;
+}
+
 function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number): CourseCardItem {
     const idValue =
         (columns.id ? row[columns.id] : undefined) ?? row.id ?? row.course_id ?? row.slug ?? index + 1;
@@ -174,16 +249,26 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number): C
         columns.title ? row[columns.title] : undefined,
         getSafeString(row.title, `Course ${index + 1}`)
     );
+    const rawProgramContent = columns.programContent ? row[columns.programContent] : row.programContent;
+    const programContent = getOptionalJsonString(rawProgramContent);
+    const parsedProgramContent = getProgramContentObject(rawProgramContent);
+    const descriptionFromProgramContent = pickProgramContentText(parsedProgramContent, [
+        "overview",
+        "description",
+        "summary",
+    ]);
     const description = getSafeString(
         columns.description ? row[columns.description] : undefined,
-        getSafeString(row.description, "Program information coming soon.")
+        getSafeString(row.description, descriptionFromProgramContent || "Program information coming soon.")
     );
-    const programContent = getOptionalJsonString(
-        columns.programContent ? row[columns.programContent] : row.programContent
-    );
+    const durationFromProgramContent = pickProgramContentText(parsedProgramContent, [
+        "duration",
+        "timeline",
+        "time",
+    ]);
     const time = getSafeString(
         columns.duration ? row[columns.duration] : undefined,
-        getSafeString(row.duration, "Duration TBD")
+        getSafeString(row.duration, durationFromProgramContent || "Duration TBD")
     );
     const img = getSafeString(
         columns.image ? row[columns.image] : undefined,
@@ -220,6 +305,8 @@ export async function getCourses(filters: {
     const conditions: string[] = [];
     const params: string[] = [];
 
+    addPublishedVisibilityCondition(conditions, columns);
+
     if (filters.degreeLevel && columns.degreeLevel) {
         params.push(filters.degreeLevel);
         const quoted = quoteIdentifier(columns.degreeLevel);
@@ -232,7 +319,7 @@ export async function getCourses(filters: {
         conditions.push(`lower(${quoted}::text) = lower($${params.length})`);
     }
 
-    const where = conditions.length > 0 ? `where ${conditions.join(" and ")}` : "";
+    const where = getWhereClause(conditions);
     const quotedTable = quoteIdentifier(columns.tableName);
     const query = `
         select *
@@ -254,13 +341,17 @@ export async function getCourseById(courseId: string): Promise<CourseCardItem | 
         return null;
     }
 
+    const baseConditions: string[] = [];
+    addPublishedVisibilityCondition(baseConditions, columns);
+
     if (columns.id) {
         const quotedTable = quoteIdentifier(columns.tableName);
         const quotedId = quoteIdentifier(columns.id);
+        const conditions = [...baseConditions, `lower(${quotedId}::text) = lower($1)`];
         const rowByIdQuery = `
             select *
             from ${quotedTable}
-            where lower(${quotedId}::text) = lower($1)
+            where ${conditions.join(" and ")}
             limit 1
         `;
         const rowById = await sql.unsafe<DbCourse[]>(rowByIdQuery, [normalizedCourseId]);
@@ -272,9 +363,11 @@ export async function getCourseById(courseId: string): Promise<CourseCardItem | 
 
     // Fallback for routes using a title slug when id lookup does not match.
     const quotedTable = quoteIdentifier(columns.tableName);
+    const where = getWhereClause(baseConditions);
     const rows = await sql.unsafe<DbCourse[]>(`
         select *
         from ${quotedTable}
+        ${where}
         limit 500
     `);
     const mappedRows = rows.map((row, index) => mapCourseRow(row, columns, index));

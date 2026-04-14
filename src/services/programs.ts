@@ -25,7 +25,7 @@ type ProgramSearchInput = {
     includeFilters?: boolean;
 };
 
-const PROGRAMS_API_PATH = "/api/courses";
+const PROGRAMS_API_PATH = "/api/programs";
 
 function logInfo(message: string, details?: Record<string, unknown>): void {
     console.info(`[programs-service] ${message}`, details ?? {});
@@ -71,8 +71,8 @@ async function requestPrograms(input: ProgramSearchInput = {}): Promise<Programs
             cache: "no-store",
         });
     } catch (error) {
-        logError("Network error while calling courses API", { url, error });
-        throw new Error("Unable to reach courses API.");
+        logError("Network error while calling programs API", { url, error });
+        throw new Error("Unable to reach programs API.");
     }
 
     let payload: ProgramsApiResponse | undefined;
@@ -84,7 +84,7 @@ async function requestPrograms(input: ProgramSearchInput = {}): Promise<Programs
             status: response.status,
             error,
         });
-        throw new Error("Courses API returned an invalid response.");
+        throw new Error("Programs API returned an invalid response.");
     }
 
     if (!response.ok || !payload?.ok) {
