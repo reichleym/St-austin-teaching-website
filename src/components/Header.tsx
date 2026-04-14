@@ -168,6 +168,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
 
     const menuItems = [
         { label: t('header.menu.programs'), href: "/program" },
+        { label: t('header.menu.careers'), href: "/careers" },
         { label: t('header.menu.admissions'), href: "/admissions" },
         { label: t('header.menu.tuition'), href: "/tuition" },
         { label: t('header.menu.studentExperience'), href: "/studentExperience" },
