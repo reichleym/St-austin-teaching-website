@@ -6,7 +6,8 @@ import { toLanguage } from "@/lib/i18n/catalog";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const queryLang = url.searchParams.get("lang");
-  const cookieLang = cookies().get("lang")?.value ?? null;
+  const cookieStore = await cookies();
+  const cookieLang = cookieStore.get("lang")?.value ?? null;
   const lang = toLanguage(queryLang ?? cookieLang) ?? "en";
 
   const aboutPage = await getAboutPageContent(lang);
