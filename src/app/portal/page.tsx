@@ -4,15 +4,17 @@ import Button from "@/components/Button";
 import IconCard from "@/components/IconCard";
 import Link from "next/link";
 import ProgramCard from "@/components/ProgramCard";
+import { getServerTranslations } from "@/lib/i18n/server";
 import { getCourses, type CourseCardItem } from "@/lib/course-catalog";
 import { isDatabaseConfigured } from "@/lib/postgres";
 
 
 
-export default async function portalPage() {
+export default async function PortalPage() {
+    const { t, lang } = await getServerTranslations();
     const bannerContent = {
-        title: "Access Your Learning Portal",
-        description: "Your portal to courses, assignments, discussions, and everything you need to succeed.",
+        title: t('portal.accessTitle'),
+        description: t('portal.accessDescription'),
         bgImg: "/bannerImg.jpg"
     }
 
@@ -20,7 +22,7 @@ export default async function portalPage() {
 
     if (isDatabaseConfigured) {
         try {
-            const courses = await getCourses({});
+            const courses = await getCourses({ language: lang });
             dynamicPrograms = courses.slice(0, 4);
         } catch (error) {
             console.error("Failed to load dynamic programs for portal page:", error);
@@ -29,55 +31,51 @@ export default async function portalPage() {
 
 const blockContent = [
         {
-            cardTitle: "Students",
-            cardDescription: "Access courses, submit assignments, join discussions, track grades, and message instructors.",
+            cardTitle: t('portal.users.students.title'),
+            cardDescription: t('portal.users.students.description'),
             icon: "/awards-icon.png"
         },
         {
-            cardTitle: "Faculty",
-            cardDescription: "Manage courses, grade assignments, create discussions, and communicate with students.",
+            cardTitle: t('portal.users.faculty.title'),
+            cardDescription: t('portal.users.faculty.description'),
             icon: "/business-icon.png"
         },
         {
-            cardTitle: "Administrators",
-            cardDescription: "Manage users, departments, programs, reports, and institutional settings.",
-            // icon: <IoSettingsOutline />
+            cardTitle: t('portal.users.administrators.title'),
+            cardDescription: t('portal.users.administrators.description'),
             icon: "/business-icon.png"
-            
-
         },
     ]
 
      const blockFeatures = [
         {
-            cardTitle: "Course Management",
-            cardDescription: "Blackboard-style learning with organized modules, materials, and quizzes.",
+            cardTitle: t('portal.platformFeatures.courseManagement.title'),
+            cardDescription: t('portal.platformFeatures.courseManagement.description'),
             icon: "/awards-icon.png"
         },
         {
-            cardTitle: "Real-Time Messaging",
-            cardDescription: "Direct messaging and group discussions with instant notifications.",
+            cardTitle: t('portal.platformFeatures.realTimeMessaging.title'),
+            cardDescription: t('portal.platformFeatures.realTimeMessaging.description'),
             icon: "/business-icon.png"
         },
         {
-            cardTitle: "Progress Tracking",
-            cardDescription: "Visual dashboards showing grades, attendance, and learning milestones.",
+            cardTitle: t('portal.platformFeatures.progressTracking.title'),
+            cardDescription: t('portal.platformFeatures.progressTracking.description'),
             icon: "/nursing-icon.png"
         },
-
         {
-            cardTitle: "Assignment System",
-            cardDescription: "Submit, review, and grade assignments with inline feedback.",
+            cardTitle: t('portal.platformFeatures.assignmentSystem.title'),
+            cardDescription: t('portal.platformFeatures.assignmentSystem.description'),
             icon: "/awards-icon.png"
         },
         {
-            cardTitle: "Virtual Classrooms",
-            cardDescription: "Live sessions with video, screen sharing, and interactive tools.",
+            cardTitle: t('portal.platformFeatures.virtualClassrooms.title'),
+            cardDescription: t('portal.platformFeatures.virtualClassrooms.description'),
             icon: "/business-icon.png"
         },
         {
-            cardTitle: "Collaboration",
-            cardDescription: "Group projects, peer review, and collaborative document editing.",
+            cardTitle: t('portal.platformFeatures.collaboration.title'),
+            cardDescription: t('portal.platformFeatures.collaboration.description'),
             icon: "/nursing-icon.png"
         },
     ]
@@ -92,13 +90,13 @@ const blockContent = [
                 </div>
             </section>
 
-            <Accreditation blockContent={blockFeatures} title="Platform Features" description="Everything you need for a seamless learning experience" className="bg-[#F5F5F5] py-25" classNameCard="items-center text-center md:gap-x-15" />
+            <Accreditation blockContent={blockFeatures} title={t('portal.platformFeatures.title')} description={t('portal.platformFeatures.description')} className="bg-[#F5F5F5] py-25" classNameCard="items-center text-center md:gap-x-15" />
 
             <section className="py-25">
                 <div className="container">
                     <div className="mb-8 text-center">
-                        <h2 className="text-3xl font-bold">Programs You Can Explore</h2>
-                        <p className="mt-2 text-lg text-[#333333CC]">These programs are loaded dynamically from the database.</p>
+                        <h2 className="text-3xl font-bold">{t('portal.programsSection.title')}</h2>
+                        <p className="mt-2 text-lg text-[#333333CC]">{t('portal.programsSection.subtitle')}</p>
                     </div>
                     <ProgramCard programCardContent={dynamicPrograms.length > 0 ? dynamicPrograms : undefined} />
                 </div>

@@ -1,0 +1,25 @@
+{
+  "academicExcellence": {
+    "title": "Academic Excellence Award",
+    "description": "For students with a GPA of 3.5 or higher."
+  },
+  "flexibleLearning": {
+    "title": "Flexible Learning Options",
+    "description": "Study online or on-campus with schedules designed for working professionals."
+  },
+  "careerFocused": {
+    "title": "Career-Focused",
+    "description": "92% placement rate with dedicated career services and industry partnerships."
+  },
+  "expertFaculty": {
+    "title": "Expert Faculty",
+    "description": "Learn from industry practitioners and accomplished researchers."
+  },
+  "paymentPlansList": [
+    "Monthly installment plans with no interest",
+    "Military and veteran benefits accepted",
+    "Employer tuition reimbursement processing",
+    "Federal and state financial aid eligible"
+  ],
+  "financialAidButton": "Contact Financial Aid Office"
+}

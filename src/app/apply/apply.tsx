@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
+import { useTranslations } from "@/lib/useTranslations";
 import { cn } from "@/lib/utils";
 
 type StepId =
@@ -90,12 +91,12 @@ const fullApplicationSteps: Exclude<StepId, "dashboard" | "submitted">[] = [
 ];
 
 const stepMeta = {
-    program: { label: "Program" },
-    batchStart: { label: "Batch Start" },
-    studentType: { label: "Student Type" },
-    studentInfo: { label: "Student Info" },
-    review: { label: "Review" },
-    fees: { label: "Application Fees" },
+    program: { label: "apply.step3Title" },
+    batchStart: { label: "apply.startDate" },
+    studentType: { label: "apply.studyPreference" },
+    studentInfo: { label: "apply.step1Title" },
+    review: { label: "apply.step4Title" },
+    fees: { label: "apply.title" },
 } as const;
 
 const batchStartOptions = ["September", "January", "May"];
@@ -429,6 +430,15 @@ export default function ApplyPageContent({
         governmentDiscountPercent: 0,
     },
 }: ApplyPageContentProps) {
+    const { t } = useTranslations();
+    const format = (key: string, vars?: Record<string, string | number>) => {
+        const text = t(key);
+        if (!vars) return text;
+        return Object.entries(vars).reduce(
+            (value, [varName, replacement]) => value.replace(`{${varName}}`, String(replacement)),
+            text
+        );
+    };
     const router = useRouter();
     const hasHandledPaymentReturnRef = useRef(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -1180,15 +1190,15 @@ export default function ApplyPageContent({
     const renderFeesStep = () => (
         <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Pay Application Fee
+                {t("apply.payApplicationFee")}
             </h2>
             <p className="mt-5 text-[18px] font-medium text-[#333333]">
-                You will be redirected to CamPay secure checkout to enter your payment details and complete your application fee.
+                {t("apply.paymentRedirectDesc")}
             </p>
 
             <div className="mt-6 rounded-[4px] border border-[#D8D8D8] px-4 py-4">
                 <div className="flex items-center justify-between gap-4">
-                    <p className="text-[18px] font-medium text-[#333333]">Base Application Fee</p>
+                    <p className="text-[18px] font-medium text-[#333333]">{t("apply.baseApplicationFee")}</p>
                     <p className="text-[18px] text-[#33333380]">{applicationFeeSummary.baseFee.toLocaleString()} XAF</p>
                 </div>
                 {governmentDiscountNotice ? (
@@ -1200,12 +1210,12 @@ export default function ApplyPageContent({
                     <>
                         <div className="mt-2 flex items-center justify-between gap-4 border-t border-[#D8D8D8] pt-2">
                             <p className="text-[18px] font-medium text-[#333333]">
-                                Government Employee Discount ({applicationFeeSummary.discountPercent}%)
+                                {format("apply.governmentEmployeeDiscountLabel", { discount: applicationFeeSummary.discountPercent })}
                             </p>
                             <p className="text-[18px] text-[#1E73BE]">-{applicationFeeSummary.discountAmount.toLocaleString()} XAF</p>
                         </div>
                         <div className="mt-2 flex items-center justify-between gap-4 border-t border-[#D8D8D8] pt-2">
-                            <p className="text-[18px] font-semibold text-[#333333]">Total Due</p>
+                            <p className="text-[18px] font-semibold text-[#333333]">{t("apply.totalDue")}</p>
                             <p className="text-[18px] font-semibold text-[#333333]">{applicationFeeSummary.finalAmount.toLocaleString()} XAF</p>
                         </div>
                     </>
@@ -1213,12 +1223,12 @@ export default function ApplyPageContent({
             </div>
 
             <div className="mt-6">
-                <FieldLabel>Choose Payment Method</FieldLabel>
+                <FieldLabel>{t("apply.choosePaymentMethod")}</FieldLabel>
                 <div className="space-y-3">
                     <RadioOption
                         checked={form.paymentMethod === "card"}
-                        title="Card (CamPay Checkout)"
-                        description="Pay online using card through CamPay secure checkout."
+                        title={t("apply.cardOptionTitle")}
+                        description={t("apply.cardOptionDescription")}
                         onClick={() => updateForm("paymentMethod", "card")}
                     />
                     <RadioOption

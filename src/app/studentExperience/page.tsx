@@ -1,13 +1,17 @@
+"use client";
+
 import BannerSection from "@/components/sections/BannerSection";
 import CtaSection from "@/components/CtaSection";
 import Accreditation from "@/components/sections/Accreditation";
 import CheckList from "@/components/CheckList";
 import Button from "@/components/Button";
+import { useTranslations } from "@/lib/useTranslations";
 
 export default function studentExperiencePage() {
+    const { t } = useTranslations();
     const bannerContent = {
-        title: "Student Experience",
-        description: "Discover what it's like to learn at St. Austin — flexible, supportive, and career-focused.",
+        title: t("studentExperience.title"),
+        description: t("studentExperience.desc"),
         bgImg: "/bannerImg.jpg"
     }
 

@@ -1,0 +1,25 @@
+{
+  "academicExcellence": {
+    "title": "Prix d'excellence académique",
+    "description": "Pour les étudiants avec une moyenne de 3,5 ou plus."
+  },
+  "flexibleLearning": {
+    "title": "Options d'apprentissage flexibles",
+    "description": "Étudiez en ligne ou sur le campus avec des horaires adaptés aux professionnels."
+  },
+  "careerFocused": {
+    "title": "Orientation carrière",
+    "description": "Taux de placement de 92% avec services de carrière dédiés et partenariats industriels."
+  },
+  "expertFaculty": {
+    "title": "Faculté experte",
+    "description": "Apprenez auprès de praticiens de l'industrie et chercheurs accomplis."
+  },
+  "paymentPlansList": [
+    "Plans d'échéances mensuelles sans intérêt",
+    "Avantages militaires et vétérans acceptés",
+    "Traitement de remboursement des frais de scolarité par l'employeur",
+    "Admissible à l'aide financière fédérale et étatique"
+  ],
+  "financialAidButton": "Contacter le bureau d'aide financière"
+}

@@ -1,10 +1,7 @@
-import CtaSection from "@/components/CtaSection";
-import BannerSection from "@/components/sections/BannerSection";
-import Button from "@/components/Button";
-import Link from "next/link";
+import ProgramDetailClient from "@/components/ProgramDetailClient";
 import { notFound } from "next/navigation";
-import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { getCourseById, type CourseCardItem } from "@/lib/course-catalog";
+import { getServerLanguage } from "@/lib/i18n/server";
 import { isDatabaseConfigured } from "@/lib/postgres";
 
 type ProgramDetailPageProps = {
@@ -54,7 +51,22 @@ function parseProgramContent(raw: string | undefined): ProgramContentPayload | n
     try {
         const parsed: unknown = JSON.parse(raw);
         if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-            return parsed as ProgramContentPayload;
+            const record = parsed as Record<string, unknown>;
+
+            if (
+                typeof record.overview !== "undefined" ||
+                typeof record.tuitionAndFees !== "undefined" ||
+                typeof record.curriculum !== "undefined" ||
+                typeof record.admissionRequirements !== "undefined" ||
+                typeof record.careerOpportunities !== "undefined"
+            ) {
+                return record as ProgramContentPayload;
+            }
+
+            const en = record.en;
+            if (en && typeof en === "object" && !Array.isArray(en)) {
+                return en as ProgramContentPayload;
+            }
         }
     } catch {
         return null;
@@ -146,7 +158,8 @@ function getFallbackProgram(programId: string): CourseCardItem | null {
 async function getProgramForDetail(programId: string): Promise<CourseCardItem | null> {
     if (isDatabaseConfigured) {
         try {
-            const fromDb = await getCourseById(programId);
+            const lang = await getServerLanguage();
+            const fromDb = await getCourseById(programId, lang);
             if (fromDb) {
                 return fromDb;
             }
@@ -167,12 +180,9 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
         notFound();
     }
 
-    const bannerContent = {
-        title: program.title,
-        description: program.description,
-        bgImg: "/bannerImg.jpg",
-    };
     const bannerBadge = ["Online", program.time];
+    
+    // Parse content for fallback values only (will be overridden by language-specific content in client)
     const structuredContent = parseProgramContent(program.programContent);
     const programOverviewContent = getNonEmptyString(structuredContent?.overview) ?? EMPTY_CONTENT_MESSAGE;
     const tuitionAndFees = getNonEmptyString(structuredContent?.tuitionAndFees) ?? EMPTY_CONTENT_MESSAGE;
@@ -181,108 +191,15 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
     const careerOpportunities = getStringList(structuredContent?.careerOpportunities);
 
     return (
-        <>
-            <BannerSection {...bannerContent}>
-                <div className="flex gap-2.5 -order-1 mb-2.5">
-                    {bannerBadge.map((badge, index) => (
-                        <span
-                            className="bg-[#fff] border border-[#1E73BE] text-[#1E73BE] text-sm font-semibold px-2 py-1 rounded"
-                            key={index}
-                        >
-                            {badge}
-                        </span>
-                    ))}
-                </div>
-                <div className="flex gap-5 mt-11">
-                    <Link href="/apply" className="inline-flex">
-                        <Button variant="primary">Apply Now</Button>
-                    </Link>
-                    <Button variant="outline">Request Info</Button>
-                </div>
-            </BannerSection>
-            <section className="md:py-25 py-15">
-                <div className="container">
-                    <div className="grid grid-cols-1 md:grid-cols-5 lg:gap-25 md:gap-12 gap-8">
-                        <div className="md:col-span-3 space-y-12">
-                            <div>
-                                <h2 className="md:text-4xl text-3xl font-bold mb-5">Program Overview</h2>
-                                <p className="whitespace-pre-line">{programOverviewContent}</p>
-                            </div>
-                            <div>
-                                <h2 className="md:text-4xl text-3xl font-bold mb-5">Curriculum</h2>
-                                {curriculum.length > 0 ? (
-                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {curriculum.map((item, index) => (
-                                            <li className="flex gap-4 items-center" key={`${item}-${index}`}>
-                                                <span className="bg-[#1E73BE] font-semibold text-white w-11 h-11 rounded-full flex items-center justify-center">
-                                                    {String(index + 1).padStart(2, "0")}
-                                                </span>
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p>{EMPTY_CONTENT_MESSAGE}</p>
-                                )}
-                            </div>
-                            <div>
-                                <h2 className="md:text-4xl text-3xl font-bold mb-5">Career Opportunities</h2>
-                                {careerOpportunities.length > 0 ? (
-                                    <div className="flex flex-wrap gap-5">
-                                        {careerOpportunities.map((tag, index) => (
-                                            <span
-                                                className="bg-[#1E73BE1A] p-3 border border-[#1E73BE] font-semibold flex items-center gap-2.5"
-                                                key={`${tag}-${index}`}
-                                            >
-                                                <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE]" />
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p>{EMPTY_CONTENT_MESSAGE}</p>
-                                )}
-                            </div>
-                        </div>
-                        <div className="md:col-span-2 space-y-10">
-                            <div className="bg-[#F2F5FA] p-7 rounded-lg space-y-5">
-                                <h4 className="font-semibold text-[22px] leading-tight">Tuition & Fees</h4>
-                                <div className="leading-tight">
-                                    <span className="md:text-[50px] text-4xl font-bold">{tuitionAndFees}</span>
-                                </div>
-                                <Link href="/tuition" className="hover:underline">
-                                    View financial aid options →
-                                </Link>
-                            </div>
-                            <div className="bg-[#F2F5FA] p-7 rounded-lg">
-                                <h4 className="font-semibold text-[22px] mb-4">Admission Requirements</h4>
-                                {admissionRequirements.length > 0 ? (
-                                    <ul className="space-y-3">
-                                        {admissionRequirements.map((item, index) => (
-                                            <li className="flex gap-2.5 items-center" key={`${item}-${index}`}>
-                                                <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE]" />
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p>{EMPTY_CONTENT_MESSAGE}</p>
-                                )}
-                            </div>
-                            <div className="bg-[#1E73BE] p-7 rounded-lg text-white text-center">
-                                <h3 className="font-semibold text-[28px] leading-tight mb-5">Start Your Application</h3>
-                                <p>The next cohort begins Fall 2026</p>
-                                <Link href="/apply" className="inline-flex w-full">
-                                    <Button variant="white" className="mt-10 w-full">
-                                        Apply Now
-                                    </Button>
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <CtaSection />
-        </>
+        <ProgramDetailClient
+            program={program}
+            bannerBadge={bannerBadge}
+            programContentJson={program.programContent}
+            programOverviewContent={programOverviewContent}
+            tuitionAndFees={tuitionAndFees}
+            curriculum={curriculum}
+            admissionRequirements={admissionRequirements}
+            careerOpportunities={careerOpportunities}
+        />
     );
 }

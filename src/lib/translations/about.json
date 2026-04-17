@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "About Page Documentation",
+  "description": "Comprehensive schema and content documentation for src/app/about/page.tsx. Captures all sections, structure, data types, and current content.",
+  "type": "object",
+  "properties": {
+    "pageInfo": {
+      "type": "object",
+      "properties": {
+        "name": {"const": "About Page"},
+        "file": {"const": "src/app/about/page.tsx"},
+        "sectionsUsed": {
+          "type": "array",
+          "items": {"type": "string"},
+          "examples": ["BannerSection", "IconCard", "CtaSection"]
+        },
+        "dataSources": {
+          "type": "array",
+          "items": {"type": "string"},
+          "examples": ["useTranslations() t('about.*')", "hardcoded blockContent/teamMembers"]
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "component": {"type": "string"},
+          "description": {"type": "string"},
+          "propsSchema": {"type": "object"},
+          "content": {"type": "object"}
+        },
+        "required": ["name", "component", "propsSchema", "content"]
+      }
+    }
+  },
+  "pageInfo": {
+    "name": "About Page",
+    "file": "src/app/about/page.tsx",
+    "sectionsUsed": ["BannerSection", "Custom History Section", "Custom Mission/Vision Section", "IconCard (Accreditation)", "Custom Leadership Team", "CtaSection"],
+    "dataSources": ["t('about.title')", "t('about.history')", "hardcoded bannerContent/blockContent/teamMembers"]
+  },
+  "sections": [
+    {
+      "name": "Hero",
+      "component": "BannerSection",
+      "description": "Intro banner with title, mission desc, background image.",
+      "propsSchema": {
+        "title": "string (t('about.title'))",
+        "description": "string (t('about.mission'))",
+        "bgImg": "string"
+      },
+      "content": {
+        "title": "About St. Austin's International University",
+        "description": "Our Mission",
+        "bgImg": "/bannerImg.jpg"
+      }
+    },
+    {
+      "name": "History",
+      "component": "Custom (div section)",
+      "description": "Two-column layout with title, desc, and image.",
+      "propsSchema": {
+        "title": "string (t('about.history'))",
+        "description": "string (t('about.historyDesc'))",
+        "image": "string"
+      },
+      "content": {
+        "title": "Our History",
+        "description": "Founded in 1995, St. Austin's International University has been dedicated to providing career-focused education for over 25 years. Starting as a small institution with just 50 students, we have grown to serve thousands of students annually while maintaining our commitment to personalized education and career success.",
+        "image": "/cta-img.png"
+      }
+    },
+    {
+      "name": "Mission & Vision",
+      "component": "Custom (div section)",
+      "description": "Two-column mission/vision blocks.",
+      "propsSchema": {
+        "mission": {"title": "string (t('about.mission'))", "desc": "string (t('about.missionDesc'))"},
+        "vision": {"title": "string (t('about.vision'))", "desc": "string (t('about.visionDesc'))"}
+      },
+      "content": {
+        "mission": {
+          "title": "Our Mission",
+          "desc": "To empower individuals through accessible, high-quality education that bridges academic excellence with practical career readiness."
+        },
+        "vision": {
+          "title": "Our Vision",
+          "desc": "To be a global leader in career-focused higher education, recognized for innovation, inclusivity, and student success."
+        }
+      }
+    },
+    {
+      "name": "Accreditation",
+      "component": "IconCard",
+      "description": "Grid of accreditation cards with icon, title, desc.",
+      "propsSchema": {
+        "title": "string (t('about.accreditation'))",
+        "blockContent": {
+          "type": "array",
+          "items": {
+            "cardTitle": "string",
+            "cardDescription": "string",
+            "icon": "string"
+          }
+        },
+        "classNameCard": "string"
+      },
+      "content": {
+        "title": "Accreditation",
+        "blockContent": [
+          {
+            "cardTitle": "National Board of Higher Education",
+            "cardDescription": "National Board of Higher Education",
+            "icon": "/awards-icon.png"
+          },
+          {
+            "cardTitle": "Business Programs",
+            "cardDescription": "International accreditation for business programs",
+            "icon": "/business-icon.png"
+          },
+          {
+            "cardTitle": "Nursing Programs",
+            "cardDescription": "Commission on Collegiate Nursing Education",
+            "icon": "/nursing-icon.png"
+          }
+        ],
+        "classNameCard": "border border-[#33333340] p-[30px]"
+      }
+    },
+    {
+      "name": "Leadership",
+      "component": "Custom Team Grid",
+      "description": "4-column grid of team member cards.",
+      "propsSchema": {
+        "title": "string (t('about.leadership'))",
+        "teamMembers": {
+          "type": "array",
+          "items": {
+            "name": "string",
+            "role": "string",
+            "image": "string",
+            "description": "string"
+          }
+        }
+      },
+      "content": {
+        "title": "Leadership Team",
+        "teamMembers": [
+          {
+            "name": "Dr. Margaret Chen",
+            "role": "President",
+            "image": "/team1.jpg",
+            "description": "Dr. Chen brings over 25 years of academic leadership experience and a vision for accessible, career-oriented education."
+          },
+          {
+            "name": "Dr. Robert Williams",
+            "role": "Provost & VP of Academic Affairs",
+            "image": "/team1.jpg",
+            "description": "A distinguished scholar in educational innovation, Dr. Williams oversees curriculum development and academic quality."
+          },
+          {
+            "name": "Dr. Amara Osei",
+            "role": "Dean of Student Affairs",
+            "image": "/team1.jpg",
+            "description": "Dr. Osei is passionate about student success and leads initiatives in mentorship, career services, and community building."
+          },
+          {
+            "name": "Prof. David Nakamura",
+            "role": "Dean of Technology",
+            "image": "/team1.jpg",
+            "description": "Prof. Nakamura drives the university's technology programs and digital learning infrastructure with industry expertise."
+          }
+        ]
+      }
+    },
+    {
+      "name": "CTA",
+      "component": "CtaSection",
+      "description": "Call-to-action section at bottom.",
+      "propsSchema": {
+        "className": "string (optional)"
+      },
+      "content": {
+        "title": "Ready to Start Your Journey?",
+        "desc": "Take the next step toward your future. Our admissions team is here to guide you through every step of the process.",
+        "buttons": ["Apply Now", "Request Info", "Talk to an Advisor"],
+        "className": ""
+      }
+    }
+  ],
+  "additionalContent": {
+    "values": [
+      {
+        "title": "Excellence",
+        "desc": "We maintain the highest standards in education and student outcomes"
+      },
+      {
+        "title": "Accessibility",
+        "desc": "We make quality education available to all, regardless of background"
+      },
+      {
+        "title": "Innovation",
+        "desc": "We embrace modern teaching methods and cutting-edge technology"
+      },
+      {
+        "title": "Community",
+        "desc": "We foster a supportive and inclusive campus environment"
+      }
+    ],
+    "historySummary": "Founded in 1995... (full in sections)",
+    "accreditationDesc": "We are accredited by the Southern Association of Colleges and Schools Commission on Colleges (SACSCOC)."
+  },
+  "pageNotes": [
+    "Content mixes translations (t('about.*')) and hardcoded data.",
+    "Refactor opportunity: Load from this JSON for full data-driven.",
+    "Images referenced: /bannerImg.jpg, /cta-img.png, /awards-icon.png etc.",
+    "Currently 6 main sections."
+  ]
+}

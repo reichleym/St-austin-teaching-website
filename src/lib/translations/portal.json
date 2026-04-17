@@ -1,0 +1,55 @@
+{
+  "accessTitle": "Access Your Learning Portal",
+  "accessDescription": "Your portal to courses, assignments, discussions, and everything you need to succeed.",
+  "bannerTitle": "Your Learning Portal",
+  "bannerDescription": "Access everything you need for your academic success in one place.",
+  "blocks": {
+    "students": {
+      "title": "Students",
+      "description": "Access courses, submit assignments, join discussions, track grades, and message instructors."
+    },
+    "faculty": {
+      "title": "Faculty",
+      "description": "Manage courses, grade assignments, create discussions, and communicate with students."
+    },
+    "administrators": {
+      "title": "Administrators",
+      "description": "Manage users, departments, programs, reports, and institutional settings."
+    }
+  },
+  "features": {
+    "title": "Platform Features",
+    "description": "Everything you need for a seamless learning experience",
+    "courseManagement": {
+      "title": "Course Management",
+      "description": "Blackboard-style learning with organized modules, materials, and quizzes."
+    },
+    "messaging": {
+      "title": "Real-Time Messaging",
+      "description": "Direct messaging and group discussions with instant notifications."
+    },
+    "progressTracking": {
+      "title": "Progress Tracking",
+      "description": "Visual dashboards showing grades, attendance, and learning milestones."
+    },
+    "assignmentSystem": {
+      "title": "Assignment System",
+      "description": "Submit, review, and grade assignments with inline feedback."
+    },
+    "virtualClassrooms": {
+      "title": "Virtual Classrooms",
+      "description": "Live sessions with video, screen sharing, and interactive tools."
+    },
+    "collaboration": {
+      "title": "Collaboration",
+      "description": "Group projects, peer review, and collaborative document editing."
+    }
+  },
+  "programsSectionTitle": "Explore Available Programs",
+  "programsSectionDescription": "These programs are loaded dynamically from the database.",
+  "intuitivePortal": {
+    "title": "Intuitive Portal",
+    "description": "Navigate your academic journey with ease. Our portal puts everything at your fingertips — from upcoming assignments to live class schedules.",
+    "button": "Go to Portal"
+  }
+}

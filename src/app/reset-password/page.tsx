@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "@/lib/useTranslations";
 
 function getFriendlyApiMessage(input: unknown, fallback: string): string {
     if (typeof input !== "string") {
@@ -23,6 +24,7 @@ function getFriendlyApiMessage(input: unknown, fallback: string): string {
 }
 
 function ResetPasswordContent() {
+    const { t } = useTranslations();
     const router = useRouter();
     const searchParams = useSearchParams();
     const initialEmail = searchParams.get("email") || "";
@@ -103,15 +105,15 @@ function ResetPasswordContent() {
     return (
         <main className="min-h-screen bg-[#F5F7FB] px-4 py-12">
             <div className="mx-auto max-w-[520px] rounded-[8px] border border-[#DDDDDD] bg-white p-6 md:p-8">
-                <h1 className="text-[28px] font-semibold text-[#1D1D1D]">Reset Password</h1>
+                <h1 className="text-[28px] font-semibold text-[#1D1D1D]">{t("resetPassword.title")}</h1>
                 <p className="mt-2 text-[15px] text-[#555555]">
-                    Set your new portal password below.
+                    {t("resetPassword.subtitle")}
                 </p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                     <div>
                         <label htmlFor="reset-email" className="mb-1 block text-[14px] font-medium text-[#323232]">
-                            Email
+                            {t("auth.email")}
                         </label>
                         <input
                             id="reset-email"
@@ -126,7 +128,7 @@ function ResetPasswordContent() {
 
                     <div>
                         <label htmlFor="new-password" className="mb-1 block text-[14px] font-medium text-[#323232]">
-                            New Password
+                            {t("resetPassword.newPassword")}
                         </label>
                         <input
                             id="new-password"
@@ -141,7 +143,7 @@ function ResetPasswordContent() {
 
                     <div>
                         <label htmlFor="confirm-password" className="mb-1 block text-[14px] font-medium text-[#323232]">
-                            Confirm Password
+                            {t("resetPassword.confirmPassword")}
                         </label>
                         <input
                             id="confirm-password"
@@ -167,7 +169,7 @@ function ResetPasswordContent() {
                         disabled={isSubmitting || isRedirecting || !isReady}
                         className="h-[42px] w-full rounded-[6px] bg-[#1E73BE] px-4 text-[14px] font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        {isSubmitting ? "Updating..." : isRedirecting ? "Redirecting..." : "Set New Password"}
+                        {isSubmitting ? t("resetPassword.resetting") : isRedirecting ? "Redirecting..." : t("resetPassword.reset")}
                     </button>
                 </form>
 

@@ -1,5 +1,6 @@
 import "server-only";
 import { getSql } from "@/lib/postgres";
+import { toLanguage, type Language } from "@/lib/i18n/catalog";
 
 type DbCourse = Record<string, unknown>;
 
@@ -14,6 +15,7 @@ type CourseColumnMap = {
     degreeLevel?: string;
     fieldOfStudy?: string;
     visibility?: string;
+    translations?: string;
 };
 
 export type CourseCardItem = {
@@ -41,6 +43,7 @@ const TEXT_COLUMN_CANDIDATES = {
     degreeLevel: ["degree_level", "degree", "level", "program_level", "degree_type"],
     fieldOfStudy: ["field_of_study", "field", "study_field", "discipline", "major"],
     visibility: ["visibility", "publish_status", "is_published"],
+    translations: ["translations", "translation", "i18n", "localizations", "localized_content"],
 } as const;
 
 function normalize(value: string): string {
@@ -114,6 +117,7 @@ async function getCourseColumns(): Promise<CourseColumnMap> {
         degreeLevel: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
         fieldOfStudy: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.fieldOfStudy),
         visibility: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.visibility),
+        translations: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.translations),
     };
 }
 
@@ -163,6 +167,10 @@ function getOptionalJsonString(value: unknown): string | undefined {
     return undefined;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 function toProgramSlug(value: string): string {
     return value
         .trim()
@@ -201,6 +209,20 @@ function getProgramContentObject(value: unknown): Record<string, unknown> | null
     return null;
 }
 
+function getTranslationForLanguage(rawTranslations: unknown, language: Language): Record<string, unknown> | null {
+    const root = getProgramContentObject(rawTranslations);
+    if (!root) {
+        return null;
+    }
+
+    const translation = root[language];
+    if (isRecord(translation)) {
+        return translation;
+    }
+
+    return null;
+}
+
 function pickProgramContentText(
     content: Record<string, unknown> | null,
     keys: readonly string[]
@@ -217,6 +239,47 @@ function pickProgramContentText(
     }
 
     return "";
+}
+
+function looksLikeLocalizedProgramContent(content: Record<string, unknown> | null): boolean {
+    if (!content) {
+        return false;
+    }
+
+    return isRecord(content.en) || isRecord(content.fr);
+}
+
+function toLocalizedProgramContent(
+    rawProgramContent: unknown,
+    rawTranslations: unknown
+): string | undefined {
+    const parsedProgramContent = getProgramContentObject(rawProgramContent);
+    const hasLocalizedContent = looksLikeLocalizedProgramContent(parsedProgramContent);
+
+    const enContent = hasLocalizedContent
+        ? (isRecord(parsedProgramContent?.en) ? (parsedProgramContent?.en as Record<string, unknown>) : {})
+        : (parsedProgramContent ?? {});
+
+    const frFromProgramContent = hasLocalizedContent
+        ? (isRecord(parsedProgramContent?.fr) ? (parsedProgramContent?.fr as Record<string, unknown>) : {})
+        : {};
+
+    const frFromTranslations = getTranslationForLanguage(rawTranslations, "fr");
+    const frContent =
+        frFromTranslations && Object.keys(frFromTranslations).length > 0
+            ? { ...frFromProgramContent, ...frFromTranslations }
+            : frFromProgramContent;
+
+    const result: Record<string, unknown> = { en: enContent };
+    if (Object.keys(frContent).length > 0) {
+        result.fr = frContent;
+    }
+
+    try {
+        return JSON.stringify(result);
+    } catch {
+        return getOptionalJsonString(rawProgramContent);
+    }
 }
 
 function buildPublishedVisibilityCondition(column: string): string {
@@ -240,40 +303,70 @@ function getWhereClause(conditions: string[]): string {
     return `where ${conditions.join(" and ")}`;
 }
 
-function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number): CourseCardItem {
+function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number, language: Language): CourseCardItem {
     const idValue =
         (columns.id ? row[columns.id] : undefined) ?? row.id ?? row.course_id ?? row.slug ?? index + 1;
     const id = String(idValue);
 
+    const rawTranslations = columns.translations ? row[columns.translations] : row.translations;
+    const translation = language === "en" ? null : getTranslationForLanguage(rawTranslations, language);
+
     const title = getSafeString(
-        columns.title ? row[columns.title] : undefined,
+        translation?.title ?? (columns.title ? row[columns.title] : undefined),
         getSafeString(row.title, `Course ${index + 1}`)
     );
     const rawProgramContent = columns.programContent ? row[columns.programContent] : row.programContent;
-    const programContent = getOptionalJsonString(rawProgramContent);
     const parsedProgramContent = getProgramContentObject(rawProgramContent);
     const descriptionFromProgramContent = pickProgramContentText(parsedProgramContent, [
         "overview",
         "description",
         "summary",
     ]);
+    const localizedDescription = pickProgramContentText(translation, [
+        "overview",
+        "description",
+        "summary",
+        "details",
+    ]);
     const description = getSafeString(
-        columns.description ? row[columns.description] : undefined,
-        getSafeString(row.description, descriptionFromProgramContent || "Program information coming soon.")
+        language === "en"
+            ? columns.description
+                ? row[columns.description]
+                : undefined
+            : localizedDescription,
+        getSafeString(
+            language === "en" ? row.description : null,
+            localizedDescription || descriptionFromProgramContent || "Program information coming soon."
+        )
     );
     const durationFromProgramContent = pickProgramContentText(parsedProgramContent, [
         "duration",
         "timeline",
         "time",
     ]);
+    const localizedDuration = pickProgramContentText(translation, [
+        "duration",
+        "timeline",
+        "time",
+        "length",
+    ]);
     const time = getSafeString(
-        columns.duration ? row[columns.duration] : undefined,
-        getSafeString(row.duration, durationFromProgramContent || "Duration TBD")
+        language === "en"
+            ? columns.duration
+                ? row[columns.duration]
+                : undefined
+            : localizedDuration,
+        getSafeString(
+            language === "en" ? row.duration : null,
+            localizedDuration || durationFromProgramContent || "Duration TBD"
+        )
     );
     const img = getSafeString(
         columns.image ? row[columns.image] : undefined,
         "/news-card-img.png"
     );
+
+    const programContent = toLocalizedProgramContent(rawProgramContent, rawTranslations) ?? getOptionalJsonString(rawProgramContent);
 
     return {
         id,
@@ -299,11 +392,13 @@ export async function getCourseFilters(): Promise<CourseFilters> {
 export async function getCourses(filters: {
     degreeLevel?: string;
     fieldOfStudy?: string;
+    language?: Language;
 }): Promise<CourseCardItem[]> {
     const sql = getSql();
     const columns = await getCourseColumns();
     const conditions: string[] = [];
     const params: string[] = [];
+    const language = toLanguage(filters.language ?? null) ?? "en";
 
     addPublishedVisibilityCondition(conditions, columns);
 
@@ -329,13 +424,14 @@ export async function getCourses(filters: {
     `;
 
     const rows = await sql.unsafe<DbCourse[]>(query, params);
-    return rows.map((row, index) => mapCourseRow(row, columns, index));
+    return rows.map((row, index) => mapCourseRow(row, columns, index, language));
 }
 
-export async function getCourseById(courseId: string): Promise<CourseCardItem | null> {
+export async function getCourseById(courseId: string, language: Language = "en"): Promise<CourseCardItem | null> {
     const sql = getSql();
     const columns = await getCourseColumns();
     const normalizedCourseId = courseId.trim();
+    const resolvedLanguage = toLanguage(language) ?? "en";
 
     if (normalizedCourseId.length === 0) {
         return null;
@@ -357,7 +453,7 @@ export async function getCourseById(courseId: string): Promise<CourseCardItem | 
         const rowById = await sql.unsafe<DbCourse[]>(rowByIdQuery, [normalizedCourseId]);
 
         if (rowById.length > 0) {
-            return mapCourseRow(rowById[0], columns, 0);
+            return mapCourseRow(rowById[0], columns, 0, resolvedLanguage);
         }
     }
 
@@ -370,7 +466,7 @@ export async function getCourseById(courseId: string): Promise<CourseCardItem | 
         ${where}
         limit 500
     `);
-    const mappedRows = rows.map((row, index) => mapCourseRow(row, columns, index));
+    const mappedRows = rows.map((row, index) => mapCourseRow(row, columns, index, resolvedLanguage));
     const normalizedId = normalizedCourseId.toLowerCase();
     const normalizedSlug = toProgramSlug(normalizedCourseId);
 

@@ -9,10 +9,12 @@ import {
 } from "@/lib/auth/server";
 import { isDatabaseConfigured } from "@/lib/postgres";
 import { getCourses } from "@/lib/course-catalog";
+import { getServerLanguage } from "@/lib/i18n/server";
 
 const FALLBACK_PROGRAM_OPTIONS = ["Data Science", "Business Administration", "Public Health"];
 
 export default async function ApplyPage() {
+  const lang = await getServerLanguage();
   let initialApplicationStatus: ApplicationStatus = "not_started";
   let programOptions = FALLBACK_PROGRAM_OPTIONS;
   let initialSessionUser: AuthUser | null = null;
@@ -50,7 +52,7 @@ export default async function ApplyPage() {
     }
 
     try {
-      const courses = await getCourses({});
+      const courses = await getCourses({ language: lang });
       const dynamicOptions = Array.from(
         new Set(
           courses

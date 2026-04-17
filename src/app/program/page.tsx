@@ -3,6 +3,7 @@ import ExplorePrograms from "@/components/sections/ExplorePrograms";
 import ProgramCard from "@/components/ProgramCard";
 import BannerSection from "@/components/sections/BannerSection";
 import { getCourseFilters, getCourses, type CourseCardItem } from "@/lib/course-catalog";
+import { getServerLanguage } from "@/lib/i18n/server";
 import { isDatabaseConfigured } from "@/lib/postgres";
 
 type ProgramPageSearchParams = Promise<{
@@ -57,6 +58,7 @@ export default async function ProgramPage({
 }: {
     searchParams: ProgramPageSearchParams;
 }) {
+    const lang = await getServerLanguage();
     const params = await searchParams;
     const selectedDegreeLevel = getSingleParam(params.degreeLevel);
     const selectedFieldOfStudy = getSingleParam(params.fieldOfStudy);
@@ -77,6 +79,7 @@ export default async function ProgramPage({
                 getCourses({
                     degreeLevel: selectedDegreeLevel || undefined,
                     fieldOfStudy: selectedFieldOfStudy || undefined,
+                    language: lang,
                 }),
             ]);
             degreeLevelOptions = filters.degreeLevel;

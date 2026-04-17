@@ -1,3 +1,4 @@
+"use client";
 
 import CtaSection from "@/components/CtaSection";
 import ExplorePrograms from "@/components/sections/ExplorePrograms";
@@ -7,14 +8,17 @@ import Button from "@/components/Button";
 import CheckList from "@/components/CheckList";
 import WhyAustin from "@/components/sections/WhyAustin";
 import Link from "next/link";
+import { useTranslations } from "@/lib/useTranslations";
+
 export default function ProgramPage() {
+    const { t } = useTranslations();
     const bannerContent = {
-        title: "Tuition & Financial Aid",
-        description: "Investing in your future should be clear and manageable.",
+        title: t("tuition.title"),
+        description: t("tuition.subtitle"),
         bgImg: "/bannerImg.jpg"
     }
 
-    const tableHeadings = [ "Program",  "Per Year",  "Per Credit"];
+    const tableHeadings = [ t("tuition.programs"),  t("tuition.year"),  t("tuition.semester")];
     const tableData = [
         { program: "Undergraduate (Online)", perYear: "$12,500", perCredit: "$12,500" },
         { program: "Computer Science", perYear: "$14,000", perCredit: "$14,000" },
@@ -23,32 +27,26 @@ export default function ProgramPage() {
     ];
 
 
-    const listContent =[
-        "Monthly installment plans with no interest",
-        "Military and veteran benefits accepted",
-        "Employer tuition reimbursement processing",
-        "Federal and state financial aid eligible",
-    ]
     const whiteCards = [
         {
             icon: "/wedding-certificate.svg",
-            title: "Academic Excellence Award",
-            description: "For students with a GPA of 3.5 or higher."
+            title: t('tuition.scholarships.academicExcellence.title'),
+            description: t('tuition.scholarships.academicExcellence.description')
         },
         {
             icon: "/global-learning.svg",
-            title: "Flexible Learning Options",
-            description: "Study online or on-campus with schedules designed for working professionals."
+            title: t('tuition.scholarships.flexibleLearning.title'),
+            description: t('tuition.scholarships.flexibleLearning.description')
         },
         {
             icon: "/workspace-premium.svg",
-            title: "Career-Focused",
-            description: "92% placement rate with dedicated career services and industry partnerships."
+            title: t('tuition.scholarships.careerFocused.title'),
+            description: t('tuition.scholarships.careerFocused.description')
         },
         {
             icon: "/award-trophy.svg",
-            title: "Expert Faculty",
-            description: "Learn from industry practitioners and accomplished researchers."
+            title: t('tuition.scholarships.expertFaculty.title'),
+            description: t('tuition.scholarships.expertFaculty.description')
         }
     ]
 
@@ -58,7 +56,7 @@ export default function ProgramPage() {
             <BannerSection {...bannerContent} />
             <section className="md:py-25 py-15">
                 <div className="container">
-                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">Tuition Rates</h2>
+                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">{t("tuition.title")}</h2>
                     <div className="max-w-2xl mx-auto relative overflow-x-auto rounded-lg border border-[#33333326]">
                         <table className="w-full text-sm text-left text-nowrap">
                             <thead className="bg-[#1E73BE] text-white text-lg font-semibold">
@@ -84,12 +82,12 @@ export default function ProgramPage() {
             <WhyAustin whiteCards={whiteCards} secTitle="Scholarships & Grants" whyAustinDesc={null} button={null} />
             <section className="bg-[#F9F9F9] md:py-25 py-15">
                 <div className="container">
-                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">Payment Options</h2>
+                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">{t("tuition.paymentPlans")}</h2>
                     <div className="">
-                        <CheckList listContent={listContent} className="grid md:grid-cols-2 gap-6 space-y-0" classNamecheckboxList="p-3.5 border border-[#1E73BE]" />
-                        <Button className="mt-12 mx-auto block" variant="primary">Contact Financial Aid Office</Button>
-                        <CheckList listContent={listContent} className="grid md:grid-cols-2 gap-6" />
-                        <Link href="/contact"><Button className="mt-12 mx-auto block" variant="primary">Contact Financial Aid Office</Button></Link>
+                        <CheckList listContent={[t("tuition.paymentPlan.monthlyInstallment"), t("tuition.paymentPlan.militaryVeteran"), t("tuition.paymentPlan.employerReimbursement"), t("tuition.paymentPlan.federalAid")]} className="grid md:grid-cols-2 gap-6 space-y-0" classNamecheckboxList="p-3.5 border border-[#1E73BE]" />
+                        <Button className="mt-12 mx-auto block" variant="primary">{t('tuition.scholarships.financialAidButton')}</Button>
+                        {/* <CheckList listContent={[t("tuition.paymentPlan.monthlyInstallment"), t("tuition.paymentPlan.militaryVeteran"), t("tuition.paymentPlan.employerReimbursement"), t("tuition.paymentPlan.federalAid")]} className="grid md:grid-cols-2 gap-6" />
+                        <Link href="/contact"><Button className="mt-12 mx-auto block" variant="primary">{t('tuition.scholarships.financialAidButton')}</Button></Link> */}
                     </div>
                 </div>
             </section>

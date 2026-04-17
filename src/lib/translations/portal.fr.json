@@ -1,0 +1,55 @@
+{
+  "accessTitle": "Accéder à votre portail d'apprentissage",
+  "accessDescription": "Votre portail vers les cours, devoirs, discussions et tout ce dont vous avez besoin pour réussir.",
+  "bannerTitle": "Votre portail d'apprentissage",
+  "bannerDescription": "Accédez à tout ce dont vous avez besoin pour votre réussite académique en un seul endroit.",
+  "blocks": {
+    "students": {
+      "title": "Étudiants",
+      "description": "Accédez aux cours, soumettez des devoirs, participez aux discussions, suivez vos notes et messagerie avec les instructeurs."
+    },
+    "faculty": {
+      "title": "Faculté",
+      "description": "Gérez les cours, corrigez les devoirs, créez des discussions et communiquez avec les étudiants."
+    },
+    "administrators": {
+      "title": "Administrateurs",
+      "description": "Gérez les utilisateurs, départements, programmes, rapports et paramètres institutionnels."
+    }
+  },
+  "features": {
+    "title": "Fonctionnalités de la plateforme",
+    "description": "Tout ce dont vous avez besoin pour une expérience d'apprentissage fluide",
+    "courseManagement": {
+      "title": "Gestion des cours",
+      "description": "Apprentissage style Blackboard avec modules organisés, matériels et quiz."
+    },
+    "messaging": {
+      "title": "Messagerie en temps réel",
+      "description": "Messagerie directe et discussions de groupe avec notifications instantanées."
+    },
+    "progressTracking": {
+      "title": "Suivi des progrès",
+      "description": "Tableaux de bord visuels montrant les notes, présences et étapes d'apprentissage."
+    },
+    "assignmentSystem": {
+      "title": "Système de devoirs",
+      "description": "Soumettez, examinez et corrigez les devoirs avec commentaires intégrés."
+    },
+    "virtualClassrooms": {
+      "title": "Salles de classe virtuelles",
+      "description": "Sessions en direct avec vidéo, partage d'écran et outils interactifs."
+    },
+    "collaboration": {
+      "title": "Collaboration",
+      "description": "Projets de groupe, révision par les pairs et édition collaborative de documents."
+    }
+  },
+  "programsSectionTitle": "Explorer les programmes disponibles",
+  "programsSectionDescription": "Ces programmes sont chargés dynamiquement depuis la base de données.",
+  "intuitivePortal": {
+    "title": "Portail intuitif",
+    "description": "Naviguez facilement dans votre parcours académique. Notre portail met tout à portée de main — des devoirs à venir aux horaires de cours en direct.",
+    "button": "Aller au portail"
+  }
+}

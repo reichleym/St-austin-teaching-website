@@ -5,6 +5,7 @@ import { Eye, EyeOff, X } from "lucide-react";
 import Button from "./Button";
 import Input from "./Input";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "@/lib/useTranslations";
 
 export type AuthModalView =
     | "login"
@@ -173,6 +174,7 @@ export default function Modal({
     onAuthSuccess,
     className,
 }: ModalProps) {
+    const { t } = useTranslations();
     const [formState, setFormState] = useState<AuthFormState>(initialFormState);
     const [showPassword, setShowPassword] = useState<Record<string, boolean>>({});
     const [errorMessage, setErrorMessage] = useState("");
@@ -241,7 +243,7 @@ export default function Modal({
 
         if (view === "login") {
             if (!formState.loginEmail.trim() || !formState.loginPassword.trim()) {
-                setErrorMessage("Please enter your email and password.");
+                setErrorMessage(t("auth.required"));
                 return;
             }
 
@@ -263,7 +265,7 @@ export default function Modal({
                     setErrorMessage(
                         getFriendlyApiMessage(
                             payload?.error,
-                            "Unable to log in right now. Please try again."
+                            t("auth.invalidCredentials")
                         )
                     );
                     return;
@@ -272,7 +274,7 @@ export default function Modal({
                 onAuthSuccess?.(payload.user as AuthUser);
                 closeAndReset();
             } catch {
-                setErrorMessage("Unable to connect to the server. Please try again.");
+                setErrorMessage(t("common.error"));
             } finally {
                 setIsSubmitting(false);
             }
@@ -281,7 +283,7 @@ export default function Modal({
 
         if (view === "signup") {
             if (!formState.fullName.trim() || !formState.signupEmail.trim() || !formState.signupPassword.trim()) {
-                setErrorMessage("Please complete all required fields.");
+                setErrorMessage(t("auth.required"));
                 return;
             }
 
@@ -304,7 +306,7 @@ export default function Modal({
                     setErrorMessage(
                         getFriendlyApiMessage(
                             payload?.error,
-                            "Unable to create your account right now. Please try again."
+                            t("auth.invalidCredentials")
                         )
                     );
                     return;
@@ -316,7 +318,7 @@ export default function Modal({
                 onAuthSuccess?.(payload.user as AuthUser);
                 closeAndReset();
             } catch {
-                setErrorMessage("Unable to connect to the server. Please try again.");
+                setErrorMessage(t("common.error"));
             } finally {
                 setIsSubmitting(false);
             }
@@ -325,7 +327,7 @@ export default function Modal({
 
         if (view === "reset-password") {
             if (!formState.resetEmail.trim()) {
-                setErrorMessage("Please provide your email address.");
+                setErrorMessage(t("resetPassword.email"));
                 return;
             }
 
@@ -346,7 +348,7 @@ export default function Modal({
                     setErrorMessage(
                         getFriendlyApiMessage(
                             payload?.error,
-                            "Unable to process password reset right now. Please try again."
+                            t("common.error")
                         )
                     );
                     return;
@@ -358,11 +360,11 @@ export default function Modal({
                 if (typeof payload?.devResetToken === "string" && payload.devResetToken.trim()) {
                     updateField("resetToken", payload.devResetToken);
                     setInfoMessage(
-                        "Password reset link sent. Development mode token has been auto-filled."
+                        t("resetPassword.success")
                     );
                 }
             } catch {
-                setErrorMessage("Unable to connect to the server. Please try again.");
+                setErrorMessage(t("common.error"));
                 return;
             } finally {
                 setIsSubmitting(false);
@@ -380,17 +382,17 @@ export default function Modal({
 
         if (view === "new-password") {
             if (!formState.newPassword.trim() || !formState.confirmPassword.trim()) {
-                setErrorMessage("Please enter and confirm your new password.");
+                setErrorMessage(t("resetPassword.passwordRequirements"));
                 return;
             }
 
             if (formState.newPassword !== formState.confirmPassword) {
-                setErrorMessage("Password and confirm password must match.");
+                setErrorMessage(t("auth.passwordsDoNotMatch"));
                 return;
             }
 
             if (!formState.resetToken.trim()) {
-                setErrorMessage("Please enter your reset token.");
+                setErrorMessage(t("resetPassword.reset"));
                 return;
             }
 
@@ -413,13 +415,13 @@ export default function Modal({
                     setErrorMessage(
                         getFriendlyApiMessage(
                             payload?.error,
-                            "Unable to reset password right now. Please try again."
+                            t("common.error")
                         )
                     );
                     return;
                 }
             } catch {
-                setErrorMessage("Unable to connect to the server. Please try again.");
+                setErrorMessage(t("common.error"));
                 return;
             } finally {
                 setIsSubmitting(false);
@@ -476,10 +478,10 @@ export default function Modal({
                         <div>
                             <div className="mb-10 pr-10">
                                 <h4 className="text-[22px] font-semibold leading-tight text-[#333333] md:text-[26px]">
-                                    Log In
+                                    {t("auth.login")}
                                 </h4>
                                 <p className="mt-3 text-[18px] leading-[1.4] text-[#333333]">
-                                    Continue to St. Austin&apos;s University portal.
+                                    {t("auth.orContinueWith")} St. Austin&apos;s University portal.
                                 </p>
                             </div>
 
@@ -493,7 +495,7 @@ export default function Modal({
                                 <Input
                                     type="email"
                                     name="loginEmail"
-                                    labelText="Email Address"
+                                    labelText={t("auth.email")}
                                     placeholder="email@example.com"
                                     value={formState.loginEmail}
                                     onChange={(event) => updateField("loginEmail", event.target.value)}
@@ -501,9 +503,9 @@ export default function Modal({
                                 />
 
                                 <PasswordField
-                                    label="Password"
+                                    label={t("auth.password")}
                                     name="loginPassword"
-                                    placeholder="Enter password"
+                                    placeholder={t("auth.password")}
                                     value={formState.loginPassword}
                                     visible={Boolean(showPassword.loginPassword)}
                                     onChange={(value) => updateField("loginPassword", value)}
@@ -520,22 +522,22 @@ export default function Modal({
                                             className="text-[18px] text-[#9A9A9A]"
                                             onClick={() => changeView("reset-password")}
                                         >
-                                            Forgot Password?
+                                            {t("auth.forgotPassword")}
                                         </InlineAction>
                                 </div>
 
                                 <Button type="submit" disabled={isSubmitting} className="h-[44px] w-full rounded-[7px] text-[20px]">
-                                    {isSubmitting ? "Signing in..." : "Log In"}
+                                    {isSubmitting ? t("auth.signingIn") : t("auth.signIn")}
                                 </Button>
                             </form>
 
                             <div className="mt-10 text-center text-[18px] text-[#333333]">
-                                <span>Don&apos;t have an account, </span>
+                                <span>{t("auth.dontHaveAccount")} </span>
                                 <InlineAction
                                     className="font-medium text-[#1E73BE]"
                                     onClick={() => changeView("signup")}
                                 >
-                                    Create an Account
+                                    {t("auth.createAccount")}
                                 </InlineAction>
                             </div>
                         </div>
@@ -545,10 +547,10 @@ export default function Modal({
                         <div>
                             <div className="mb-10 pr-10">
                                 <h4 className="text-[22px] font-semibold leading-tight text-[#333333] md:text-[26px]">
-                                    Sign Up
+                                    {t("auth.signup")}
                                 </h4>
                                 <p className="mt-3 text-[18px] leading-[1.4] text-[#333333]">
-                                    Let&apos;s create an account to continue to St. Austin&apos;s University.
+                                    {t("auth.alreadyHaveAccount")} St. Austin&apos;s University.
                                 </p>
                             </div>
 
@@ -562,8 +564,8 @@ export default function Modal({
                                 <Input
                                     type="text"
                                     name="fullName"
-                                    labelText="Full Name"
-                                    placeholder="enter full name"
+                                    labelText={t("auth.firstName")}
+                                    placeholder={t("auth.firstName")}
                                     value={formState.fullName}
                                     onChange={(event) => updateField("fullName", event.target.value)}
                                     className={fieldClassName}
@@ -572,7 +574,7 @@ export default function Modal({
                                 <Input
                                     type="email"
                                     name="signupEmail"
-                                    labelText="Email Address"
+                                    labelText={t("auth.email")}
                                     placeholder="email@example.com"
                                     value={formState.signupEmail}
                                     onChange={(event) => updateField("signupEmail", event.target.value)}
@@ -580,9 +582,9 @@ export default function Modal({
                                 />
 
                                 <PasswordField
-                                    label="Password"
+                                    label={t("auth.password")}
                                     name="signupPassword"
-                                    placeholder="Enter password"
+                                    placeholder={t("auth.password")}
                                     value={formState.signupPassword}
                                     visible={Boolean(showPassword.signupPassword)}
                                     onChange={(value) => updateField("signupPassword", value)}
@@ -595,17 +597,17 @@ export default function Modal({
                                 />
 
                                 <Button type="submit" disabled={isSubmitting} className="h-[44px] w-full rounded-[7px] text-[20px]">
-                                    {isSubmitting ? "Creating account..." : "Sign up"}
+                                    {isSubmitting ? t("auth.signingUp") : t("auth.signUp")}
                                 </Button>
                             </form>
 
                             <div className="mt-10 text-center text-[18px] text-[#333333]">
-                                <span>Already have an account, </span>
+                                <span>{t("auth.alreadyHaveAccount")} </span>
                                 <InlineAction
                                     className="font-medium text-[#1E73BE]"
                                     onClick={() => changeView("login")}
                                 >
-                                    Log In Here
+                                    {t("auth.signIn")}
                                 </InlineAction>
                             </div>
                         </div>
@@ -615,10 +617,10 @@ export default function Modal({
                         <div>
                             <div className="mb-10 max-w-[520px] pr-10">
                                 <h4 className="text-[22px] font-semibold leading-tight text-[#333333] md:text-[26px]">
-                                    Reset Password
+                                    {t("resetPassword.title")}
                                 </h4>
                                 <p className="mt-3 text-[18px] leading-[1.4] text-[#333333]">
-                                    Enter your registered email address to receive a password reset link.
+                                    {t("resetPassword.enterEmail")}
                                 </p>
                             </div>
 
@@ -632,7 +634,7 @@ export default function Modal({
                                 <Input
                                     type="email"
                                     name="resetEmail"
-                                    labelText="Email Address"
+                                    labelText={t("auth.email")}
                                     placeholder="email@example.com"
                                     value={formState.resetEmail}
                                     onChange={(event) => updateField("resetEmail", event.target.value)}
@@ -640,7 +642,7 @@ export default function Modal({
                                 />
 
                                 <Button type="submit" disabled={isSubmitting} className="h-[44px] w-full rounded-[7px] text-[20px]">
-                                    {isSubmitting ? "Sending..." : "Send Password Reset Link"}
+                                    {isSubmitting ? t("resetPassword.sending") : t("resetPassword.send")}
                                 </Button>
                             </form>
 
@@ -649,7 +651,7 @@ export default function Modal({
                                     className="text-[18px] text-[#333333] font-semibold"
                                     onClick={() => changeView("login")}
                                 >
-                                    ← Back to login
+                                    {t("common.back")}
                                 </InlineAction>
                             </div>
                         </div>
@@ -665,10 +667,10 @@ export default function Modal({
 
                             <div className="max-w-[560px]">
                                 <h4 className="text-[22px] font-semibold leading-tight text-[#333333] md:text-[26px]">
-                                    Check your Email
+                                    {t("resetPassword.title")}
                                 </h4>
                                 <p className="mt-4 text-[18px] leading-[1.4] text-[#333333]">
-                                    We have sent a password reset link to your registered email address :
+                                    {t("resetPassword.success")}
                                     <span className="font-semibold"> {submittedEmail}</span>
                                 </p>
                             </div>
@@ -681,7 +683,7 @@ export default function Modal({
                                     void handlePrimaryAction();
                                 }}
                             >
-                                Open Gmail App
+                                {t("common.continue")}
                             </Button>
 
                             <div className="mt-10 text-center">
@@ -689,7 +691,7 @@ export default function Modal({
                                     className="text-[18px] text-[#333333]"
                                     onClick={() => changeView("login")}
                                 >
-                                    ← Back to login
+                                    {t("common.back")}
                                 </InlineAction>
                             </div>
                         </div>
@@ -706,10 +708,10 @@ export default function Modal({
 
                             <div className="mb-8 max-w-[560px]">
                                 <h4 className="text-[22px] font-semibold leading-tight text-[#333333] md:text-[26px]">
-                                    Set New Password
+                                    {t("resetPassword.resetForm")}
                                 </h4>
                                 <p className="mt-4 text-[18px] leading-[1.4] text-[#333333]">
-                                    Set a new password and write it down in your notes to remember it.
+                                    {t("resetPassword.passwordRequirements")}
                                 </p>
                             </div>
 
@@ -721,9 +723,9 @@ export default function Modal({
                                 }}
                             >
                                 <PasswordField
-                                    label="Password"
+                                    label={t("resetPassword.newPassword")}
                                     name="newPassword"
-                                    placeholder="Enter new password"
+                                    placeholder={t("resetPassword.newPassword")}
                                     value={formState.newPassword}
                                     visible={Boolean(showPassword.newPassword)}
                                     onChange={(value) => updateField("newPassword", value)}
@@ -736,9 +738,9 @@ export default function Modal({
                                 />
 
                                 <PasswordField
-                                    label="Confirm Password"
+                                    label={t("resetPassword.confirmPassword")}
                                     name="confirmPassword"
-                                    placeholder="Confirm password"
+                                    placeholder={t("resetPassword.confirmPassword")}
                                     value={formState.confirmPassword}
                                     visible={Boolean(showPassword.confirmPassword)}
                                     onChange={(value) => updateField("confirmPassword", value)}
@@ -753,7 +755,7 @@ export default function Modal({
                                 <Input
                                     type="text"
                                     name="resetToken"
-                                    labelText="Reset Token"
+                                    labelText={t("resetPassword.resetForm")}
                                     placeholder="Paste reset token"
                                     value={formState.resetToken}
                                     onChange={(event) => updateField("resetToken", event.target.value)}
@@ -763,7 +765,7 @@ export default function Modal({
                                 {errorMessage ? <p className="text-sm text-red-600">{errorMessage}</p> : null}
 
                                 <Button type="submit" disabled={isSubmitting} className="h-[44px] w-full rounded-[7px] text-[20px]">
-                                    {isSubmitting ? "Resetting..." : "Reset Password"}
+                                    {isSubmitting ? t("resetPassword.resetting") : t("resetPassword.reset")}
                                 </Button>
                             </form>
 
@@ -772,7 +774,7 @@ export default function Modal({
                                     className="text-[18px] text-[#333333]"
                                     onClick={() => changeView("login")}
                                 >
-                                    ← Back to login
+                                    {t("common.back")}
                                 </InlineAction>
                             </div>
                         </div>
@@ -789,10 +791,10 @@ export default function Modal({
 
                             <div className="max-w-[340px]">
                                 <h4 className="text-[22px] font-semibold leading-tight text-[#333333]">
-                                    Password Reset Successful
+                                    {t("resetPassword.passwordReset")}
                                 </h4>
                                 <p className="mt-3 text-[18px] leading-[1.4] text-[#333333]">
-                                    Your password has been successfully reset
+                                    {t("auth.loginSuccess")}
                                 </p>
                             </div>
 
@@ -803,7 +805,7 @@ export default function Modal({
                                     void handlePrimaryAction();
                                 }}
                             >
-                                ← Back to login
+                                {t("auth.loginNow")}
                             </Button>
                         </div>
                     )}

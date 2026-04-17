@@ -1,41 +1,53 @@
-import Link from "next/link";
-import Button from "../Button"
+'use client';
 
-const cardItems = [
+import Link from "next/link";
+import Button from "../Button";
+import { useTranslations } from "@/lib/useTranslations";
+
+const defaultCardItems = [
     {
         icon: "/wedding-certificate.svg",
-        title: "Accredited & Recognized",
-        description: "Nationally accredited institution with programs recognized by industry leaders."
+        titleKey: "whyAustin.card1Title",
+        descriptionKey: "whyAustin.card1Desc"
     },
     {
         icon: "/global-learning.svg",
-        title: "Flexible Learning Options",
-        description: "Study online or on-campus with schedules designed for working professionals."
+        titleKey: "whyAustin.card2Title",
+        descriptionKey: "whyAustin.card2Desc"
     },
     {
         icon: "/workspace-premium.svg",
-        title: "Career-Focused",
-        description: "92% placement rate with dedicated career services and industry partnerships."
+        titleKey: "whyAustin.card3Title",
+        descriptionKey: "whyAustin.card3Desc"
     },
     {
         icon: "/award-trophy.svg",
-        title: "Expert Faculty",
-        description: "Learn from industry practitioners and accomplished researchers."
+        titleKey: "whyAustin.card4Title",
+        descriptionKey: "whyAustin.card4Desc"
     }
-]
+];
 
-export default function WhyAustin({ whiteCards = cardItems, secTitle = "Why St. Austin?", whyAustinDesc, button }: { whiteCards?: { icon: string; title: string; description: string; }[]; secTitle?: string; whyAustinDesc?: React.ReactNode | string | null; button?: React.ReactNode }) {
+export default function WhyAustin({ whiteCards, secTitle, whyAustinDesc, button }: { whiteCards?: { icon: string; title: string; description: string; }[]; secTitle?: string; whyAustinDesc?: React.ReactNode | string | null; button?: React.ReactNode }) {
+    const { t } = useTranslations();
+    const title = secTitle ?? t("whyAustin.title");
+    const description = whyAustinDesc === undefined ? t("whyAustin.desc") : whyAustinDesc;
+    const cards = whiteCards ?? defaultCardItems.map((item) => ({
+        icon: item.icon,
+        title: t(item.titleKey),
+        description: t(item.descriptionKey),
+    }));
+
     return (
         <div className="bg-[#1E73BE] md:py-25 py-15">
             <div className="container">
                 <div className="grid grid-cols-1 lg:grid-cols-8 gap-8 items-center">
                     <div className="text-white lg:col-span-3">
-                        <h2 className="text-4xl md:text-[50px] font-bold mb-2.5 leading-tight">{secTitle}</h2>
-                        {whyAustinDesc && <p className="mb-7">Discover the St. Austin difference with our commitment to excellence, flexibility, and career success.</p>}
-                        {button && <Link href='/about' className="inline-block"><Button variant="white">Learn More</Button></Link>}
+                        <h2 className="text-4xl md:text-[50px] font-bold mb-2.5 leading-tight">{title}</h2>
+                        <p className="mb-7">{description}</p>
+                        {button ? button : <Link href='/about' className="inline-block"><Button variant="white">{t("whyAustin.learnMore")}</Button></Link>}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:col-span-5">
-                        {whiteCards.map((item, index) => (
+                        {cards.map((item, index) => (
                             <div className="bg-white p-5 rounded-[10px]" key={index}>
                                 <div className="flex items-center mb-2.5">
                                     <div className="text-4xl mr-2.5">

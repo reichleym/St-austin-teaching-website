@@ -5,6 +5,7 @@ import Link from "next/link";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
+import { useTranslations } from "@/lib/useTranslations";
 import {
     GOVERNMENT_EMPLOYEE_GROUPS,
     GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT,
@@ -31,27 +32,54 @@ function getSafeDefaultGroup(value: GovernmentEmployeeGroup | null): GovernmentE
 
 const GOVERNMENT_SUPPORT_EMAIL = "govtservices@staustin.edu";
 
-function getStatusLabel(benefit: GovernmentBenefitState): string {
+const groupLabelKeys: Record<GovernmentEmployeeGroup, string> = {
+    "Civil Service Employees": "governmentEmployeeDiscount.group.civilServiceEmployees",
+    "Veterans and Active-Duty Personnel": "governmentEmployeeDiscount.group.veteransAndActiveDuty",
+    "Public Safety Personnel": "governmentEmployeeDiscount.group.publicSafetyPersonnel",
+    "Public Health and Education Workers": "governmentEmployeeDiscount.group.publicHealthAndEducationWorkers",
+};
+
+function formatTranslation(
+    t: (key: string) => string,
+    key: string,
+    vars?: Record<string, string | number>
+) {
+    let text = t(key);
+    if (!vars) {
+        return text;
+    }
+
+    return Object.entries(vars).reduce((result, [varName, value]) => {
+        return result.replace(`{${varName}}`, String(value));
+    }, text);
+}
+
+function getStatusLabel(t: (key: string) => string, benefit: GovernmentBenefitState): string {
     if (!benefit.isGovernmentEmployee) {
-        return "Not claimed";
+        return t("governmentEmployeeDiscount.status.notClaimed");
     }
 
     if (benefit.governmentVerificationStatus === "pending_review") {
-        return "Pending admin approval";
+        return t("governmentEmployeeDiscount.status.pendingReview");
     }
 
     if (benefit.governmentVerificationStatus === "rejected") {
-        return "Rejected (resubmit required)";
+        return t("governmentEmployeeDiscount.status.rejected");
     }
 
     const activeDiscount = benefit.governmentDiscountPercent || GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT;
-    return `Approved (${activeDiscount}% discount active)`;
+    return formatTranslation(t, "governmentEmployeeDiscount.status.approved", { discount: activeDiscount });
+}
+
+function getGroupLabel(t: (key: string) => string, group: GovernmentEmployeeGroup) {
+    return t(groupLabelKeys[group]);
 }
 
 export default function GovernmentEmployeeDiscountCard({
     isLoggedIn,
     initialBenefit,
 }: GovernmentEmployeeDiscountCardProps) {
+    const { t } = useTranslations();
     const [isGovernmentEmployee, setIsGovernmentEmployee] = useState(initialBenefit.isGovernmentEmployee);
     const [selectedGroup, setSelectedGroup] = useState<GovernmentEmployeeGroup>(
         getSafeDefaultGroup(initialBenefit.governmentEmployeeGroup)
@@ -81,12 +109,12 @@ export default function GovernmentEmployeeDiscountCard({
         }
 
         if (isGovernmentEmployee && !selectedGroup) {
-            setErrorMessage("Please select your government employee category.");
+            setErrorMessage(t("governmentEmployeeDiscount.validation.selectCategory"));
             return;
         }
 
         if (isGovernmentEmployee && !governmentEmployeeId.trim()) {
-            setErrorMessage("Please provide your government employee ID.");
+            setErrorMessage(t("governmentEmployeeDiscount.validation.governmentId"));
             return;
         }
 
@@ -106,7 +134,7 @@ export default function GovernmentEmployeeDiscountCard({
 
             const payload = await response.json().catch(() => ({}));
             if (!response.ok || !payload?.ok) {
-                setErrorMessage(payload?.error || "Unable to save your discount settings.");
+                setErrorMessage(payload?.error || t("governmentEmployeeDiscount.errors.save"));
                 return;
             }
 
@@ -118,12 +146,12 @@ export default function GovernmentEmployeeDiscountCard({
             setSuccessMessage(
                 nextBenefit.isGovernmentEmployee
                     ? nextBenefit.governmentVerificationStatus === "approved"
-                        ? `Government employee discount approved (${nextBenefit.governmentDiscountPercent}% off application fee).`
-                        : `Request submitted. Email your government ID to ${GOVERNMENT_SUPPORT_EMAIL}. Discount is activated after admin approval.`
-                    : "Government employee discount removed."
+                        ? formatTranslation(t, "governmentEmployeeDiscount.success.approved", { discount: nextBenefit.governmentDiscountPercent })
+                        : formatTranslation(t, "governmentEmployeeDiscount.success.submitted", { email: GOVERNMENT_SUPPORT_EMAIL })
+                    : t("governmentEmployeeDiscount.success.removed")
             );
         } catch {
-            setErrorMessage("Unable to connect to the server. Please try again.");
+            setErrorMessage(t("governmentEmployeeDiscount.errors.connect"));
         } finally {
             setIsSubmitting(false);
         }
@@ -132,16 +160,16 @@ export default function GovernmentEmployeeDiscountCard({
     if (!isLoggedIn) {
         return (
             <div className="rounded-lg border border-[#33333333] bg-white p-6">
-                <h3 className="text-[28px] font-bold leading-tight text-[#2F2F2F]">Claim Government Employee Discount</h3>
+                <h3 className="text-[28px] font-bold leading-tight text-[#2F2F2F]">{t("governmentEmployeeDiscount.claimTitle")}</h3>
                 <p className="mt-3 text-[18px] text-[#333333CC]">
-                    Sign in to submit your government ID for admin review and unlock your application fee discount after approval.
+                    {t("governmentEmployeeDiscount.claimDescription")}
                 </p>
                 <div className="mt-5">
                     <Link
                         href="/portal?auth=login&redirect=/government-employees"
                         className="inline-flex rounded-[5px] bg-[#1E73BE] px-5 py-2.5 font-medium text-white"
                     >
-                        Sign In to Claim Discount
+                        {t("governmentEmployeeDiscount.signInButton")}
                     </Link>
                 </div>
             </div>
@@ -150,38 +178,33 @@ export default function GovernmentEmployeeDiscountCard({
 
     return (
         <div className="rounded-lg border border-[#33333333] bg-white p-6">
-            <h3 className="text-[28px] font-bold leading-tight text-[#2F2F2F]">Government Employee Discount</h3>
+            <h3 className="text-[28px] font-bold leading-tight text-[#2F2F2F]">{t("governmentEmployeeDiscount.cardTitle")}</h3>
             <p className="mt-3 text-[18px] text-[#333333CC]">
-                Eligible government employees receive {GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT}% off the
-                application fee after admin approval.
+                {formatTranslation(t, "governmentEmployeeDiscount.description", { discount: GOVERNMENT_EMPLOYEE_DISCOUNT_PERCENT })}
             </p>
 
             <div className="mt-6 rounded-md border border-[#D9E7F8] bg-[#F5F9FF] px-4 py-3">
                 <p className="text-[16px] text-[#1E73BE]">
-                    Current status:{" "}
-                    <span className="font-semibold">
-                        {getStatusLabel(currentBenefit)}
-                    </span>
+                    {t("governmentEmployeeDiscount.currentStatus")} <span className="font-semibold">{getStatusLabel(t, currentBenefit)}</span>
                 </p>
                 {currentBenefit.isGovernmentEmployee && currentBenefit.governmentEmployeeGroup ? (
                     <p className="mt-1 text-[14px] text-[#1E73BECC]">
-                        Category: {currentBenefit.governmentEmployeeGroup}
+                        {t("governmentEmployeeDiscount.categoryLabel")} {getGroupLabel(t, currentBenefit.governmentEmployeeGroup)}
                     </p>
                 ) : null}
                 {currentBenefit.isGovernmentEmployee && currentBenefit.governmentEmployeeId ? (
                     <p className="mt-1 text-[14px] text-[#1E73BECC]">
-                        Government ID: {currentBenefit.governmentEmployeeId}
+                        {t("governmentEmployeeDiscount.governmentIdLabel")} {currentBenefit.governmentEmployeeId}
                     </p>
                 ) : null}
-                {currentBenefit.isGovernmentEmployee &&
-                currentBenefit.governmentVerificationStatus === "pending_review" ? (
+                {currentBenefit.isGovernmentEmployee && currentBenefit.governmentVerificationStatus === "pending_review" ? (
                     <p className="mt-1 text-[14px] text-[#1E73BECC]">
-                        Email your ID confirmation to {GOVERNMENT_SUPPORT_EMAIL} for approval.
+                        {formatTranslation(t, "governmentEmployeeDiscount.emailConfirmation", { email: GOVERNMENT_SUPPORT_EMAIL })}
                     </p>
                 ) : null}
                 {activeDiscount > 0 ? (
                     <p className="mt-1 text-[14px] text-[#1E73BECC]">
-                        Active discount: {activeDiscount}% off application fee.
+                        {formatTranslation(t, "governmentEmployeeDiscount.activeDiscount", { discount: activeDiscount })}
                     </p>
                 ) : null}
             </div>
@@ -194,14 +217,14 @@ export default function GovernmentEmployeeDiscountCard({
                     className="mt-1 h-4 w-4 accent-[#1E73BE]"
                 />
                 <span className="text-[16px] text-[#333333]">
-                    I am a current government employee / public sector staff member.
+                    {t("governmentEmployeeDiscount.checkboxLabel")}
                 </span>
             </label>
 
             {isGovernmentEmployee ? (
                 <div className="mt-4">
                     <label className="mb-2 block text-sm font-medium text-[#333333]">
-                        Select your government employee category
+                        {t("governmentEmployeeDiscount.selectCategoryLabel")}
                     </label>
                     <Select
                         value={selectedGroup}
@@ -210,21 +233,21 @@ export default function GovernmentEmployeeDiscountCard({
                     >
                         {GOVERNMENT_EMPLOYEE_GROUPS.map((group) => (
                             <option key={group} value={group}>
-                                {group}
+                                {getGroupLabel(t, group)}
                             </option>
                         ))}
                     </Select>
                     <div className="mt-4">
                         <Input
                             type="text"
-                            labelText="Government Employee ID"
+                            labelText={t("governmentEmployeeDiscount.governmentEmployeeIdLabel")}
                             value={governmentEmployeeId}
                             onChange={(event) => setGovernmentEmployeeId(event.target.value)}
-                            placeholder="Enter your official government ID"
+                            placeholder={t("governmentEmployeeDiscount.governmentEmployeeIdPlaceholder")}
                             className="h-[42px] rounded-[4px] border-[#A7A7A7] px-3 text-[14px] text-[#333333]"
                         />
                         <p className="mt-2 text-[13px] text-[#333333B3]">
-                            Submit the same ID by email to {GOVERNMENT_SUPPORT_EMAIL}. Discount is applied only after admin approval.
+                            {formatTranslation(t, "governmentEmployeeDiscount.submitIdMessage", { email: GOVERNMENT_SUPPORT_EMAIL })}
                         </p>
                     </div>
                 </div>
@@ -232,7 +255,7 @@ export default function GovernmentEmployeeDiscountCard({
 
             <div className="mt-6">
                 <Button type="button" onClick={handleSave} disabled={isSubmitting} className="min-w-[170px] px-5 py-[10px]">
-                    {isSubmitting ? "Saving..." : "Save Discount Settings"}
+                    {isSubmitting ? t("governmentEmployeeDiscount.saving") : t("governmentEmployeeDiscount.saveButton")}
                 </Button>
             </div>
 

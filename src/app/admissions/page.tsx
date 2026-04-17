@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/components/Button";
 import { FaAngleRight } from "react-icons/fa6";
 import BannerSection from "@/components/sections/BannerSection";
@@ -5,105 +7,106 @@ import StepsSection from "@/components/sections/StepsSection";
 import CheckList from "@/components/CheckList";
 import CtaSection from "@/components/CtaSection";
 import Accordions from "@/components/Accordions";
+import { useTranslations } from "@/lib/useTranslations";
 
 export default function AdmissionsPage() {
+    const { t } = useTranslations();
     const bannerContent = {
-        title: "Admissions",
-        description: "Your journey to a brighter future starts here. Learn about our application process, requirements, and deadlines.",
+        title: t("admissions.title"),
+        description: t("admissions.desc"),
         bgImg: "/bannerImg.jpg",
     };
 
     const stepsContent = [
         {
-            cardTitle: "Choose Your Program",
-            cardDescription: "Browse our catalog and select the program that aligns with your goals.",
+            cardTitle: t("admissions.step1Title"),
+            cardDescription: t("admissions.step1Desc"),
             stepNum: "01",
         },
         {
-            cardTitle: "Submit Your Application",
-            cardDescription: "Complete the online application form with your personal and academic details.",
+            cardTitle: t("admissions.step2Title"),
+            cardDescription: t("admissions.step2Desc"),
             stepNum: "02",
         },
         {
-            cardTitle: "Provide Documents",
-            cardDescription: "Upload transcripts, test scores, and any required supporting documents.",
+            cardTitle: t("admissions.step3Title"),
+            cardDescription: t("admissions.step3Desc"),
             stepNum: "03",
         },
         {
-            cardTitle: "Receive Your Decision",
-            cardDescription: "Our admissions team will review and notify you within 2-3 weeks.",
+            cardTitle: t("admissions.step4Title"),
+            cardDescription: t("admissions.step4Desc"),
             stepNum: "04",
         },
     ];
 
     const listContent = [
-        "Completed online application form",
-        "Official transcripts from all previous institutions",
-        "Standardized test scores (if applicable)",
-        "Letters of recommendation",
-        "Personal statement or essay",
-        "Application fee payment",
+        t("admissions.req1"),
+        t("admissions.req2"),
+        t("admissions.req3"),
+        t("admissions.req4"),
+        t("admissions.req5"),
     ];
 
     const deadlineItem = [
         {
-            title: "September Intake",
-            headingOne: "Priority Deadline",
-            headingTwo: "Final Deadline",
-            dateOne: "July 15",
-            dateTwo: "August 31",
+            title: t("admissions.intakeSeptember"),
+            headingOne: t("admissions.priorityDeadline"),
+            headingTwo: t("admissions.finalDeadline"),
+            dateOne: t("admissions.septemberPriorityDate"),
+            dateTwo: t("admissions.septemberFinalDate"),
         },
         {
-            title: "January Intake",
-            headingOne: "Priority Deadline",
-            headingTwo: "Final Deadline",
-            dateOne: "November 1",
-            dateTwo: "December 15",
+            title: t("admissions.intakeJanuary"),
+            headingOne: t("admissions.priorityDeadline"),
+            headingTwo: t("admissions.finalDeadline"),
+            dateOne: t("admissions.januaryPriorityDate"),
+            dateTwo: t("admissions.januaryFinalDate"),
         },
         {
-            title: "May Intake",
-            headingOne: "Priority Deadline",
-            headingTwo: "Final Deadline",
-            dateOne: "March 1",
-            dateTwo: "April 15",
+            title: t("admissions.intakeMay"),
+            headingOne: t("admissions.priorityDeadline"),
+            headingTwo: t("admissions.finalDeadline"),
+            dateOne: t("admissions.mayPriorityDate"),
+            dateTwo: t("admissions.mayFinalDate"),
         },
     ];
 
     const accordionsContent = [
         {
-            title: "Can I apply to multiple programs?",
-            description: "The application deadlines vary by program. Please refer to our admissions page for specific dates and details.",
+            title: t("admissions.faqQ1"),
+            description: t("admissions.faqA1"),
         },
         {
-            title: "Is there an application fee?",
-            description: "Typically, we require transcripts, standardized test scores, letters of recommendation, and a personal statement. Please check the specific requirements for your chosen program.",
+            title: t("admissions.faqQ2"),
+            description: t("admissions.faqA2"),
         },
         {
-            title: "How long does the review process take?",
-            description: "Yes, there is a non-refundable application fee. The amount may vary depending on the program. Fee waivers are available for eligible applicants.",
+            title: t("admissions.faqQ3"),
+            description: t("admissions.faqA3"),
         },
         {
-            title: "Can I defer my admission?",
-            description: "Yes, there is a non-refundable application fee. The amount may vary depending on the program. Fee waivers are available for eligible applicants.",
+            title: t("admissions.faqQ4"),
+            description: t("admissions.faqA4"),
         },
     ];
 
     return (
         <>
             <BannerSection {...bannerContent}>
-                <Button className="mt-6" variant="icon" icon={<FaAngleRight />} size="lg">Explore Programs</Button>
+                <Button className="mt-6" variant="icon" icon={<FaAngleRight />} size="lg">{t("admissions.explorePrograms")}</Button>
             </BannerSection>
-            <StepsSection stepsContent={stepsContent} title="How to Apply" />
+            <StepsSection stepsContent={stepsContent} title={t("admissions.stepsTitle") || "How to Apply"} />
             <section className="bg-[#F9F9F9] md:py-25 py-15">
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10">
                         <div className="md:col-span-1">
-                            <h2 className="text-3xl font-bold mb-10">Requirements</h2>
+                            <h2 className="text-3xl font-bold mb-10">{t("admissions.requirements")}</h2>
                             <CheckList listContent={listContent} className="md:max-w-[500px]" />
                         </div>
                         <div className="md:col-span-1">
                             <img src="/cta-img.png" className="w-full md:max-w-[500px] ml-auto h-full object-cover" alt="" />
-                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-10">Requirements</h2>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-10">{t("admissions.requirements")}</h2>
                             <CheckList listContent={listContent} className="max-w-[500px]" classNamecheckboxList="p-3.5 border border-[#1E73BE]" />
                         </div>
                         <div className="md:col-span-1 h-full">
@@ -115,7 +118,7 @@ export default function AdmissionsPage() {
             <section className="md:py-25 py-15">
                 <div className="container">
                     <div className="flex flex-col items-center text-center mb-12">
-                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">Important Deadlines</h2>
+                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">{t("admissions.importantDeadlines")}</h2>
                     </div>
                     <div className="mx-auto max-w-[840px] space-y-5">
                         {deadlineItem.map((item, index) => (
@@ -142,7 +145,7 @@ export default function AdmissionsPage() {
             </section>
             <section className="md:pb-25 pb-15">
                 <div className="container">
-                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">Frequently Asked Questions</h2>
+                    <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">{t("admissions.faq")}</h2>
                     <div className="mx-auto max-w-[890px] space-y-5">
                         <Accordions accordionsContent={accordionsContent} />
                     </div>

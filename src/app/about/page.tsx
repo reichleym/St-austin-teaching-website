@@ -1,13 +1,17 @@
+"use client";
+
 import BannerSection from "@/components/sections/BannerSection";
 import CtaSection from "@/components/CtaSection";
 import Accreditation from "@/components/sections/Accreditation";
 import { Icon } from "lucide-react";
 import IconCard from "@/components/IconCard";
+import { useTranslations } from "@/lib/useTranslations";
 
 export default function AboutPage() {
+    const { t } = useTranslations();
     const bannerContent = {
-        title: "About St. Austin",
-        description: "A legacy of academic excellence, innovation, and commitment to student success since 1985.",
+        title: t("about.title"),
+        description: t("about.mission"),
         bgImg: "/bannerImg.jpg",
     };
 
@@ -65,11 +69,9 @@ export default function AboutPage() {
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10 items-center">
                         <div className="md:col-span-1">
-                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">Our History</h2>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{t("about.history")}</h2>
                             <p className="">
-                                Founded in 1985, St. Austin University began as a small college dedicated to business education. Over four decades, we have grown into a comprehensive university offering over 50 programs across multiple disciplines.
-                                <br />
-                                Our commitment to flexibility and innovation led us to become one of the first institutions to offer fully online degree programs, making quality education accessible to students worldwide.
+                                {t("about.historyDesc")}
                             </p>
                         </div>
                         <div className="md:col-span-1 h-full">
@@ -83,12 +85,12 @@ export default function AboutPage() {
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10">
                         <div className="md:col-span-1">
-                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">Our Mission</h2>
-                            <p className="text-lg">To provide accessible, career-focused education that empowers individuals to achieve professional excellence and contribute meaningfully to their communities. We are committed to innovative teaching, rigorous scholarship, and inclusive learning.</p>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{t("about.mission")}</h2>
+                            <p className="text-lg">{t("about.missionDesc")}</p>
                         </div>
                         <div className="md:col-span-1">
-                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">Our Vision</h2>
-                            <p className="text-lg">To be a leading institution recognized for transforming lives through education, fostering innovation, and preparing graduates who drive positive change in the global workforce.</p>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{t("about.vision")}</h2>
+                            <p className="text-lg">{t("about.visionDesc")}</p>
                         </div>
                     </div>
                 </div>
@@ -96,7 +98,7 @@ export default function AboutPage() {
             <section className="md:py-25 py-15">
                 <div className="container">
                     <div className="mb-[50px] text-center">
-                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">Accreditation</h2>
+                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">{t("about.accreditation")}</h2>
                     </div>
                     <IconCard blockContent={blockContent} classNameCard="border border-[#33333340] p-[30px]" />
                 </div>
@@ -105,7 +107,7 @@ export default function AboutPage() {
             <section className="pb-25">
                 <div className="container">
                     <div className="flex flex-col items-center text-center mb-[50px]">
-                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">Leadership Team</h2>
+                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">{t("about.leadership")}</h2>
                     </div>
                     <div className="grid md:grid-cols-4 gap-5">
                         {teamMembers.map((member) => (

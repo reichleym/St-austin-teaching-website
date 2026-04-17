@@ -168,7 +168,6 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
 
     const menuItems = [
         { label: t('header.menu.programs'), href: "/program" },
-        { label: t('header.menu.careers'), href: "/careers" },
         { label: t('header.menu.admissions'), href: "/admissions" },
         { label: t('header.menu.tuition'), href: "/tuition" },
         { label: t('header.menu.studentExperience'), href: "/studentExperience" },
@@ -179,6 +178,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
         { label: t('header.topMenu.governmentEmployees'), href: "/government-employees" },
         { label: t('header.topMenu.requestInfo'), href: "/request-info" },
         { label: t('header.topMenu.donations'), href: "/donations" },
+        { label: t('header.topMenu.careers'), href: "/careers" },
     ];
 
 
@@ -441,7 +441,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                     onClick={() => openPortalModal("login")}
                                     className="w-full cursor-pointer rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors duration-200 hover:bg-blue-700"
                                 >
-                                    Portal
+                                    {t('header.portal')}
                                 </button>
                             )}
                         </div>

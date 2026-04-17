@@ -7,8 +7,10 @@ import Input from '@/components/Input';
 import Select from '@/components/Select';
 import BannerSection from '@/components/sections/BannerSection';
 import { FaAngleRight } from 'react-icons/fa6';
+import { useTranslations } from '@/lib/useTranslations';
 
 export default function RequestInfoPage() {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -69,8 +71,8 @@ export default function RequestInfoPage() {
   };
 
   const bannerContent = {
-    title: 'Request More Information',
-    description: 'Get personalized details about our programs, admissions process, tuition, and how we can help you achieve your educational goals.',
+    title: t('requestInfo.title'),
+    description: t('requestInfo.subtitle'),
     bgImg: '/bannerImg.jpg'
   };
 
@@ -78,8 +80,8 @@ export default function RequestInfoPage() {
     return (
       <section className="min-h-screen flex items-center justify-center py-25">
         <div className="container text-center max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-8 text-[#1E73BE]">Thank You!</h1>
-          <p className="text-xl mb-8">Your request has been submitted successfully. Our admissions team will contact you within 1-2 business days.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-8 text-[#1E73BE]">{t('requestInfo.success')}</h1>
+          <p className="text-xl mb-8">{t('requestInfo.desc')}</p>
           <Link href="/">
             <Button variant="primary" size="lg" className="inline-flex items-center gap-2">
               Back to Home <FaAngleRight />
@@ -93,12 +95,12 @@ export default function RequestInfoPage() {
   return (
     <>
       <BannerSection {...bannerContent}>
-        <p className="text-lg mb-6 max-w-md">Complete the form below and we'll send you detailed program information tailored to your interests.</p>
+        <p className="text-lg mb-6 max-w-md">{t('requestInfo.desc')}</p>
       </BannerSection>
       <section className="py-25">
         <div className="container">
           <div className="max-w-[700px] mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Request Information</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{t('requestInfo.title')}</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {formError && <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">{formError}</div>}

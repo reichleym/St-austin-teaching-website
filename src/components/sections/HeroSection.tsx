@@ -24,9 +24,9 @@ export default function HeroSection() {
                             <Link href="/apply" className="inline-flex">
                                 <Button>{t('header.applyNow')}</Button>
                             </Link>
-                            <Link href="/apply" className="inline-flex">
+                            {/* <Link href="/apply" className="inline-flex">
                                 <Button variant="icon" icon={<FaAngleRight />}>{t('header.applyNow')}</Button>
-                            </Link>
+                            </Link> */}
                         </div>
                     </div>
                 </div>

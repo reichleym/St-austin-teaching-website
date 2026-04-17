@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/sections/Footer";
@@ -33,13 +34,15 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Teachers:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <LanguageProvider suppressHydrationWarning>
-          <Header initialSessionUser={initialSessionUser} />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </LanguageProvider>
+        <Suspense fallback={null}>
+          <LanguageProvider suppressHydrationWarning>
+            <Header initialSessionUser={initialSessionUser} />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </LanguageProvider>
+        </Suspense>
       </body>
 
     </html>

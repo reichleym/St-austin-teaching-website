@@ -1,5 +1,8 @@
+"use client";
+
+import { useState, useEffect } from 'react';
 import BannerSection from "@/components/sections/BannerSection";
-import { getSql, isDatabaseConfigured } from "@/lib/postgres";
+import { useTranslations } from "@/lib/useTranslations";
 
 type Career = {
   id: string;
@@ -8,60 +11,37 @@ type Career = {
   isActive?: boolean;
 };
 
-async function getCareersFromDb(): Promise<Career[]> {
-  if (!isDatabaseConfigured) {
-    return [];
-  }
-
-  try {
-    const sql = getSql();
-    const settings = await sql`
-      SELECT
-        "universityCareers" AS "universityCareers"
-      FROM
-        "SystemSettings"
-      ORDER BY
-        "updatedAt" DESC
-      LIMIT 1
-    `;
-
-    const rawCareers = settings?.[0]?.universityCareers ?? settings?.[0]?.universitycareers;
-    let careers: unknown = rawCareers;
-
-    if (typeof rawCareers === "string") {
+export default function CareersPage() {
+  const { t } = useTranslations();
+  const [careers, setCareers] = useState<Career[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadCareers = async () => {
       try {
-        careers = JSON.parse(rawCareers);
-      } catch {
-        careers = undefined;
+        const response = await fetch('/api/careers');
+        if (response.ok) {
+          const data = await response.json();
+          setCareers(Array.isArray(data?.data) ? data.data : []);
+        } else {
+          setCareers([]);
+        }
+      } catch (error) {
+        console.error('Failed to load careers', error);
+        setCareers([]);
+      } finally {
+        setLoading(false);
       }
-    }
-
-    if (!Array.isArray(careers)) {
-      return [];
-    }
-
-    return careers.filter((career: unknown) => {
-      return (
-        typeof career === "object" &&
-        career !== null &&
-        ("isActive" in career ? Boolean((career as any).isActive) : true)
-      );
-    }) as Career[];
-  } catch (error) {
-    console.error("[careers/page] Failed to load careers from DB", error);
-    return [];
-  }
-}
-
-export default async function CareersPage() {
-  const careers = await getCareersFromDb();
+    };
+    loadCareers();
+  }, []);
   const email = "admissions@staustin.edu";
 
   return (
     <>
       <BannerSection
-        title="Career Opportunities"
-        description="Explore our current openings and apply by email for a smooth, direct process."
+        title={t('careers.title')}
+        description={t('careers.desc')}
         bgImg="/bannerImg.jpg"
       >
         <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">

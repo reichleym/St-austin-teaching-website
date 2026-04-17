@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "@/lib/useTranslations";
 import BannerSection from "@/components/sections/BannerSection";
 import Button from "@/components/Button";
 import Accreditation from "@/components/sections/Accreditation";
@@ -25,10 +26,10 @@ function parseAmountToCents(value: string): number | null {
 }
 
 export default function DonationsPage() {
+    const { t } = useTranslations();
     const bannerContent = {
-        title: "Make Your Gift to St. Austin University",
-        description:
-            "When you support St. Austin through student scholarships, you help others succeed. Every donation funds scholarships and programs to help more students achieve their degrees.",
+        title: t("donations.title"),
+        description: t("donations.subtitle"),
         bgImg: "/bannerImg.jpg",
     };
 
@@ -193,9 +194,9 @@ export default function DonationsPage() {
                         <div className="rounded-[10px] bg-white">
                             <div className="mb-10">
                                 <h2 className="mb-3 text-3xl font-bold leading-tight md:text-[35px]">
-                                    Choose Your Gift Amount
+                                    {t("donations.donationAmounts")}
                                 </h2>
-                                <p className="text-[#333333]">Select a suggested amount or enter your own.</p>
+                                <p className="text-[#333333]">{t("donations.desc")}</p>
                             </div>
 
                             {renderAmountGrid(oneTimeAmounts)}
@@ -203,7 +204,7 @@ export default function DonationsPage() {
                             <div className="space-y-5 pt-2">
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-[#333333]">
-                                        Enter a custom amount
+                                        {t("donations.custom")}
                                     </label>
                                     <div className="flex items-center rounded-[5px] border border-[#BDBDBD] px-4">
                                         <span className="text-lg font-semibold text-[#333333]">XAF</span>
@@ -318,7 +319,7 @@ export default function DonationsPage() {
                                     {formSuccess ? <p className="mt-5 text-sm text-green-700">{formSuccess}</p> : null}
 
                                     <Button className="mt-8 w-full" type="submit" disabled={isSubmitting}>
-                                        {isSubmitting ? "Submitting..." : "Donate"}
+                                        {isSubmitting ? t("common.loading") : t("donations.donateNow")}
                                     </Button>
                                 </form>
 
@@ -379,10 +380,8 @@ export default function DonationsPage() {
 
             <Accreditation
                 blockContent={blockFeatures}
-                title="Your Impact at St. Austin"
-                description="Every gift, no matter the size, helps us provide accessible, high-quality education to students who need it most."
-                className="bg-[#F5F5F5] py-25"
-                classNameCard="items-center text-center"
+                                title={t("donations.impact")}
+                                description={t("donations.desc")}
             />
 
             <MatchingGiftSection />
