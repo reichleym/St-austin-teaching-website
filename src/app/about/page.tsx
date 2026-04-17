@@ -1,21 +1,88 @@
-"use client";
-
 import BannerSection from "@/components/sections/BannerSection";
 import CtaSection from "@/components/CtaSection";
-import Accreditation from "@/components/sections/Accreditation";
-import { Icon } from "lucide-react";
 import IconCard from "@/components/IconCard";
-import { useTranslations } from "@/lib/useTranslations";
+import { getAboutPageContent } from "@/lib/about-page";
+import { getServerLanguage } from "@/lib/i18n/server";
+import { getNestedValue, translationsMap, type Language } from "@/lib/i18n/catalog";
 
-export default function AboutPage() {
-    const { t } = useTranslations();
+type TeamMember = {
+    name: string;
+    role: string;
+    image: string;
+    description: string;
+};
+
+type IconBlock = {
+    cardTitle: string;
+    cardDescription: string;
+    icon: string;
+};
+
+function translate(key: string, translations: Record<string, unknown>, fallbackTranslations: Record<string, unknown>) {
+    const value = getNestedValue(translations, key);
+    if (typeof value === "string") {
+        return value;
+    }
+
+    const fallbackValue = getNestedValue(fallbackTranslations, key);
+    if (typeof fallbackValue === "string") {
+        return fallbackValue;
+    }
+
+    return key;
+}
+
+export async function generateMetadata() {
+    const lang = await getServerLanguage();
+    const aboutData = await getAboutPageContent(lang);
+
+    return {
+        title: aboutData.banner?.title ?? "About St. Austin's International University",
+        description: aboutData.banner?.description ?? "Learn more about St. Austin's International University.",
+    };
+}
+
+export default async function AboutPage() {
+    const lang = await getServerLanguage();
+    const aboutData = await getAboutPageContent(lang);
+    const translations = translationsMap[lang];
+    const fallbackTranslations = translationsMap.en;
+
     const bannerContent = {
-        title: t("about.title"),
-        description: t("about.mission"),
-        bgImg: "/bannerImg.jpg",
+        title: aboutData.banner?.title ?? translate("about.title", translations, fallbackTranslations),
+        description: aboutData.banner?.description ?? translate("about.mission", translations, fallbackTranslations),
+        bgImg: aboutData.banner?.bgImg ?? "/bannerImg.jpg",
     };
 
-    const blockContent = [
+    const historyContent = {
+        title: aboutData.history?.title ?? translate("about.history", translations, fallbackTranslations),
+        description: aboutData.history?.description ?? translate("about.historyDesc", translations, fallbackTranslations),
+        image: aboutData.history?.image ?? "/cta-img.png",
+    };
+
+    const missionTitle =
+        aboutData.missionVision?.mission?.title ??
+        aboutData.missionVision?.missionTitle ??
+        aboutData.missionVision?.title ??
+        translate("about.mission", translations, fallbackTranslations);
+
+    const missionDescription =
+        aboutData.missionVision?.mission?.desc ??
+        aboutData.missionVision?.missionDesc ??
+        aboutData.missionVision?.description ??
+        translate("about.missionDesc", translations, fallbackTranslations);
+
+    const visionTitle =
+        aboutData.missionVision?.vision?.title ??
+        aboutData.missionVision?.visionTitle ??
+        translate("about.vision", translations, fallbackTranslations);
+
+    const visionDescription =
+        aboutData.missionVision?.vision?.desc ??
+        aboutData.missionVision?.visionDesc ??
+        translate("about.visionDesc", translations, fallbackTranslations);
+
+    const blockContent: IconBlock[] = aboutData.iconCard?.blockContent ?? [
         {
             cardTitle: "National Board of Higher Education",
             cardDescription: "National Board of Higher Education",
@@ -33,7 +100,7 @@ export default function AboutPage() {
         },
     ];
 
-    const teamMembers = [
+    const teamMembers: TeamMember[] = aboutData.teamGrid?.teamMembers ?? [
         {
             name: "Dr. Margaret Chen",
             role: "President",
@@ -69,13 +136,11 @@ export default function AboutPage() {
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10 items-center">
                         <div className="md:col-span-1">
-                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{t("about.history")}</h2>
-                            <p className="">
-                                {t("about.historyDesc")}
-                            </p>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{historyContent.title}</h2>
+                            <p>{historyContent.description}</p>
                         </div>
                         <div className="md:col-span-1 h-full">
-                            <img src="/cta-img.png" className="h-full object-cover rounded-lg w-full" alt="" />
+                            <img src={historyContent.image} className="h-full object-cover rounded-lg w-full" alt="About history" />
                         </div>
                     </div>
                 </div>
@@ -85,20 +150,21 @@ export default function AboutPage() {
                 <div className="container">
                     <div className="grid md:grid-cols-2 gap-10">
                         <div className="md:col-span-1">
-                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{t("about.mission")}</h2>
-                            <p className="text-lg">{t("about.missionDesc")}</p>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{missionTitle}</h2>
+                            <p className="text-lg">{missionDescription}</p>
                         </div>
                         <div className="md:col-span-1">
-                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{t("about.vision")}</h2>
-                            <p className="text-lg">{t("about.visionDesc")}</p>
+                            <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-[10px]">{visionTitle}</h2>
+                            <p className="text-lg">{visionDescription}</p>
                         </div>
                     </div>
                 </div>
             </section>
+
             <section className="md:py-25 py-15">
                 <div className="container">
                     <div className="mb-[50px] text-center">
-                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">{t("about.accreditation")}</h2>
+                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">{aboutData.iconCard?.title ?? translate("about.accreditation", translations, fallbackTranslations)}</h2>
                     </div>
                     <IconCard blockContent={blockContent} classNameCard="border border-[#33333340] p-[30px]" />
                 </div>
@@ -107,7 +173,7 @@ export default function AboutPage() {
             <section className="pb-25">
                 <div className="container">
                     <div className="flex flex-col items-center text-center mb-[50px]">
-                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">{t("about.leadership")}</h2>
+                        <h2 className="text-4xl md:text-[50px] leading-tight font-bold">{aboutData.teamGrid?.title ?? translate("about.leadership", translations, fallbackTranslations)}</h2>
                     </div>
                     <div className="grid md:grid-cols-4 gap-5">
                         {teamMembers.map((member) => (
@@ -124,7 +190,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            <CtaSection />
+            <CtaSection title={aboutData.cta?.title} desc={aboutData.cta?.desc} />
         </>
     );
 }

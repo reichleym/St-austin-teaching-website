@@ -10,7 +10,7 @@ export function useTranslations() {
     throw new Error('useTranslations must be used within LanguageProvider');
   }
 
-  const { translations, fallbackTranslations } = context;
+  const { translations, fallbackTranslations, lang, setLang } = context;
 
   function t(key: string): string {
     const value = getNestedValue(translations, key);
@@ -26,6 +26,5 @@ export function useTranslations() {
     return key;
   }
 
-
-  return { t };
+  return { t, lang, setLang };
 }
