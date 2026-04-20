@@ -2,6 +2,7 @@ import BannerSection from "@/components/sections/BannerSection";
 import CtaSection from "@/components/CtaSection";
 import IconCard from "@/components/IconCard";
 import { getAboutPageContent } from "@/lib/about-page";
+import { getStudentExperienceContent } from "@/lib/student-experience-page";
 import { getServerLanguage } from "@/lib/i18n/server";
 import { getNestedValue, translationsMap, type Language } from "@/lib/i18n/catalog";
 
@@ -44,8 +45,8 @@ export async function generateMetadata() {
 
 export default async function AboutPage() {
     const lang = await getServerLanguage();
-    const aboutData = await getAboutPageContent(lang);
-    const translations = translationsMap[lang];
+    const [aboutData] = await Promise.all([getAboutPageContent(lang), getStudentExperienceContent(lang)]);
+    const translations = translationsMap[lang as Language];
     const fallbackTranslations = translationsMap.en;
 
     const bannerContent = {

@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { getAboutPageContent } from "@/lib/about-page";
 import { getStudentExperienceContent } from "@/lib/student-experience-page";
 import { toLanguage } from "@/lib/i18n/catalog";
 
@@ -11,6 +10,6 @@ export async function GET(request: Request) {
   const cookieLang = cookieStore.get("lang")?.value ?? null;
   const lang = toLanguage(queryLang ?? cookieLang) ?? "en";
 
-  const [aboutPage, studentExperience] = await Promise.all([getAboutPageContent(lang), getStudentExperienceContent(lang)]);
-  return NextResponse.json({ lang, aboutPage, studentExperience });
+  const studentExperience = await getStudentExperienceContent(lang);
+  return NextResponse.json({ lang, studentExperience });
 }

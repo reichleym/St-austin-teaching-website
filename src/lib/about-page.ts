@@ -1,5 +1,5 @@
 import "server-only";
-import { getSql } from "@/lib/postgres";
+import { getSql, isDatabaseConfigured } from "@/lib/postgres";
 import { toLanguage, type Language } from "@/lib/i18n/catalog";
 
 export type AboutPageBanner = {
@@ -106,29 +106,39 @@ function getTranslationForLang(value: unknown, lang: Language): Record<string, u
 }
 
 async function fetchAboutPageRows(): Promise<RawAboutPageRow[]> {
-  const sql = getSql();
+  if (!isDatabaseConfigured) {
+    console.warn("[about-page] database not configured — skipping AboutPage query");
+    return [];
+  }
 
-  return await sql<RawAboutPageRow[]>`
-    select "componentType", "content"
-    from "AboutPage"
-    where "componentType" in (
-      'BannerSection',
-      'HistorySection',
-      'MissionVisionSection',
-      'IconCard',
-      'TeamGridSection',
-      'CtaSection'
-    )
-    order by case
-      when "componentType" = 'BannerSection' then 0
-      when "componentType" = 'HistorySection' then 1
-      when "componentType" = 'MissionVisionSection' then 2
-      when "componentType" = 'IconCard' then 3
-      when "componentType" = 'TeamGridSection' then 4
-      when "componentType" = 'CtaSection' then 5
-      else 99
-    end
-  `;
+  try {
+    const sql = getSql();
+
+    return await sql<RawAboutPageRow[]>`
+      select "componentType", "content"
+      from "AboutPage"
+      where "componentType" in (
+        'BannerSection',
+        'HistorySection',
+        'MissionVisionSection',
+        'IconCard',
+        'TeamGridSection',
+        'CtaSection'
+      )
+      order by case
+        when "componentType" = 'BannerSection' then 0
+        when "componentType" = 'HistorySection' then 1
+        when "componentType" = 'MissionVisionSection' then 2
+        when "componentType" = 'IconCard' then 3
+        when "componentType" = 'TeamGridSection' then 4
+        when "componentType" = 'CtaSection' then 5
+        else 99
+      end
+    `;
+  } catch (err) {
+    console.error("[about-page] error fetching AboutPage rows:", err);
+    return [];
+  }
 }
 
 export async function getAboutPageContent(langValue: string | null): Promise<AboutPagePayload> {
@@ -136,6 +146,7 @@ export async function getAboutPageContent(langValue: string | null): Promise<Abo
   const rows = await fetchAboutPageRows();
 
   const payload: AboutPagePayload = {};
+  type AboutSectionValue = AboutPagePayload[keyof AboutPagePayload];
 
   for (const row of rows) {
     const sectionKey = SECTION_COMPONENT_MAP[row.componentType];
@@ -148,7 +159,7 @@ export async function getAboutPageContent(langValue: string | null): Promise<Abo
       continue;
     }
 
-    payload[sectionKey] = translated as any;
+    payload[sectionKey] = translated as AboutSectionValue;
   }
 
   return payload;
