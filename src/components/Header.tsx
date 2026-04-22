@@ -259,12 +259,12 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                         </div>
 
                         <div className="hidden lg:flex items-center space-x-3">
-                            <div className="flex items-cente border border-[#33333340] rounded-lg justify-content-end">
-                            <input
-                                type="text"
-                                placeholder={t('header.search')}
-                                className={`outline-none text-gray-700 placeholder-gray-500 ${searchInput ? "w-full px-2.5 py-2" : "w-0 "}`}
-                            />
+                            {/* <div className="flex items-cente border border-[#33333340] rounded-lg justify-content-end">
+                                <input
+                                    type="text"
+                                    placeholder={t('header.search')}
+                                    className={`outline-none text-gray-700 placeholder-gray-500 ${searchInput ? "w-full px-2.5 py-2" : "w-0 "}`}
+                                />
 
                                 <div className="cursor-pointer px-2.5 py-2" onClick={handleSearchInput}>
                                     {searchInput ? (
@@ -273,7 +273,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                         <Search className="w-6 h-6 text-[#1E73BE]" />
                                     )}
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* Language Switch */}
                             <div className="relative">

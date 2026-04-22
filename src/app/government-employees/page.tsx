@@ -118,9 +118,9 @@ export default async function GovernmentEmployeesPage() {
     return (
         <>
             <BannerSection {...bannerContent}>
-                <Button className="mt-6" variant="icon" icon={<FaAngleRight />} size="lg">
+                {/* <Button className="mt-6" variant="icon" icon={<FaAngleRight />} size="lg">
                     {translate("governmentEmployees.claimButton", translations, fallbackTranslations)}
-                </Button>
+                </Button> */}
             </BannerSection>
 
             <section className="py-15 md:py-25">

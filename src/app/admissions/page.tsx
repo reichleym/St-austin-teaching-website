@@ -35,10 +35,12 @@ export default async function AdmissionsPage() {
     const sections = await getAdmissionsSections(lang);
 
     const bannerContent = {
-        title: data.banner?.title ?? translate("admissions.title", translations, fallbackTranslations),
-        description: data.banner?.description ?? translate("admissions.desc", translations, fallbackTranslations),
+        title: data.banner?.title,
+        titleKey: data.banner?.title ? undefined : "admissions.title",
+        description: data.banner?.description,
+        descriptionKey: data.banner?.description ? undefined : "admissions.desc",
         bgImg: data.banner?.bgImg ?? "/bannerImg.jpg",
-    };
+    } as const;
 
     const rawSteps = data.steps?.stepsContent ?? [];
     const stepsContent = (rawSteps.length ? rawSteps : [
@@ -87,7 +89,9 @@ export default async function AdmissionsPage() {
                         case "BannerSection": {
                             const b = {
                                 title: (content as any).title ?? bannerContent.title,
+                                titleKey: (content as any).title ? undefined : bannerContent.titleKey,
                                 description: (content as any).description ?? bannerContent.description,
+                                descriptionKey: (content as any).description ? undefined : bannerContent.descriptionKey,
                                 bgImg: (content as any).bgImg ?? bannerContent.bgImg,
                             };
                             return <BannerSection key={idx} {...b}><Button className="mt-6" variant="icon" icon={<FaAngleRight />} size="lg">{translate("admissions.explorePrograms", translations, fallbackTranslations)}</Button></BannerSection>;
@@ -174,7 +178,8 @@ export default async function AdmissionsPage() {
                         }
 
                         case "CtaSection": {
-                            return <CtaSection key={idx} title={(content as any)?.title ?? data.cta?.title} desc={(content as any)?.desc ?? data.cta?.desc} />;
+                            const c = (content as any) ?? {};
+                            return <CtaSection key={idx} title={c.title ?? data.cta?.title} titleKey={c.title ? undefined : (data.cta?.title ? undefined : "cta.title")} desc={c.desc ?? data.cta?.desc} descKey={c.desc ? undefined : (data.cta?.desc ? undefined : "cta.desc")} />;
                         }
 
                         default:
@@ -250,7 +255,7 @@ export default async function AdmissionsPage() {
                 </div>
             </section>
 
-            <CtaSection title={data.cta?.title} desc={data.cta?.desc} />
+            <CtaSection title={data.cta?.title} titleKey={data.cta?.title ? undefined : "cta.title"} desc={data.cta?.desc} descKey={data.cta?.desc ? undefined : "cta.desc"} />
         </>
     );
 }

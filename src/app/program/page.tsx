@@ -63,10 +63,10 @@ export default async function ProgramPage({
     const selectedDegreeLevel = getSingleParam(params.degreeLevel);
     const selectedFieldOfStudy = getSingleParam(params.fieldOfStudy);
     const bannerContent = {
-        title: "Our Programs",
-        description: "Discover career-focused programs designed for the modern professional.",
+        titleKey: "explorePrograms.title",
+        descriptionKey: "featuredPrograms.desc",
         bgImg: "/bannerImg.jpg",
-    };
+    } as const;
 
     let programs = fallbackPrograms;
     let degreeLevelOptions: string[] = [];

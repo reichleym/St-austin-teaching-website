@@ -6,13 +6,15 @@ import { useTranslations } from "@/lib/useTranslations";
 interface CtaSectionProps {
   className?: string;
   title?: string;
-  desc?: string;
+    desc?: string;
+    titleKey?: string;
+    descKey?: string;
 }
 
-export default function CtaSection({ className, title, desc }: CtaSectionProps) {
-    const { t } = useTranslations();
-    const resolvedTitle = title ?? t('cta.title');
-    const resolvedDescription = desc ?? t('cta.desc');
+export default function CtaSection({ className, title, desc, titleKey, descKey }: CtaSectionProps) {
+        const { t } = useTranslations();
+        const resolvedTitle = title ?? (titleKey ? t(titleKey) : t('cta.title'));
+        const resolvedDescription = desc ?? (descKey ? t(descKey) : t('cta.desc'));
 
     return (
         <>
@@ -30,7 +32,7 @@ export default function CtaSection({ className, title, desc }: CtaSectionProps) 
                                     <Link href="/request-info" className="inline-flex">
                                         <Button variant="whiteOutline">{t('cta.requestInfo')}</Button>
                                     </Link>
-                                    <Button variant="whiteOutline">{t('cta.talkToAdvisor')}</Button>
+                                    {/* <Button variant="whiteOutline">{t('cta.talkToAdvisor')}</Button> */}
                                 </div>
                             </div>
                         </div>
