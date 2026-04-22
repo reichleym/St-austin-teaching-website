@@ -24,7 +24,7 @@ function FeaturedProgramsSkeleton() {
             {skeletonCards.map((index) => (
                 <div
                     key={index}
-                    className="bg-white rounded-lg border border-[#33333340] p-4 flex items-center flex-col"
+                    className="bg-white rounded-lg border border-[#33333340] p-4 flex flex-col"
                 >
                     <div className="relative w-full mb-3">
                         <div className="w-full h-[140px] rounded bg-[#EDEDED]" />
@@ -37,7 +37,7 @@ function FeaturedProgramsSkeleton() {
                             <div className="h-4 w-11/12 rounded bg-[#EDEDED] mb-2" />
                             <div className="h-4 w-2/3 rounded bg-[#EDEDED]" />
                         </div>
-                        <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center justify-between mt-4 gap-2">
                             <div className="h-5 w-20 rounded bg-[#EDEDED]" />
                             <div className="h-10 w-32 rounded border border-[#1E73BE] bg-white" />
                         </div>
