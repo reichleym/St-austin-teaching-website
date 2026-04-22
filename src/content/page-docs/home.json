@@ -1,0 +1,83 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.046177+00:00",
+  "pageInfo": {
+    "name": "Home Page",
+    "slug": "home",
+    "route": "/",
+    "file": "src/app/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "CtaSection",
+      "occurrences": 1,
+      "propsUsed": [
+        "className"
+      ]
+    },
+    {
+      "component": "ExplorePrograms",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "FeaturedPrograms",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "FeaturedStories",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Footer",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Header",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "HeroSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "LearnSomething",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "LearningExp",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "NewsAnnouncements",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Testimonial",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "WhyAustin",
+      "occurrences": 1,
+      "propsUsed": [
+        "button",
+        "whyAustinDesc"
+      ]
+    }
+  ],
+  "translationKeys": [],
+  "translationDefaults": {},
+  "dataSources": [],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

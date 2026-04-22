@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.043941+00:00",
+  "pageInfo": {
+    "name": "Apply Page",
+    "slug": "apply",
+    "route": "/apply",
+    "file": "src/app/apply/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "ApplyPageContent",
+      "occurrences": 1,
+      "propsUsed": [
+        "initialApplicationStatus",
+        "initialGovernmentBenefit",
+        "initialSessionUser",
+        "programOptions"
+      ]
+    }
+  ],
+  "translationKeys": [],
+  "translationDefaults": {},
+  "dataSources": [
+    "@/lib/auth/server",
+    "@/lib/course-catalog",
+    "@/lib/i18n/server",
+    "@/lib/postgres"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

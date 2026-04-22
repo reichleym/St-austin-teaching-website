@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.044299+00:00",
+  "pageInfo": {
+    "name": "Careers Page",
+    "slug": "careers",
+    "route": "/careers",
+    "file": "src/app/careers/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": [
+        "bgImg",
+        "description",
+        "title"
+      ]
+    },
+    {
+      "component": "Career",
+      "occurrences": 1,
+      "propsUsed": []
+    }
+  ],
+  "translationKeys": [
+    "careers.desc",
+    "careers.title"
+  ],
+  "translationDefaults": {
+    "careers.desc": {
+      "en": "St. Austin's International University is always looking for talented individuals to join our team.",
+      "fr": "L'Universit\u00e9 internationale Saint-Austin recherche toujours des individus talentueux pour rejoindre notre \u00e9quipe."
+    },
+    "careers.title": {
+      "en": "Careers",
+      "fr": "Carri\u00e8res"
+    }
+  },
+  "dataSources": [
+    "@/lib/useTranslations"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

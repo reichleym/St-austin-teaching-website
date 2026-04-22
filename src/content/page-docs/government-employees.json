@@ -1,0 +1,260 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.045710+00:00",
+  "pageInfo": {
+    "name": "Government Employees Page",
+    "slug": "government-employees",
+    "route": "/government-employees",
+    "file": "src/app/government-employees/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Button",
+      "occurrences": 1,
+      "propsUsed": [
+        "className",
+        "icon",
+        "variant"
+      ]
+    },
+    {
+      "component": "GovernmentEmployeeDiscountCard",
+      "occurrences": 1,
+      "propsUsed": [
+        "initialBenefit",
+        "isLoggedIn"
+      ]
+    },
+    {
+      "component": "Link",
+      "occurrences": 2,
+      "propsUsed": [
+        "className",
+        "href"
+      ]
+    }
+  ],
+  "translationKeys": [
+    "governmentEmployees.asideTitle",
+    "governmentEmployees.bannerDescription",
+    "governmentEmployees.bannerTitle",
+    "governmentEmployees.claimButton",
+    "governmentEmployees.contactEmail",
+    "governmentEmployees.contactPhone",
+    "governmentEmployees.contactSupport",
+    "governmentEmployees.groups.civilService.summary",
+    "governmentEmployees.groups.civilService.support1",
+    "governmentEmployees.groups.civilService.support2",
+    "governmentEmployees.groups.civilService.support3",
+    "governmentEmployees.groups.civilService.title",
+    "governmentEmployees.groups.publicHealth.summary",
+    "governmentEmployees.groups.publicHealth.support1",
+    "governmentEmployees.groups.publicHealth.support2",
+    "governmentEmployees.groups.publicHealth.support3",
+    "governmentEmployees.groups.publicHealth.title",
+    "governmentEmployees.groups.publicSafety.summary",
+    "governmentEmployees.groups.publicSafety.support1",
+    "governmentEmployees.groups.publicSafety.support2",
+    "governmentEmployees.groups.publicSafety.support3",
+    "governmentEmployees.groups.publicSafety.title",
+    "governmentEmployees.groups.veterans.summary",
+    "governmentEmployees.groups.veterans.support1",
+    "governmentEmployees.groups.veterans.support2",
+    "governmentEmployees.groups.veterans.support3",
+    "governmentEmployees.groups.veterans.title",
+    "governmentEmployees.howDiscountWorksStep1",
+    "governmentEmployees.howDiscountWorksStep2Part1",
+    "governmentEmployees.howDiscountWorksStep2Part2",
+    "governmentEmployees.howDiscountWorksStep3",
+    "governmentEmployees.howDiscountWorksTitle",
+    "governmentEmployees.quickLinks.advising",
+    "governmentEmployees.quickLinks.careerPathways",
+    "governmentEmployees.quickLinks.creditForPriorLearning",
+    "governmentEmployees.quickLinks.flexibleSchedules",
+    "governmentEmployees.quickLinks.tuitionSupport",
+    "governmentEmployees.quickLinks.veteransSupport",
+    "governmentEmployees.quickLinksTitle",
+    "governmentEmployees.supportByGroupDesc",
+    "governmentEmployees.supportByGroupTitle"
+  ],
+  "translationDefaults": {
+    "governmentEmployees.asideTitle": {
+      "en": "Government Employees Services at St. Austin University",
+      "fr": "Services pour les fonctionnaires \u00e0 l'Universit\u00e9 Saint-Austin"
+    },
+    "governmentEmployees.bannerDescription": {
+      "en": "Exclusive Benefits & Discounts",
+      "fr": "Avantages et r\u00e9ductions exclusifs"
+    },
+    "governmentEmployees.bannerTitle": {
+      "en": "Special Programs for Government Employees",
+      "fr": "Programmes sp\u00e9ciaux pour les fonctionnaires"
+    },
+    "governmentEmployees.claimButton": {
+      "en": null,
+      "fr": null
+    },
+    "governmentEmployees.contactEmail": {
+      "en": "Email: govtservices@staustin.edu",
+      "fr": "Email : govtservices@staustin.edu"
+    },
+    "governmentEmployees.contactPhone": {
+      "en": "Phone: +237 670 000 000",
+      "fr": "T\u00e9l\u00e9phone : +237 670 000 000"
+    },
+    "governmentEmployees.contactSupport": {
+      "en": "Contact Support",
+      "fr": "Support de contact"
+    },
+    "governmentEmployees.groups.civilService.summary": {
+      "en": "For ministry, council, and agency staff looking to strengthen management, policy, and digital skills.",
+      "fr": "Pour le personnel des minist\u00e8res, conseils et agences cherchant \u00e0 renforcer leurs comp\u00e9tences en gestion, en politique et en num\u00e9rique."
+    },
+    "governmentEmployees.groups.civilService.support1": {
+      "en": "Public administration pathways",
+      "fr": "Parcours en administration publique"
+    },
+    "governmentEmployees.groups.civilService.support2": {
+      "en": "Weekend and evening options",
+      "fr": "Options de week-end et de soir\u00e9e"
+    },
+    "governmentEmployees.groups.civilService.support3": {
+      "en": "Employer-sponsored study support",
+      "fr": "Soutien aux \u00e9tudes parrain\u00e9 par l'employeur"
+    },
+    "governmentEmployees.groups.civilService.title": {
+      "en": "Civil Service Employees",
+      "fr": "Employ\u00e9s de la fonction publique"
+    },
+    "governmentEmployees.groups.publicHealth.summary": {
+      "en": "For government-employed teachers, health workers, and administrators seeking advancement.",
+      "fr": "Pour les enseignants, les professionnels de la sant\u00e9 et les administrateurs employ\u00e9s par le gouvernement cherchant \u00e0 progresser."
+    },
+    "governmentEmployees.groups.publicHealth.support1": {
+      "en": "Program tracks for service delivery roles",
+      "fr": "Parcours de programme pour les r\u00f4les de prestation de services"
+    },
+    "governmentEmployees.groups.publicHealth.support2": {
+      "en": "Practical, career-aligned curriculum",
+      "fr": "Curriculum pratique align\u00e9 sur la carri\u00e8re"
+    },
+    "governmentEmployees.groups.publicHealth.support3": {
+      "en": "Support for long-term professional growth",
+      "fr": "Soutien pour une croissance professionnelle \u00e0 long terme"
+    },
+    "governmentEmployees.groups.publicHealth.title": {
+      "en": "Public Health and Education Workers",
+      "fr": "Travailleurs de la sant\u00e9 publique et de l'\u00e9ducation"
+    },
+    "governmentEmployees.groups.publicSafety.summary": {
+      "en": "For police, emergency, and security professionals balancing duty schedules with academic goals.",
+      "fr": "Pour les professionnels de la police, des urgences et de la s\u00e9curit\u00e9 conciliant les horaires de service avec des objectifs acad\u00e9miques."
+    },
+    "governmentEmployees.groups.publicSafety.support1": {
+      "en": "Shift-friendly scheduling",
+      "fr": "Horaires adapt\u00e9s aux quarts"
+    },
+    "governmentEmployees.groups.publicSafety.support2": {
+      "en": "Leadership and operations upskilling",
+      "fr": "Renforcement des comp\u00e9tences en leadership et en op\u00e9rations"
+    },
+    "governmentEmployees.groups.publicSafety.support3": {
+      "en": "Progress tracking with advisor support",
+      "fr": "Suivi des progr\u00e8s avec le soutien d'un conseiller"
+    },
+    "governmentEmployees.groups.publicSafety.title": {
+      "en": "Public Safety Personnel",
+      "fr": "Personnel de la s\u00e9curit\u00e9 publique"
+    },
+    "governmentEmployees.groups.veterans.summary": {
+      "en": "For service members and veterans transitioning into civilian careers or advancing their qualifications.",
+      "fr": "Pour les militaires et les anciens combattants en transition vers des carri\u00e8res civiles ou cherchant \u00e0 faire progresser leurs qualifications."
+    },
+    "governmentEmployees.groups.veterans.support1": {
+      "en": "Transition-focused advising",
+      "fr": "Conseil ax\u00e9 sur la transition"
+    },
+    "governmentEmployees.groups.veterans.support2": {
+      "en": "Recognition of prior service experience",
+      "fr": "Reconnaissance de l'exp\u00e9rience de service ant\u00e9rieure"
+    },
+    "governmentEmployees.groups.veterans.support3": {
+      "en": "Career planning and placement support",
+      "fr": "Planification de carri\u00e8re et soutien au placement"
+    },
+    "governmentEmployees.groups.veterans.title": {
+      "en": "Veterans and Active-Duty Personnel",
+      "fr": "Anciens combattants et personnel en service actif"
+    },
+    "governmentEmployees.howDiscountWorksStep1": {
+      "en": "Sign in, select your category, and submit your government employee ID.",
+      "fr": "Connectez-vous, s\u00e9lectionnez votre cat\u00e9gorie et soumettez votre num\u00e9ro de pi\u00e8ce d'identit\u00e9 gouvernementale."
+    },
+    "governmentEmployees.howDiscountWorksStep2Part1": {
+      "en": "Receive",
+      "fr": "Recevez"
+    },
+    "governmentEmployees.howDiscountWorksStep2Part2": {
+      "en": "the application fee only after admin approval.",
+      "fr": "la r\u00e9duction sur les frais de dossier uniquement apr\u00e8s approbation administrative."
+    },
+    "governmentEmployees.howDiscountWorksStep3": {
+      "en": "Email your ID details to govtservices@staustin.edu for review before discount activation.",
+      "fr": "Envoyez vos d\u00e9tails d'identit\u00e9 \u00e0 govtservices@staustin.edu pour examen avant l'activation de la r\u00e9duction."
+    },
+    "governmentEmployees.howDiscountWorksTitle": {
+      "en": "How the Discount Works",
+      "fr": "Comment fonctionne la r\u00e9duction"
+    },
+    "governmentEmployees.quickLinks.advising": {
+      "en": "Academic advising for public-service careers",
+      "fr": "Conseil acad\u00e9mique pour les carri\u00e8res de service public"
+    },
+    "governmentEmployees.quickLinks.careerPathways": {
+      "en": "Career pathways in administration, IT, and leadership",
+      "fr": "Parcours de carri\u00e8re en administration, informatique et leadership"
+    },
+    "governmentEmployees.quickLinks.creditForPriorLearning": {
+      "en": "Credit for prior learning and professional training",
+      "fr": "Cr\u00e9dit pour l'apprentissage ant\u00e9rieur et la formation professionnelle"
+    },
+    "governmentEmployees.quickLinks.flexibleSchedules": {
+      "en": "Flexible class schedules for shift workers",
+      "fr": "Horaires de cours flexibles pour les travailleurs post\u00e9s"
+    },
+    "governmentEmployees.quickLinks.tuitionSupport": {
+      "en": "Tuition support and sponsorship guidance",
+      "fr": "Soutien aux frais de scolarit\u00e9 et orientation de parrainage"
+    },
+    "governmentEmployees.quickLinks.veteransSupport": {
+      "en": "Veterans transition support services",
+      "fr": "Services de soutien \u00e0 la transition des anciens combattants"
+    },
+    "governmentEmployees.quickLinksTitle": {
+      "en": "Quick Links & Resources",
+      "fr": "Liens rapides et ressources"
+    },
+    "governmentEmployees.supportByGroupDesc": {
+      "en": "We have grouped public-sector learners so each team gets relevant guidance, benefits, and academic pathways.",
+      "fr": "Nous avons regroup\u00e9 les apprenants du secteur public afin que chaque \u00e9quipe re\u00e7oive des conseils, des avantages et des parcours acad\u00e9miques pertinents."
+    },
+    "governmentEmployees.supportByGroupTitle": {
+      "en": "Support by Government Employee Group",
+      "fr": "Soutien par groupe de fonctionnaires"
+    }
+  },
+  "dataSources": [
+    "@/lib/auth/server",
+    "@/lib/government-benefits",
+    "@/lib/postgres",
+    "@/lib/useTranslations"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

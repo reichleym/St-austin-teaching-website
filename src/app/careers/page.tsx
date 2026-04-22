@@ -76,28 +76,38 @@ export default function CareersPage() {
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2">
-                {careers.map((career) => (
-                  <div key={career.id} className="rounded-3xl border border-[#E6E8F0] bg-white p-8 shadow-sm">
-                    <div className="mb-4 flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="text-2xl font-semibold mb-2">{career.title}</h3>
-                        <p className="text-sm text-[#6B7280]">{career.description ?? "No description available."}</p>
-                      </div>
-                      <span className={`rounded-full px-3 py-1 text-sm font-semibold ${career.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}>
-                        {career.isActive ? "Open" : "Inactive"}
-                      </span>
-                    </div>
+                {careers.map((career, idx) => {
+                  const key = String(career.id ?? career.title ?? `career_${idx}`);
+                  const titlePath = `system.universityCareers.${key}.title`;
+                  const descPath = `system.universityCareers.${key}.description`;
+                  const translatedTitle = t(titlePath);
+                  const translatedDesc = t(descPath);
+                  const title = translatedTitle !== titlePath ? translatedTitle : career.title;
+                  const description = translatedDesc !== descPath ? translatedDesc : career.description;
 
-                        <div className="mt-6 flex flex-col gap-3">
-                      <a
-                        href={`mailto:${email}?subject=Application%20for%20${encodeURIComponent(career.title)}&body=Hello%2C%0A%0AI%20would%20like%20to%20apply%20for%20the%20${encodeURIComponent(career.title)}%20position.%20Please%20share%20the%20next%20steps.%0A%0AThank%20you.`}
-                        className="inline-flex rounded-[5px] bg-[#1E73BE] text-white px-6 py-2 text-sm font-medium transition hover:opacity-90"
-                      >
-                        Apply by Email
-                      </a>
+                  return (
+                    <div key={key} className="rounded-3xl border border-[#E6E8F0] bg-white p-8 shadow-sm">
+                      <div className="mb-4 flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-2xl font-semibold mb-2">{title}</h3>
+                          <p className="text-sm text-[#6B7280]">{description ?? "No description available."}</p>
+                        </div>
+                        <span className={`rounded-full px-3 py-1 text-sm font-semibold ${career.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}>
+                          {career.isActive ? "Open" : "Inactive"}
+                        </span>
+                      </div>
+
+                      <div className="mt-6 flex flex-col gap-3">
+                        <a
+                          href={`mailto:${email}?subject=Application%20for%20${encodeURIComponent(title || '')}&body=Hello%2C%0A%0AI%20would%20like%20to%20apply%20for%20the%20${encodeURIComponent(title || '')}%20position.%20Please%20share%20the%20next%20steps.%0A%0AThank%20you.`}
+                          className="inline-flex rounded-[5px] bg-[#1E73BE] text-white px-6 py-2 text-sm font-medium transition hover:opacity-90"
+                        >
+                          Apply by Email
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

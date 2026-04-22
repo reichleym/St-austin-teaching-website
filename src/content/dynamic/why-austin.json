@@ -1,0 +1,42 @@
+{
+  "pageSlug": "why-austin",
+  "name": "Why Austin Section",
+  "route": "sections/WhyAustin",
+  "tableName": "WhyAustinSection",
+  "sections": [
+    {
+      "sectionKey": "whyAustin",
+      "componentType": "WhyAustin",
+      "position": 0,
+      "content": {
+        "title": "Why St. Austin?",
+        "desc": "Discover the St. Austin difference with our commitment to excellence, flexibility, and career success.",
+        "cards": [
+          {
+            "icon": "/wedding-certificate.svg",
+            "title": "Accredited & Recognized",
+            "description": "Nationally accredited institution with programs recognized by industry leaders."
+          },
+          {
+            "icon": "/global-learning.svg",
+            "title": "Flexible Learning Options",
+            "description": "Study online or on-campus with schedules designed for working professionals."
+          },
+          {
+            "icon": "/workspace-premium.svg",
+            "title": "Career-Focused",
+            "description": "92% placement rate with dedicated career services and industry partnerships."
+          },
+          {
+            "icon": "/award-trophy.svg",
+            "title": "Expert Faculty",
+            "description": "Learn from industry practitioners and accomplished researchers."
+          }
+        ],
+        "learnMoreButton": "Learn More",
+        "learnMoreHref": "/about"
+      }
+    }
+  ]
+}
+

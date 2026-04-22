@@ -1,0 +1,260 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.043028+00:00",
+  "pageInfo": {
+    "name": "Admissions Page",
+    "slug": "admissions",
+    "route": "/admissions",
+    "file": "src/app/admissions/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "Accordions",
+      "occurrences": 1,
+      "propsUsed": [
+        "accordionsContent"
+      ]
+    },
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Button",
+      "occurrences": 1,
+      "propsUsed": [
+        "className",
+        "icon",
+        "variant"
+      ]
+    },
+    {
+      "component": "CheckList",
+      "occurrences": 2,
+      "propsUsed": [
+        "className",
+        "classNamecheckboxList",
+        "listContent"
+      ]
+    },
+    {
+      "component": "CtaSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "StepsSection",
+      "occurrences": 1,
+      "propsUsed": [
+        "stepsContent",
+        "title"
+      ]
+    }
+  ],
+  "translationKeys": [
+    "admissions.desc",
+    "admissions.explorePrograms",
+    "admissions.faq",
+    "admissions.faqA1",
+    "admissions.faqA2",
+    "admissions.faqA3",
+    "admissions.faqA4",
+    "admissions.faqQ1",
+    "admissions.faqQ2",
+    "admissions.faqQ3",
+    "admissions.faqQ4",
+    "admissions.finalDeadline",
+    "admissions.importantDeadlines",
+    "admissions.intakeJanuary",
+    "admissions.intakeMay",
+    "admissions.intakeSeptember",
+    "admissions.januaryFinalDate",
+    "admissions.januaryPriorityDate",
+    "admissions.mayFinalDate",
+    "admissions.mayPriorityDate",
+    "admissions.priorityDeadline",
+    "admissions.req1",
+    "admissions.req2",
+    "admissions.req3",
+    "admissions.req4",
+    "admissions.req5",
+    "admissions.requirements",
+    "admissions.septemberFinalDate",
+    "admissions.septemberPriorityDate",
+    "admissions.step1Desc",
+    "admissions.step1Title",
+    "admissions.step2Desc",
+    "admissions.step2Title",
+    "admissions.step3Desc",
+    "admissions.step3Title",
+    "admissions.step4Desc",
+    "admissions.step4Title",
+    "admissions.stepsTitle",
+    "admissions.title"
+  ],
+  "translationDefaults": {
+    "admissions.desc": {
+      "en": "Join St. Austin's International University and unlock your potential. Our admissions process is designed to be straightforward and supportive.",
+      "fr": "Rejoignez l'Universit\u00e9 internationale Saint-Austin et lib\u00e9rez votre potentiel. Notre processus d'admission est con\u00e7u pour \u00eatre simple et favorable."
+    },
+    "admissions.explorePrograms": {
+      "en": "Explore Programs",
+      "fr": "Explorer les programmes"
+    },
+    "admissions.faq": {
+      "en": "Frequently Asked Questions",
+      "fr": "Questions fr\u00e9quemment pos\u00e9es"
+    },
+    "admissions.faqA1": {
+      "en": "We accept applications on a rolling basis. Apply as early as possible for better course availability.",
+      "fr": "Nous acceptons les candidatures sur une base continue. Postulez d\u00e8s que possible pour une meilleure disponibilit\u00e9 des cours."
+    },
+    "admissions.faqA2": {
+      "en": "Tuition varies by program. Please contact our admissions team for detailed pricing.",
+      "fr": "Les frais de scolarit\u00e9 varient selon le programme. Contactez notre \u00e9quipe d'admission pour une tarification d\u00e9taill\u00e9e."
+    },
+    "admissions.faqA3": {
+      "en": "The academic year typically starts in September. We also offer spring and summer intakes.",
+      "fr": "L'ann\u00e9e scolaire commence g\u00e9n\u00e9ralement en septembre. Nous offrons \u00e9galement des intakes au printemps et en \u00e9t\u00e9."
+    },
+    "admissions.faqA4": {
+      "en": "Yes! We offer scholarships, grants, and flexible payment plans.",
+      "fr": "Oui! Nous offrons des bourses, des subventions et des plans de paiement flexibles."
+    },
+    "admissions.faqQ1": {
+      "en": "What is the application deadline?",
+      "fr": "Quelle est la date limite de candidature?"
+    },
+    "admissions.faqQ2": {
+      "en": "What are the tuition fees?",
+      "fr": "Quels sont les frais de scolarit\u00e9?"
+    },
+    "admissions.faqQ3": {
+      "en": "When does the academic year start?",
+      "fr": "Quand l'ann\u00e9e scolaire commence-t-elle?"
+    },
+    "admissions.faqQ4": {
+      "en": "Do you offer financial aid?",
+      "fr": "Offrez-vous une aide financi\u00e8re?"
+    },
+    "admissions.finalDeadline": {
+      "en": "Final Deadline",
+      "fr": "Date limite finale"
+    },
+    "admissions.importantDeadlines": {
+      "en": "Important Deadlines",
+      "fr": "Dates limites importantes"
+    },
+    "admissions.intakeJanuary": {
+      "en": "January Intake",
+      "fr": "Intake de janvier"
+    },
+    "admissions.intakeMay": {
+      "en": "May Intake",
+      "fr": "Intake de mai"
+    },
+    "admissions.intakeSeptember": {
+      "en": "September Intake",
+      "fr": "Intake de septembre"
+    },
+    "admissions.januaryFinalDate": {
+      "en": "December 15",
+      "fr": "15 d\u00e9cembre"
+    },
+    "admissions.januaryPriorityDate": {
+      "en": "November 1",
+      "fr": "1 novembre"
+    },
+    "admissions.mayFinalDate": {
+      "en": "April 15",
+      "fr": "15 avril"
+    },
+    "admissions.mayPriorityDate": {
+      "en": "March 1",
+      "fr": "1 mars"
+    },
+    "admissions.priorityDeadline": {
+      "en": "Priority Deadline",
+      "fr": "Date limite prioritaire"
+    },
+    "admissions.req1": {
+      "en": "High school diploma or equivalent (GED)",
+      "fr": "Dipl\u00f4me d'\u00e9tudes secondaires ou \u00e9quivalent (GED)"
+    },
+    "admissions.req2": {
+      "en": "Minimum GPA of 2.5",
+      "fr": "Note moyenne minimale de 2,5"
+    },
+    "admissions.req3": {
+      "en": "TOEFL score of 79+ (for international students)",
+      "fr": "Score TOEFL de 79+ (pour les \u00e9tudiants internationaux)"
+    },
+    "admissions.req4": {
+      "en": "Completed application form",
+      "fr": "Formulaire de candidature compl\u00e9t\u00e9"
+    },
+    "admissions.req5": {
+      "en": "Two letters of recommendation",
+      "fr": "Deux lettres de recommandation"
+    },
+    "admissions.requirements": {
+      "en": "Admission Requirements",
+      "fr": "Conditions d'admission"
+    },
+    "admissions.septemberFinalDate": {
+      "en": "August 31",
+      "fr": "31 ao\u00fbt"
+    },
+    "admissions.septemberPriorityDate": {
+      "en": "July 15",
+      "fr": "15 juillet"
+    },
+    "admissions.step1Desc": {
+      "en": "Complete our online application form with your personal and academic information.",
+      "fr": "Remplissez notre formulaire de candidature en ligne avec vos informations personnelles et acad\u00e9miques."
+    },
+    "admissions.step1Title": {
+      "en": "Submit Application",
+      "fr": "Soumettre la candidature"
+    },
+    "admissions.step2Desc": {
+      "en": "Upload your transcripts, test scores, and letters of recommendation.",
+      "fr": "T\u00e9l\u00e9chargez vos relev\u00e9s de notes, scores de tests et lettres de recommandation."
+    },
+    "admissions.step2Title": {
+      "en": "Submit Documents",
+      "fr": "Soumettre les documents"
+    },
+    "admissions.step3Desc": {
+      "en": "Our admissions team will review your application and schedule an interview.",
+      "fr": "Notre \u00e9quipe d'admission examinera votre candidature et programmera une entrevue."
+    },
+    "admissions.step3Title": {
+      "en": "Review & Interview",
+      "fr": "Examen et entrevue"
+    },
+    "admissions.step4Desc": {
+      "en": "Get your admission decision and enrollment information.",
+      "fr": "Recevez la d\u00e9cision d'admission et les informations d'inscription."
+    },
+    "admissions.step4Title": {
+      "en": "Receive Decision",
+      "fr": "Recevoir une d\u00e9cision"
+    },
+    "admissions.stepsTitle": {
+      "en": "How to Apply",
+      "fr": "Comment postuler"
+    },
+    "admissions.title": {
+      "en": "Admissions",
+      "fr": "Admissions"
+    }
+  },
+  "dataSources": [
+    "@/lib/useTranslations"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

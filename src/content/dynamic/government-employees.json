@@ -1,0 +1,107 @@
+{
+  "pageSlug": "government-employees",
+  "name": "Government Employees Page",
+  "route": "/government-employees",
+  "tableName": "GovernmentEmployeesPage",
+  "file": "src/app/government-employees/page.tsx",
+  "sections": [
+    {
+      "sectionKey": "banner",
+      "componentType": "BannerSection",
+      "position": 0,
+      "content": {
+        "title": "Special Programs for Government Employees",
+        "description": "Exclusive Benefits & Discounts",
+        "bgImg": "/bannerImg.jpg"
+      }
+    },
+    {
+      "sectionKey": "discountCard",
+      "componentType": "GovernmentEmployeeDiscountCard",
+      "position": 1,
+      "content": {
+        "discountPercent": 25,
+        "contactEmail": "govtservices@staustin.edu"
+      }
+    },
+    {
+      "sectionKey": "howItWorks",
+      "componentType": "HowItWorksSection",
+      "position": 2,
+      "content": {
+        "title": "How the Discount Works",
+        "steps": [
+          "Sign in, select your category, and submit your government employee ID.",
+          "Receive the application fee only after admin approval.",
+          "Email your ID details to govtservices@staustin.edu for review before discount activation."
+        ]
+      }
+    },
+    {
+      "sectionKey": "supportGroups",
+      "componentType": "SupportGroupsSection",
+      "position": 3,
+      "content": {
+        "title": "Support by Government Employee Group",
+        "description": "We have grouped public-sector learners so each team gets relevant guidance, benefits, and academic pathways.",
+        "groups": [
+          {
+            "title": "Civil Service Employees",
+            "summary": "For ministry, council, and agency staff looking to strengthen management, policy, and digital skills.",
+            "support": [
+              "Public administration pathways",
+              "Weekend and evening options",
+              "Employer-sponsored study support"
+            ]
+          },
+          {
+            "title": "Veterans and Active-Duty Personnel",
+            "summary": "For service members and veterans transitioning into civilian careers or advancing their qualifications.",
+            "support": [
+              "Transition-focused advising",
+              "Recognition of prior service experience",
+              "Career planning and placement support"
+            ]
+          },
+          {
+            "title": "Public Safety Personnel",
+            "summary": "For police, emergency, and security professionals balancing duty schedules with academic goals.",
+            "support": [
+              "Shift-friendly scheduling",
+              "Leadership and operations upskilling",
+              "Progress tracking with advisor support"
+            ]
+          },
+          {
+            "title": "Public Health and Education Workers",
+            "summary": "For government-employed teachers, health workers, and administrators seeking advancement.",
+            "support": [
+              "Program tracks for service delivery roles",
+              "Practical, career-aligned curriculum",
+              "Support for long-term professional growth"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "cta",
+      "componentType": "CtaSection",
+      "position": 4,
+      "content": {
+        "title": "Ready to Begin?",
+        "buttons": [
+          {
+            "text": "Start Application",
+            "href": "/apply"
+          },
+          {
+            "text": "View Programs",
+            "href": "/program"
+          }
+        ]
+      }
+    }
+  ]
+}
+

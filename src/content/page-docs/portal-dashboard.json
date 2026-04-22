@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.046523+00:00",
+  "pageInfo": {
+    "name": "Portal Dashboard Page",
+    "slug": "portal-dashboard",
+    "route": "/portal/dashboard",
+    "file": "src/app/portal/dashboard/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "Button",
+      "occurrences": 1,
+      "propsUsed": [
+        "variant"
+      ]
+    },
+    {
+      "component": "Link",
+      "occurrences": 1,
+      "propsUsed": [
+        "href"
+      ]
+    }
+  ],
+  "translationKeys": [],
+  "translationDefaults": {},
+  "dataSources": [
+    "@/lib/auth/server"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

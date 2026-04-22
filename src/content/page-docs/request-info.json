@@ -1,0 +1,98 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.048540+00:00",
+  "pageInfo": {
+    "name": "Request Info Page",
+    "slug": "request-info",
+    "route": "/request-info",
+    "file": "src/app/request-info/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Button",
+      "occurrences": 2,
+      "propsUsed": [
+        "className",
+        "disabled",
+        "size",
+        "type",
+        "variant"
+      ]
+    },
+    {
+      "component": "FaAngleRight",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "HTMLInputElement",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Input",
+      "occurrences": 3,
+      "propsUsed": [
+        "labelText",
+        "name",
+        "onChange",
+        "placeholder",
+        "prependText",
+        "type",
+        "value"
+      ]
+    },
+    {
+      "component": "Link",
+      "occurrences": 1,
+      "propsUsed": [
+        "href"
+      ]
+    },
+    {
+      "component": "Select",
+      "occurrences": 1,
+      "propsUsed": [
+        "labelText",
+        "name",
+        "onChange",
+        "value"
+      ]
+    }
+  ],
+  "translationKeys": [
+    "requestInfo.desc",
+    "requestInfo.subtitle",
+    "requestInfo.success",
+    "requestInfo.title"
+  ],
+  "translationDefaults": {
+    "requestInfo.desc": {
+      "en": "Fill out the form below and our admissions team will contact you with detailed information about our programs.",
+      "fr": "Remplissez le formulaire ci-dessous et notre \u00e9quipe d'admission vous contactera avec des informations d\u00e9taill\u00e9es sur nos programmes."
+    },
+    "requestInfo.subtitle": {
+      "en": "Learn More About Our Programs",
+      "fr": "En savoir plus sur nos programmes"
+    },
+    "requestInfo.success": {
+      "en": "Thank you! We will contact you soon.",
+      "fr": "Merci! Nous vous contacterons bient\u00f4t."
+    },
+    "requestInfo.title": {
+      "en": "Request Information",
+      "fr": "Demander des informations"
+    }
+  },
+  "dataSources": [
+    "@/lib/useTranslations"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

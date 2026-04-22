@@ -1,0 +1,166 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Student Experience Page Documentation",
+  "description": "Schema and content documentation for src/app/studentExperience/page.tsx. Captures sections, structure, and current fallback content used when DB content is missing.",
+  "type": "object",
+  "properties": {
+    "pageInfo": {
+      "type": "object",
+      "properties": {
+        "name": { "const": "Student Experience Page" },
+        "file": { "const": "src/app/studentExperience/page.tsx" },
+        "route": { "const": "/studentExperience" },
+        "api": {
+          "type": "array",
+          "items": { "type": "string" },
+          "examples": ["/api/student-experience?lang=en"]
+        },
+        "sectionsUsed": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "dataSources": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["name", "file", "route", "sectionsUsed", "dataSources"]
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "component": { "type": "string" },
+          "description": { "type": "string" },
+          "propsSchema": { "type": "object" },
+          "content": { "type": "object" }
+        },
+        "required": ["name", "component", "propsSchema", "content"]
+      }
+    },
+    "pageNotes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "pageInfo": {
+    "name": "Student Experience Page",
+    "file": "src/app/studentExperience/page.tsx",
+    "route": "/studentExperience",
+    "api": ["/api/student-experience?lang=en"],
+    "sectionsUsed": ["BannerSection", "Accreditation", "Custom Learn/Schedule Section", "Custom Learning Dashboard CTA", "CtaSection"],
+    "dataSources": ["getStudentExperienceContent() (Postgres: StudentExperience table)", "translationsMap (studentExperience.*)", "hardcoded blockContent + listContent fallbacks"]
+  },
+  "sections": [
+    {
+      "name": "Hero",
+      "component": "BannerSection",
+      "description": "Intro banner with title/description/background image.",
+      "propsSchema": {
+        "title": "string (data.banner.title OR translate('studentExperience.title'))",
+        "description": "string (data.banner.description OR translate('studentExperience.desc'))",
+        "bgImg": "string (data.banner.bgImg OR '/bannerImg.jpg')"
+      },
+      "content": {
+        "title": "Student Experience",
+        "description": "Discover the vibrant community and enriching experiences at St. Austin's International University.",
+        "bgImg": "/bannerImg.jpg"
+      }
+    },
+    {
+      "name": "How You'll Learn",
+      "component": "Accreditation",
+      "description": "Card grid showing student experience highlights.",
+      "propsSchema": {
+        "title": "string (data.iconCard.title OR translate('studentExperience.howYoullLearn'))",
+        "blockContent": {
+          "type": "array",
+          "items": { "cardTitle": "string", "cardDescription": "string", "icon": "string" }
+        }
+      },
+      "content": {
+        "title": "How You'll Learn",
+        "blockContent": [
+          {
+            "cardTitle": "Flexible Online Learning",
+            "cardDescription": "Study from anywhere with our state-of-the-art virtual classroom and asynchronous course materials.",
+            "icon": "/awards-icon.png"
+          },
+          {
+            "cardTitle": "Collaborative Community",
+            "cardDescription": "Engage with peers through discussion forums, group projects, and networking events.",
+            "icon": "/business-icon.png"
+          },
+          {
+            "cardTitle": "Career Services",
+            "cardDescription": "Resume workshops, mock interviews, job fairs, and direct employer connections for every student.",
+            "icon": "/nursing-icon.png"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Learn On Your Schedule",
+      "component": "Custom (section + CheckList)",
+      "description": "Two-column section with image, title, description, and checklist.",
+      "propsSchema": {
+        "image": "string (data.learnSchedule.image OR 'cta-img.png')",
+        "title": "string (data.learnSchedule.title OR translate('studentExperience.learnOnYourSchedule'))",
+        "description": "string (translate('studentExperience.learnOnYourScheduleDesc') OR derived from data.learnSchedule.*)",
+        "listContent": { "type": "array", "items": "string" }
+      },
+      "content": {
+        "image": "cta-img.png",
+        "title": "Learn on Your Schedule",
+        "description": "Learn anytime, anywhere with flexible schedules and dedicated student support.",
+        "listContent": [
+          "Academic advising and mentorship",
+          "Writing center and tutoring",
+          "Disability and accessibility services",
+          "Mental health and wellness programs",
+          "Library and research support",
+          "Technology help desk"
+        ]
+      }
+    },
+    {
+      "name": "Learning Dashboard CTA",
+      "component": "Custom (section + Button)",
+      "description": "Two-column CTA promoting the learning dashboard/portal access.",
+      "propsSchema": {
+        "title": "string (data.learningDashboardCta.title OR translate('studentExperience.learningDashboardTitle'))",
+        "desc": "string (data.learningDashboardCta.desc OR translate('studentExperience.learningDashboardDesc'))",
+        "image": "string (data.learningDashboardCta.image OR 'cta-img.png')",
+        "buttonLabel": "string (translate('studentExperience.accessPortal'))"
+      },
+      "content": {
+        "title": "Learning Dashboard",
+        "desc": "Access your courses, assignments, and support resources in one place.",
+        "image": "cta-img.png",
+        "buttonLabel": "Access Portal"
+      }
+    },
+    {
+      "name": "CTA",
+      "component": "CtaSection",
+      "description": "Bottom call-to-action section.",
+      "propsSchema": {
+        "title": "string (data.cta.title)",
+        "desc": "string (data.cta.desc)",
+        "className": "string (optional)"
+      },
+      "content": {
+        "title": "",
+        "desc": "",
+        "className": ""
+      }
+    }
+  ],
+  "pageNotes": [
+    "Some translation keys referenced by src/app/studentExperience/page.tsx (e.g. studentExperience.howYoullLearn, learnOnYourSchedule, learningDashboardTitle, accessPortal) are not present in src/lib/translations/en.json as of 2026-04-20; the UI may fall back to showing the key string unless DB content is present.",
+    "Primary data source is Postgres (StudentExperience table) via getStudentExperienceContent(lang).",
+    "Hardcoded arrays (blockContent, listContent) are used as fallbacks when DB values are missing."
+  ]
+}

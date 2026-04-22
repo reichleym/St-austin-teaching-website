@@ -40,8 +40,8 @@ const TEXT_COLUMN_CANDIDATES = {
     programContent: ["program_content", "programContent", "programcontent"],
     duration: ["duration", "time", "length", "timeline"],
     image: ["image", "image_url", "thumbnail", "cover_image", "banner_image"],
-    degreeLevel: ["degree_level", "degree", "level", "program_level", "degree_type"],
-    fieldOfStudy: ["field_of_study", "field", "study_field", "discipline", "major"],
+    degreeLevel: ["degree_level", "degree", "level", "program_level", "degree_type", "degreeLevel", "programLevel"],
+    fieldOfStudy: ["field_of_study", "field", "study_field", "discipline", "major", "fieldOfStudy", "studyField"],
     visibility: ["visibility", "publish_status", "is_published"],
     translations: ["translations", "translation", "i18n", "localizations", "localized_content"],
 } as const;

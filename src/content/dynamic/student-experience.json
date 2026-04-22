@@ -1,0 +1,95 @@
+{
+  "pageSlug": "studentExperience",
+  "name": "Student Experience Page",
+  "route": "/studentExperience",
+  "tableName": "StudentExperience",
+  "file": "src/app/studentExperience/page.tsx",
+  "sections": [
+    {
+      "sectionKey": "banner",
+      "componentType": "BannerSection",
+      "position": 0,
+      "content": {
+        "title": "Student Experience",
+        "description": "Life at St. Austin's",
+        "bgImg": "/bannerImg.jpg"
+      }
+    },
+    {
+      "sectionKey": "iconCard",
+      "componentType": "Accreditation",
+      "position": 1,
+      "content": {
+        "title": "How You'll Learn",
+        "blockContent": [
+          {
+            "cardTitle": "Flexible Online Learning",
+            "cardDescription": "Study from anywhere with our state-of-the-art virtual classroom and asynchronous course materials.",
+            "icon": "/awards-icon.png"
+          },
+          {
+            "cardTitle": "Collaborative Community",
+            "cardDescription": "Engage with peers through discussion forums, group projects, and networking events.",
+            "icon": "/business-icon.png"
+          },
+          {
+            "cardTitle": "Career Services",
+            "cardDescription": "Resume workshops, mock interviews, job fairs, and direct employer connections for every student.",
+            "icon": "/nursing-icon.png"
+          },
+          {
+            "cardTitle": "24/7 Support",
+            "cardDescription": "Study from anywhere with our state-of-the-art virtual classroom and asynchronous course materials.",
+            "icon": "/awards-icon.png"
+          },
+          {
+            "cardTitle": "Rich Resources",
+            "cardDescription": "Engage with peers through discussion forums, group projects, and networking events.",
+            "icon": "/business-icon.png"
+          },
+          {
+            "cardTitle": "Global Network",
+            "cardDescription": "Resume workshops, mock interviews, job fairs, and direct employer connections for every student.",
+            "icon": "/nursing-icon.png"
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "learnSchedule",
+      "componentType": "LearnScheduleSection",
+      "position": 2,
+      "content": {
+        "title": "Learn on Your Schedule",
+        "description": "Whether you're a working professional, a parent, or a career changer, our programs are designed to fit your life. Study anytime, anywhere with our award-winning online platform.",
+        "listContent": [
+          "Academic advising and mentorship",
+          "Writing center and tutoring",
+          "Disability and accessibility services",
+          "Mental health and wellness programs",
+          "Library and research support",
+          "Technology help desk"
+        ],
+        "image": "/cta-img.png"
+      }
+    },
+    {
+      "sectionKey": "learningDashboardCta",
+      "componentType": "LearningDashboardCtaSection",
+      "position": 3,
+      "content": {
+        "title": "Your Learning Dashboard",
+        "desc": "Our integrated portal gives you access to assignments, discussions, messaging, grades, and more — all in one place.",
+        "image": "/cta-img.png",
+        "buttonText": "Access the Portal"
+      }
+    },
+    {
+      "sectionKey": "cta",
+      "componentType": "CtaSection",
+      "position": 4,
+      "content": {}
+    }
+  ]
+}
+

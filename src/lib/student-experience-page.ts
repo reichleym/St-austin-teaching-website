@@ -125,3 +125,14 @@ export async function getStudentExperienceContent(langValue: string | null): Pro
 
   return payload;
 }
+
+export async function getStudentExperienceSections(langValue: string | null) {
+  const lang = toLanguage(langValue) ?? "en";
+  const rows = await fetchRows();
+  const sections: Array<{ componentType: string; content: Record<string, unknown> | null }> = [];
+  for (const row of rows) {
+    const translated = getTranslationForLang(row.content, lang);
+    sections.push({ componentType: row.componentType, content: translated });
+  }
+  return sections;
+}

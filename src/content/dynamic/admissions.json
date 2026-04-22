@@ -1,0 +1,130 @@
+{
+  "pageSlug": "admissions",
+  "name": "Admissions Page",
+  "route": "/admissions",
+  "tableName": "AdmissionsPage",
+  "file": "src/app/admissions/page.tsx",
+  "sections": [
+    {
+      "sectionKey": "banner",
+      "componentType": "BannerSection",
+      "position": 0,
+      "content": {
+        "title": "Admissions",
+        "description": "Your Path to Success Starts Here",
+        "bgImg": "/bannerImg.jpg"
+      }
+    },
+    {
+      "sectionKey": "steps",
+      "componentType": "StepsSection",
+      "position": 1,
+      "content": {
+        "title": "How to Apply",
+        "stepsContent": [
+          {
+            "cardTitle": "Submit Application",
+            "cardDescription": "Complete our online application form with your personal and academic information.",
+            "stepNum": "01"
+          },
+          {
+            "cardTitle": "Submit Documents",
+            "cardDescription": "Upload your transcripts, test scores, and letters of recommendation.",
+            "stepNum": "02"
+          },
+          {
+            "cardTitle": "Review & Interview",
+            "cardDescription": "Our admissions team will review your application and schedule an interview.",
+            "stepNum": "03"
+          },
+          {
+            "cardTitle": "Receive Decision",
+            "cardDescription": "Get your admission decision and enrollment information.",
+            "stepNum": "04"
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "requirements",
+      "componentType": "RequirementsSection",
+      "position": 2,
+      "content": {
+        "title": "Admission Requirements",
+        "requirementsDesc": "To be considered for admission, applicants must meet the following requirements:",
+        "listContent": [
+          "High school diploma or equivalent (GED)",
+          "Minimum GPA of 2.5",
+          "TOEFL score of 79+ (for international students)",
+          "Completed application form",
+          "Two letters of recommendation"
+        ],
+        "image": "/cta-img.png"
+      }
+    },
+    {
+      "sectionKey": "deadlines",
+      "componentType": "DeadlinesSection",
+      "position": 3,
+      "content": {
+        "title": "Important Deadlines",
+        "deadlineItem": [
+          {
+            "title": "September Intake",
+            "headingOne": "Priority Deadline",
+            "headingTwo": "Final Deadline",
+            "dateOne": "July 15",
+            "dateTwo": "August 31"
+          },
+          {
+            "title": "January Intake",
+            "headingOne": "Priority Deadline",
+            "headingTwo": "Final Deadline",
+            "dateOne": "November 1",
+            "dateTwo": "December 15"
+          },
+          {
+            "title": "May Intake",
+            "headingOne": "Priority Deadline",
+            "headingTwo": "Final Deadline",
+            "dateOne": "March 1",
+            "dateTwo": "April 15"
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "faq",
+      "componentType": "FaqSection",
+      "position": 4,
+      "content": {
+        "title": "Frequently Asked Questions",
+        "accordionsContent": [
+          {
+            "title": "What is the application deadline?",
+            "description": "We accept applications on a rolling basis. Apply as early as possible for better course availability."
+          },
+          {
+            "title": "What are the tuition fees?",
+            "description": "Tuition varies by program. Please contact our admissions team for detailed pricing."
+          },
+          {
+            "title": "When does the academic year start?",
+            "description": "The academic year typically starts in September. We also offer spring and summer intakes."
+          },
+          {
+            "title": "Do you offer financial aid?",
+            "description": "Yes! We offer scholarships, grants, and flexible payment plans."
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "cta",
+      "componentType": "CtaSection",
+      "position": 5,
+      "content": {}
+    }
+  ]
+}
+

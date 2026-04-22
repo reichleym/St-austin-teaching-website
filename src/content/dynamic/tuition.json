@@ -1,0 +1,106 @@
+{
+  "pageSlug": "tuition",
+  "name": "Tuition & Financial Aid Page",
+  "route": "/tuition",
+  "tableName": "TuitionPage",
+  "file": "src/app/tuition/page.tsx",
+  "sections": [
+    {
+      "sectionKey": "banner",
+      "componentType": "BannerSection",
+      "position": 0,
+      "content": {
+        "title": "Tuition & Financial Aid",
+        "description": "Affordable Education Options",
+        "bgImg": "/bannerImg.jpg"
+      }
+    },
+    {
+      "sectionKey": "tuitionTable",
+      "componentType": "TuitionTableSection",
+      "position": 1,
+      "content": {
+        "title": "Tuition & Financial Aid",
+        "tableHeadings": [
+          "Program Tuition",
+          "Per Year",
+          "Per Semester"
+        ],
+        "tableData": [
+          {
+            "program": "Undergraduate (Online)",
+            "perYear": "$12,500",
+            "perCredit": "$12,500"
+          },
+          {
+            "program": "Computer Science",
+            "perYear": "$14,000",
+            "perCredit": "$14,000"
+          },
+          {
+            "program": "Data Science",
+            "perYear": "$13,000",
+            "perCredit": "$13,000"
+          },
+          {
+            "program": "Master of Business Administration",
+            "perYear": "$20,000",
+            "perCredit": "$20,000"
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "scholarships",
+      "componentType": "WhyAustin",
+      "position": 2,
+      "content": {
+        "secTitle": "Scholarships & Grants",
+        "whiteCards": [
+          {
+            "icon": "/wedding-certificate.svg",
+            "title": "Academic Excellence",
+            "description": "Reward Orientation Carriere"
+          },
+          {
+            "icon": "/global-learning.svg",
+            "title": "Flexible Learning",
+            "description": "Learn from experts and accomplished researchers"
+          },
+          {
+            "icon": "/workspace-premium.svg",
+            "title": "Career-Focused",
+            "description": "92% placement rate with services of dedicated career and industry partnerships"
+          },
+          {
+            "icon": "/award-trophy.svg",
+            "title": "Expert Faculty",
+            "description": "Learn from industry practitioners and accomplished researchers"
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "paymentPlans",
+      "componentType": "PaymentPlansSection",
+      "position": 3,
+      "content": {
+        "title": "Payment Plans",
+        "listContent": [
+          "Monthly installment plans with no interest",
+          "Military and veteran benefits accepted",
+          "Employer tuition reimbursement processing",
+          "Federal and state financial aid eligible"
+        ],
+        "buttonText": "Contact the financial aid office"
+      }
+    },
+    {
+      "sectionKey": "cta",
+      "componentType": "CtaSection",
+      "position": 4,
+      "content": {}
+    }
+  ]
+}
+

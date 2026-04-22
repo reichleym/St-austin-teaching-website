@@ -5,6 +5,14 @@ import Button from "./Button";
 import { IoMdTime } from "react-icons/io";
 import { useTranslations } from "@/lib/useTranslations";
 
+function clampSentences(text?: string, maxSentences = 2) {
+    if (!text || typeof text !== 'string') return text ?? "";
+    const parts = text.match(/[^.!?]+[.!?]*/g);
+    if (!parts) return text;
+    if (parts.length <= maxSentences) return text;
+    return parts.slice(0, maxSentences).join(' ').trim() + '...';
+}
+
 type ProgramCardItem = {
     img: string;
     title?: string;
@@ -100,8 +108,8 @@ export default function ProgramCard({
                     </div>
                     <div className="flex flex-col justify-between flex-1">
                         <div className="flex-1">
-                            <div className="font-semibold text-xl mb-2">{featureItem.title}</div>
-                            <p className="">{featureItem.description}</p>
+                                <div className="font-semibold text-xl mb-2">{featureItem.title}</div>
+                                <p className="">{clampSentences(featureItem.description, 2)}</p>
                         </div>
                         <div className="flex items-center justify-between mt-4">
                             <span className="text-[13px] text-[#33333380] flex items-center gap-2"><IoMdTime size={22} /> {featureItem.time}</span>

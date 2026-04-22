@@ -1,0 +1,128 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.045068+00:00",
+  "pageInfo": {
+    "name": "Donations Page",
+    "slug": "donations",
+    "route": "/donations",
+    "file": "src/app/donations/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "Accreditation",
+      "occurrences": 1,
+      "propsUsed": [
+        "blockContent",
+        "description",
+        "title"
+      ]
+    },
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Button",
+      "occurrences": 3,
+      "propsUsed": [
+        "className",
+        "disabled",
+        "icon",
+        "type",
+        "variant"
+      ]
+    },
+    {
+      "component": "CtaSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "FaGift",
+      "occurrences": 1,
+      "propsUsed": [
+        "className"
+      ]
+    },
+    {
+      "component": "FaHeart",
+      "occurrences": 1,
+      "propsUsed": [
+        "className"
+      ]
+    },
+    {
+      "component": "HTMLFormElement",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "IoIosCheckmarkCircleOutline",
+      "occurrences": 1,
+      "propsUsed": [
+        "className"
+      ]
+    },
+    {
+      "component": "MatchingGiftSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "PaymentMethod",
+      "occurrences": 1,
+      "propsUsed": []
+    }
+  ],
+  "translationKeys": [
+    "common.loading",
+    "donations.custom",
+    "donations.desc",
+    "donations.donateNow",
+    "donations.donationAmounts",
+    "donations.impact",
+    "donations.subtitle",
+    "donations.title"
+  ],
+  "translationDefaults": {
+    "common.loading": {
+      "en": "Loading...",
+      "fr": "Chargement en cours..."
+    },
+    "donations.custom": {
+      "en": "Custom Amount",
+      "fr": "Montant personnalis\u00e9"
+    },
+    "donations.desc": {
+      "en": "Your donation directly impacts students' lives. By contributing to St. Austin's International University, you help us provide quality education and support services.",
+      "fr": "Votre don a un impact direct sur la vie des \u00e9tudiants. En contribuant \u00e0 l'Universit\u00e9 internationale Saint-Austin, vous nous aidez \u00e0 fournir une \u00e9ducation de qualit\u00e9 et des services de soutien."
+    },
+    "donations.donateNow": {
+      "en": "Donate Now",
+      "fr": "Faire un don maintenant"
+    },
+    "donations.donationAmounts": {
+      "en": "Choose Your Donation Amount",
+      "fr": "Choisissez Votre Montant de Don"
+    },
+    "donations.impact": {
+      "en": "Your Impact",
+      "fr": "Votre Impact"
+    },
+    "donations.subtitle": {
+      "en": "Help Us Make Education Accessible to Everyone",
+      "fr": "Aidez-nous \u00e0 Rendre l'\u00c9ducation Accessible \u00e0 Tous"
+    },
+    "donations.title": {
+      "en": "Support Our Mission Through Donations",
+      "fr": "Soutenir Notre Mission par des Dons"
+    }
+  },
+  "dataSources": [
+    "@/lib/useTranslations"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

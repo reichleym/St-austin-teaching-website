@@ -164,3 +164,14 @@ export async function getAboutPageContent(langValue: string | null): Promise<Abo
 
   return payload;
 }
+
+export async function getAboutSections(langValue: string | null) {
+  const lang = toLanguage(langValue) ?? "en";
+  const rows = await fetchAboutPageRows();
+  const sections: Array<{ componentType: string; content: Record<string, unknown> | null }> = [];
+  for (const row of rows) {
+    const translated = getTranslationForLang(row.content, lang);
+    sections.push({ componentType: row.componentType, content: translated });
+  }
+  return sections;
+}

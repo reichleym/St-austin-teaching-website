@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useEffect, ReactNode, useCallback, useState } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { toLanguage, translationsMap, type Language } from '@/lib/i18n/catalog';
 
@@ -66,7 +67,14 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   const router = useRouter();
   const [lang, setLangState] = useState<Language>(() => getClientLanguage());
 
-  const translations = translationsMap[lang];
+  const [systemTranslations, setSystemTranslations] = useState<Record<string, unknown> | null>(null);
+
+  const baseTranslations = translationsMap[lang] ?? {};
+
+  const translations = useMemo(() => {
+    if (!systemTranslations) return baseTranslations;
+    return { ...baseTranslations, ...systemTranslations };
+  }, [baseTranslations, systemTranslations]);
 
   const setLang = useCallback((newLang: Language) => {
     const maxAgeSeconds = 60 * 60 * 24 * 365; // 1 year
@@ -111,6 +119,70 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       // ignore storage failures
     }
   }, [lang, router]);
+
+  // Load or fetch system translations when language changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const storageKey = `system_translations_${lang}`;
+
+    try {
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        setSystemTranslations(JSON.parse(cached));
+        return;
+      }
+    } catch {
+      // ignore
+    }
+
+    // Only fetch for non-en languages to avoid redundant data
+    if (lang === 'en') {
+      setSystemTranslations(null);
+      return;
+    }
+
+    let mounted = true;
+
+    (async () => {
+      try {
+        const res = await fetch('/api/system-translations');
+        if (!res.ok) return;
+        const json = await res.json();
+        const rawMap = json?.data?.translations ?? {};
+
+        // Flatten rawMap into translation keys under `system.universityCareers.{key}.{field}`
+        const flattened: Record<string, unknown> = {};
+        for (const itemKey of Object.keys(rawMap)) {
+          const item = rawMap[itemKey];
+          const langBlock = item?.[lang];
+          if (langBlock && typeof langBlock === 'object') {
+            for (const field of Object.keys(langBlock)) {
+              const value = langBlock[field];
+              if (typeof value === 'string') {
+                flattened[`system.universityCareers.${itemKey}.${field}`] = value;
+              }
+            }
+          }
+        }
+
+        if (!mounted) return;
+        setSystemTranslations(flattened);
+
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(flattened));
+        } catch {
+          // ignore
+        }
+      } catch (e) {
+        console.error('[LanguageProvider] Failed to load system translations', e);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [lang]);
 
   return (
     <LanguageContext.Provider

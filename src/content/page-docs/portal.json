@@ -1,0 +1,192 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.046888+00:00",
+  "pageInfo": {
+    "name": "Portal Page",
+    "slug": "portal",
+    "route": "/portal",
+    "file": "src/app/portal/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "Accreditation",
+      "occurrences": 1,
+      "propsUsed": [
+        "blockContent",
+        "className",
+        "classNameCard",
+        "description",
+        "title"
+      ]
+    },
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Button",
+      "occurrences": 1,
+      "propsUsed": [
+        "className",
+        "variant"
+      ]
+    },
+    {
+      "component": "IconCard",
+      "occurrences": 1,
+      "propsUsed": [
+        "blockContent",
+        "className",
+        "classNameCard"
+      ]
+    },
+    {
+      "component": "Link",
+      "occurrences": 1,
+      "propsUsed": [
+        "className",
+        "href"
+      ]
+    },
+    {
+      "component": "ProgramCard",
+      "occurrences": 1,
+      "propsUsed": [
+        "programCardContent"
+      ]
+    }
+  ],
+  "translationKeys": [
+    "portal.accessDescription",
+    "portal.accessTitle",
+    "portal.platformFeatures.assignmentSystem.description",
+    "portal.platformFeatures.assignmentSystem.title",
+    "portal.platformFeatures.collaboration.description",
+    "portal.platformFeatures.collaboration.title",
+    "portal.platformFeatures.courseManagement.description",
+    "portal.platformFeatures.courseManagement.title",
+    "portal.platformFeatures.description",
+    "portal.platformFeatures.progressTracking.description",
+    "portal.platformFeatures.progressTracking.title",
+    "portal.platformFeatures.realTimeMessaging.description",
+    "portal.platformFeatures.realTimeMessaging.title",
+    "portal.platformFeatures.title",
+    "portal.platformFeatures.virtualClassrooms.description",
+    "portal.platformFeatures.virtualClassrooms.title",
+    "portal.programsSection.subtitle",
+    "portal.programsSection.title",
+    "portal.users.administrators.description",
+    "portal.users.administrators.title",
+    "portal.users.faculty.description",
+    "portal.users.faculty.title",
+    "portal.users.students.description",
+    "portal.users.students.title"
+  ],
+  "translationDefaults": {
+    "portal.accessDescription": {
+      "en": null,
+      "fr": null
+    },
+    "portal.accessTitle": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.assignmentSystem.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.assignmentSystem.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.collaboration.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.collaboration.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.courseManagement.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.courseManagement.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.progressTracking.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.progressTracking.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.realTimeMessaging.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.realTimeMessaging.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.virtualClassrooms.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.platformFeatures.virtualClassrooms.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.programsSection.subtitle": {
+      "en": null,
+      "fr": null
+    },
+    "portal.programsSection.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.users.administrators.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.users.administrators.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.users.faculty.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.users.faculty.title": {
+      "en": null,
+      "fr": null
+    },
+    "portal.users.students.description": {
+      "en": null,
+      "fr": null
+    },
+    "portal.users.students.title": {
+      "en": null,
+      "fr": null
+    }
+  },
+  "dataSources": [
+    "@/lib/course-catalog",
+    "@/lib/i18n/server",
+    "@/lib/postgres"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

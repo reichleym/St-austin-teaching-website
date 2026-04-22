@@ -1,0 +1,111 @@
+{
+  "pageSlug": "donations",
+  "name": "Donations Page",
+  "route": "/donations",
+  "tableName": "DonationsPage",
+  "file": "src/app/donations/page.tsx",
+  "sections": [
+    {
+      "sectionKey": "banner",
+      "componentType": "BannerSection",
+      "position": 0,
+      "content": {
+        "title": "Support Our Mission Through Donations",
+        "description": "Help Us Make Education Accessible to Everyone",
+        "bgImg": "/bannerImg.jpg"
+      }
+    },
+    {
+      "sectionKey": "donationForm",
+      "componentType": "DonationFormSection",
+      "position": 1,
+      "content": {
+        "title": "Choose Your Donation Amount",
+        "oneTimeAmounts": ["XAF 2,500", "XAF 5,000", "XAF 10,000", "XAF 25,000", "XAF 50,000", "XAF 100,000"],
+        "designationOptions": ["Where It's Needed Most", "Student Scholarships", "Campus Ministry", "Academic Programs"],
+        "paymentMethods": [
+          {
+            "value": "mtn_mobile_money",
+            "label": "MTN Mobile Money (CamPay)"
+          },
+          {
+            "value": "orange_money",
+            "label": "Orange Money (CamPay)"
+          },
+          {
+            "value": "credit_card",
+            "label": "Credit Card (CamPay)"
+          },
+          {
+            "value": "bank_transfer",
+            "label": "Bank Payment"
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "whyGive",
+      "componentType": "WhyGiveSection",
+      "position": 2,
+      "content": {
+        "stats": {
+          "raised": "$2.4M",
+          "students": "1,200+"
+        },
+        "description": "Your generosity directly impacts students' lives. Last year, donor-funded scholarships helped over 1,200 students complete their degrees and launch successful careers."
+      }
+    },
+    {
+      "sectionKey": "otherWays",
+      "componentType": "OtherWaysSection",
+      "position": 3,
+      "content": {
+        "title": "Other Ways to Give",
+        "items": [
+          "Mail a check to St. Austin University, Office of Advancement",
+          "Donate stock, securities, or cryptocurrency",
+          "Include St. Austin in your estate plans",
+          "Set up a donor-advised fund gift"
+        ]
+      }
+    },
+    {
+      "sectionKey": "impact",
+      "componentType": "Accreditation",
+      "position": 4,
+      "content": {
+        "title": "Your Impact",
+        "blockContent": [
+          {
+            "cardTitle": "Student Scholarships",
+            "cardDescription": "Every dollar donated funds scholarships to help students achieve their degrees and transform their careers.",
+            "icon": "/carbon_gui-management.png"
+          },
+          {
+            "cardTitle": "Academic Programs",
+            "cardDescription": "Support the development of innovative programs that prepare students for the demands of a modern workforce.",
+            "icon": "/tabler_message-check.png"
+          },
+          {
+            "cardTitle": "Student Support Services",
+            "cardDescription": "Help fund mentoring, tutoring, career counseling, and wellness resources for our diverse student body.",
+            "icon": "/hugeicons_progress-04.png"
+          }
+        ]
+      }
+    },
+    {
+      "sectionKey": "matchingGift",
+      "componentType": "MatchingGiftSection",
+      "position": 5,
+      "content": {}
+    },
+    {
+      "sectionKey": "cta",
+      "componentType": "CtaSection",
+      "position": 6,
+      "content": {}
+    }
+  ]
+}
+

@@ -1,7 +1,13 @@
 import { randomUUID } from "node:crypto";
 import type { NextRequest } from "next/server";
+import { cookies } from "next/headers";
 import { getSql } from "@/lib/postgres";
+import { getDonationsContent } from "@/lib/donations-page";
 import { createCheckoutSession } from "@/lib/payment-gateway";
+import { toLanguage } from "@/lib/i18n/catalog";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 type PaymentMethod =
     | "credit_card"
@@ -78,6 +84,16 @@ async function ensureDonationsTable(): Promise<void> {
     })();
 
     return globalThis.__stAustinDonationsSchemaReady;
+}
+
+export async function GET(request: NextRequest) {
+    const queryLang = request.nextUrl.searchParams.get("lang");
+    const cookieStore = await cookies();
+    const cookieLang = cookieStore.get("lang")?.value ?? null;
+    const lang = toLanguage(queryLang ?? cookieLang) ?? "en";
+
+    const donationsPage = await getDonationsContent(lang);
+    return Response.json({ lang, donationsPage }, { status: 200 });
 }
 
 export async function POST(request: NextRequest) {
@@ -295,5 +311,3 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";

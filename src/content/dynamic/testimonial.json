@@ -1,0 +1,44 @@
+{
+  "pageSlug": "testimonial",
+  "name": "Testimonial Section",
+  "route": "sections/Testimonial",
+  "tableName": "TestimonialSection",
+  "sections": [
+    {
+      "sectionKey": "testimonials",
+      "componentType": "TestimonialSection",
+      "position": 0,
+      "content": {
+        "title": "What Our Students Say",
+        "description": "Hear from graduates and current students about their St. Austin experience",
+        "items": [
+          {
+            "name": "Student Name 1",
+            "role": "Business Administration Graduate",
+            "content": "St. Austin's program gave me the practical skills and confidence I needed for my current role. The faculty truly cares about student success.",
+            "img": "/testimonial-img.jpg"
+          },
+          {
+            "name": "Student Name 2",
+            "role": "Computer Science Student",
+            "content": "The online flexibility allowed me to work full-time while earning my degree. The instructors are experts in their field with real-world experience.",
+            "img": "/testimonial-img.jpg"
+          },
+          {
+            "name": "Student Name 3",
+            "role": "Data Science Graduate",
+            "content": "I appreciated the career services support. They helped me secure a role at a major tech company. The curriculum aligned perfectly with industry needs.",
+            "img": "/testimonial-img.jpg"
+          },
+          {
+            "name": "Student Name 4",
+            "role": "MBA Graduate",
+            "content": "The networking opportunities and peer collaboration transformed my career trajectory. Highly recommend St. Austin to anyone serious about growth.",
+            "img": "/testimonial-img.jpg"
+          }
+        ]
+      }
+    }
+  ]
+}
+

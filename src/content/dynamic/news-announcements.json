@@ -1,0 +1,48 @@
+{
+  "pageSlug": "news-announcements",
+  "name": "News & Announcements Section",
+  "route": "sections/NewsAnnouncements",
+  "tableName": "NewsAnnouncementsSection",
+  "sections": [
+    {
+      "sectionKey": "news",
+      "componentType": "NewsAnnouncements",
+      "position": 0,
+      "content": {
+        "title": "News & Announcements",
+        "readMoreButton": "Read More News",
+        "cards": [
+          {
+            "img": "/news-card-img.png",
+            "title": "Business Administration",
+            "description": "Develop strategic thinking and leadership skills for the modern business world.",
+            "time": "March 15, 2026",
+            "badge": "Accreditation"
+          },
+          {
+            "img": "/news-card-img.png",
+            "title": "Computer Science",
+            "description": "Master algorithms, software engineering, and cutting-edge technology.",
+            "time": "April 10, 2026",
+            "badge": "Admissions"
+          },
+          {
+            "img": "/news-card-img.png",
+            "title": "Data Science",
+            "description": "Analyze and interpret complex data to drive informed decision-making.",
+            "time": "May 20, 2026",
+            "badge": "Accreditation"
+          },
+          {
+            "img": "/news-card-img.png",
+            "title": "Master of Business Administration",
+            "description": "Advance your career with executive-level business acumen and leadership training.",
+            "time": "June 5, 2026",
+            "badge": "Campus"
+          }
+        ]
+      }
+    }
+  ]
+}
+

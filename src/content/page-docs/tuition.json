@@ -1,0 +1,163 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.049694+00:00",
+  "pageInfo": {
+    "name": "Tuition Page",
+    "slug": "tuition",
+    "route": "/tuition",
+    "file": "src/app/tuition/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "Button",
+      "occurrences": 2,
+      "propsUsed": [
+        "className",
+        "variant"
+      ]
+    },
+    {
+      "component": "CheckList",
+      "occurrences": 2,
+      "propsUsed": [
+        "className",
+        "classNamecheckboxList",
+        "listContent"
+      ]
+    },
+    {
+      "component": "CtaSection",
+      "occurrences": 1,
+      "propsUsed": [
+        "className"
+      ]
+    },
+    {
+      "component": "Link",
+      "occurrences": 1,
+      "propsUsed": [
+        "href"
+      ]
+    },
+    {
+      "component": "WhyAustin",
+      "occurrences": 1,
+      "propsUsed": [
+        "button",
+        "secTitle",
+        "whiteCards",
+        "whyAustinDesc"
+      ]
+    }
+  ],
+  "translationKeys": [
+    "tuition.paymentPlan.employerReimbursement",
+    "tuition.paymentPlan.federalAid",
+    "tuition.paymentPlan.militaryVeteran",
+    "tuition.paymentPlan.monthlyInstallment",
+    "tuition.paymentPlans",
+    "tuition.programs",
+    "tuition.scholarships.academicExcellence.description",
+    "tuition.scholarships.academicExcellence.title",
+    "tuition.scholarships.careerFocused.description",
+    "tuition.scholarships.careerFocused.title",
+    "tuition.scholarships.expertFaculty.description",
+    "tuition.scholarships.expertFaculty.title",
+    "tuition.scholarships.financialAidButton",
+    "tuition.scholarships.flexibleLearning.description",
+    "tuition.scholarships.flexibleLearning.title",
+    "tuition.semester",
+    "tuition.subtitle",
+    "tuition.title",
+    "tuition.year"
+  ],
+  "translationDefaults": {
+    "tuition.paymentPlan.employerReimbursement": {
+      "en": "Employer tuition reimbursement processing",
+      "fr": "Traitement du remboursement des frais de scolarit\u00e9 par l'employeur"
+    },
+    "tuition.paymentPlan.federalAid": {
+      "en": "Federal and state financial aid eligible",
+      "fr": "Admissible \u00e0 l'aide financi\u00e8re f\u00e9d\u00e9rale et provinciale"
+    },
+    "tuition.paymentPlan.militaryVeteran": {
+      "en": "Military and veteran benefits accepted",
+      "fr": "Avantages militaires et aux v\u00e9t\u00e9rans accept\u00e9s"
+    },
+    "tuition.paymentPlan.monthlyInstallment": {
+      "en": "Monthly installment plans with no interest",
+      "fr": "Plans de versements mensuels sans int\u00e9r\u00eat"
+    },
+    "tuition.paymentPlans": {
+      "en": "Payment Plans",
+      "fr": "Plans de paiement"
+    },
+    "tuition.programs": {
+      "en": "Program Tuition",
+      "fr": "Frais de scolarit\u00e9 du programme"
+    },
+    "tuition.scholarships.academicExcellence.description": {
+      "en": "Reward Orientation Carriere",
+      "fr": "Orientation carri\u00e8re"
+    },
+    "tuition.scholarships.academicExcellence.title": {
+      "en": "Academic Excellence",
+      "fr": "Excellence acad\u00e9mique"
+    },
+    "tuition.scholarships.careerFocused.description": {
+      "en": "92% placement rate with services of dedicated career and industry partnerships",
+      "fr": "Taux de placement de 92% avec services d'orientation professionnelle et partenariats industriels"
+    },
+    "tuition.scholarships.careerFocused.title": {
+      "en": "Career-Focused",
+      "fr": "Orientation carri\u00e8re"
+    },
+    "tuition.scholarships.expertFaculty.description": {
+      "en": "Learn from industry practitioners and accomplished researchers",
+      "fr": "Apprenez des praticiens de l'industrie et des chercheurs accomplis"
+    },
+    "tuition.scholarships.expertFaculty.title": {
+      "en": "Expert Faculty",
+      "fr": "Professeurs experts"
+    },
+    "tuition.scholarships.financialAidButton": {
+      "en": "Contact the financial aid office",
+      "fr": "Contacter le bureau d'aide financi\u00e8re"
+    },
+    "tuition.scholarships.flexibleLearning.description": {
+      "en": "Learn from experts and accomplished researchers",
+      "fr": "Apprenez d'experts et de chercheurs accomplis"
+    },
+    "tuition.scholarships.flexibleLearning.title": {
+      "en": "Flexible Learning",
+      "fr": "Apprentissage flexible"
+    },
+    "tuition.semester": {
+      "en": "Per Semester",
+      "fr": "Par semestre"
+    },
+    "tuition.subtitle": {
+      "en": "Affordable Education Options",
+      "fr": "Options d'\u00e9ducation abordables"
+    },
+    "tuition.title": {
+      "en": "Tuition & Financial Aid",
+      "fr": "Frais de scolarit\u00e9 et aide financi\u00e8re"
+    },
+    "tuition.year": {
+      "en": "Per Year",
+      "fr": "Par ann\u00e9e"
+    }
+  },
+  "dataSources": [
+    "@/lib/useTranslations"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

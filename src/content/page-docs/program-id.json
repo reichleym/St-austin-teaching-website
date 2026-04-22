@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.047642+00:00",
+  "pageInfo": {
+    "name": "Program Id Page",
+    "slug": "program-id",
+    "route": "/program/[ID]",
+    "file": "src/app/program/[ID]/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "CourseCardItem",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "ProgramDetailClient",
+      "occurrences": 1,
+      "propsUsed": [
+        "admissionRequirements",
+        "bannerBadge",
+        "careerOpportunities",
+        "curriculum",
+        "program",
+        "programContentJson",
+        "programOverviewContent",
+        "tuitionAndFees"
+      ]
+    }
+  ],
+  "translationKeys": [],
+  "translationDefaults": {},
+  "dataSources": [
+    "@/lib/course-catalog",
+    "@/lib/i18n/server",
+    "@/lib/postgres"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

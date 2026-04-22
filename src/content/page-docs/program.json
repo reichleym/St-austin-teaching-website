@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-04-20T07:26:13.048057+00:00",
+  "pageInfo": {
+    "name": "Program Page",
+    "slug": "program",
+    "route": "/program",
+    "file": "src/app/program/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "CtaSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "ExplorePrograms",
+      "occurrences": 1,
+      "propsUsed": [
+        "action",
+        "className",
+        "degreeLevelOptions",
+        "fieldOfStudyOptions",
+        "selectedDegreeLevel",
+        "selectedFieldOfStudy"
+      ]
+    },
+    {
+      "component": "ProgramCard",
+      "occurrences": 1,
+      "propsUsed": [
+        "programCardContent"
+      ]
+    }
+  ],
+  "translationKeys": [],
+  "translationDefaults": {},
+  "dataSources": [
+    "@/lib/course-catalog",
+    "@/lib/i18n/server",
+    "@/lib/postgres"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}
