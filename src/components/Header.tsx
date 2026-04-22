@@ -185,7 +185,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
     return (
         <header className="bg-white">
             <div className="bg-[#1E73BE]">
-                <div className="container py-2 flex justify-end gap-5 items-center">
+                {/* <div className="container py-2 flex justify-end gap-5 items-center">
                     {topMenuItem.map((topItem) => (
                         <Link
                             key={topItem.label}
@@ -195,11 +195,27 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                             {topItem.label}
                         </Link>
                     ))}
-<Link href="/apply" className="inline-flex">
+                    <Link href="/apply" className="inline-flex">
                         <Button variant="white" className="px-4">{t('header.applyNow')}</Button>
                     </Link>
 
-                </div>
+                </div> */}
+<div className="container py-2 flex justify-end gap-5 items-center">
+    {topMenuItem.map((topItem) => (
+        <Link
+            key={topItem.label}
+            href={topItem.href}
+            className={`text-sm md:text-base pb-1 font-medium text-white hover:opacity-75 hover:border-b-2 hover:pb-1 transition-opacity duration-200 leading-6 align-center ${
+                pathname === topItem.href ? "active border-b-2 pb-1 border-white" : ""
+            }`}
+        >
+            {topItem.label}
+        </Link>
+    ))}
+    <Link href="/apply" className="inline-flex">
+        <Button variant="white" className="px-4">{t('header.applyNow')}</Button>
+    </Link>
+</div>
             </div>
 
             <nav className="container md:py-5 py-3">
@@ -211,13 +227,30 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                     </div>
 
                     <div className="flex gap-5 items-center">
-                        <div className="hidden lg:block">
+                        {/* <div className="hidden lg:block">
                             <div className="ml-10 flex space-x-5">
                                 {menuItems.map((item) => (
                                     <Link
                                         key={item.label}
                                         href={item.href}
                                         className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium"
+                                    >
+                                        {item.label}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div> */}
+                        <div className="hidden lg:block">
+                            <div className="ml-10 flex space-x-5">
+                                {menuItems.map((item) => (
+                                    <Link
+                                        key={item.label}
+                                        href={item.href}
+                                        className={`transition-colors duration-200 font-medium pb-1 ${
+                                            pathname === item.href
+                                                ? "text-[#1E73BE] border-b-2 border-[#1E73BE] pb-1"
+                                                : "text-gray-700 hover:text-[#1E73BE] hover:border-b-2 hover:border-[#1E73BE] hover:pb-1"
+                                        }`}
                                     >
                                         {item.label}
                                     </Link>

@@ -8,16 +8,16 @@ export default function Footer() {
     const { t } = useTranslations();
 
     const campusMenuItems = [
-        { label: t('header.menu.programs'), href: '#' },
-        { label: t('header.menu.admissions'), href: '#' },
-        { label: t('header.menu.tuition'), href: '#' },
-        { label: t('header.menu.studentExperience'), href: '#' },
-        { label: t('header.menu.about'), href: '#' },
+        { label: t('header.menu.programs'), href: '/program' },
+        { label: t('header.menu.admissions'), href: '/admissions' },
+        { label: t('header.menu.tuition'), href: '/tuition' },
+        { label: t('header.menu.studentExperience'), href: '/studentExperience' },
+        { label: t('header.menu.about'), href: '/about' },
     ];
        const recordMenuItems = [
         { label: t('footer.requestInfo'), href: '/request-info' },
         { label: t('footer.talkToAdvisor'), href: '#' },
-        { label: t('footer.governmentEmployee'), href: '#' },
+        { label: t('footer.governmentEmployee'), href: '/government-employees' },
     ];
 
     return (

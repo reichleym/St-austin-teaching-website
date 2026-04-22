@@ -99,7 +99,7 @@ export default function ProgramCard({
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-5">
             {cards.map((featureItem, index) => (
-                <div key={index} className="bg-white rounded-lg border border-[#33333340] p-4 flex items-center flex-col">
+                <div key={index} className="bg-white rounded-lg border border-[#33333340] p-4 flex flex-col">
                     <div className="relative w-full mb-3">
                         <img src={featureItem.img} alt={featureItem.title} className="w-full h-[140px] rounded object-cover" />
                         <span className="absolute bottom-2 border border-[#33333340] left-2 bg-white text-sm font-medium px-2 py-1 rounded">
@@ -111,7 +111,7 @@ export default function ProgramCard({
                                 <div className="font-semibold text-xl mb-2">{featureItem.title}</div>
                                 <p className="">{clampSentences(featureItem.description, 2)}</p>
                         </div>
-                        <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center justify-between mt-4 gap-2">
                             <span className="text-[13px] text-[#33333380] flex items-center gap-2"><IoMdTime size={22} /> {featureItem.time}</span>
                             <Link href={toProgramHref(featureItem)} className="">
                                 <Button variant="outline">{viewLabel}</Button>
