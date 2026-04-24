@@ -148,7 +148,7 @@ export default async function TuitionPage() {
                         }
 
                         case "CtaSection": {
-                            return <CtaSection key={idx} title={(content as any)?.title ?? data.cta?.title} desc={(content as any)?.desc ?? data.cta?.desc} />;
+                            return <CtaSection className="pt-15 md:pt-25" key={idx} title={(content as any)?.title ?? data.cta?.title} desc={(content as any)?.desc ?? data.cta?.desc} />;
                         }
 
                         default:
@@ -192,14 +192,14 @@ export default async function TuitionPage() {
                 <div className="container">
                     <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">{paymentPlans.title}</h2>
                     <div className="">
-                        <CheckList listContent={paymentPlans.listContent ?? []} className="grid md:grid-cols-2 gap-6 space-y-0" classNamecheckboxList="p-3.5 border border-[#1E73BE]" />
+                        <CheckList listContent={paymentPlans.listContent ?? []} className="grid md:grid-cols-2 gap-6" classNamecheckboxList="p-3.5 border border-[#1E73BE]" />
                         <div className="mt-12 mx-auto block text-center">
                             <button className="inline-flex rounded-[5px] bg-[#1E73BE] px-6 py-3 font-medium text-white">{paymentPlans.buttonText}</button>
                         </div>
                     </div>
                 </div>
             </section>
-            <CtaSection title={data.cta?.title} desc={data.cta?.desc} />
+            <CtaSection title={data.cta?.title} desc={data.cta?.desc} className="md:pt-25 pt-15" />
         </>
     );
 }

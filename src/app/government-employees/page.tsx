@@ -175,7 +175,7 @@ export default async function GovernmentEmployeesPage() {
                             </div>
 
                             <div className="mb-6">
-                                <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                                <h2 className="text-3xl md:text-4xl font-bold mb-3 mt-6">
                                     {translate("governmentEmployees.supportByGroupTitle", translations, fallbackTranslations)}
                                 </h2>
                                 <p>

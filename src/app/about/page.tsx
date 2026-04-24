@@ -129,6 +129,8 @@ export default async function AboutPage() {
         },
     ];
 
+    
+
     return (
         <>
             <BannerSection {...bannerContent} />
