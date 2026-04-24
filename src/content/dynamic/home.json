@@ -15,22 +15,22 @@
         "bgImg": "/hero-banner.jpg"
       }
     },
-    {
-      "sectionKey": "explore",
-      "componentType": "ExplorePrograms",
-      "position": 1,
-      "content": {
-        "title": "Explore Programs",
-        "degreeLevel": "",
-        "fieldOfStudy": ""
-      }
-    },
-    {
-      "sectionKey": "featuredPrograms",
-      "componentType": "FeaturedPrograms",
-      "position": 2,
-      "content": {}
-    },
+    // {
+    //   "sectionKey": "explore",
+    //   "componentType": "ExplorePrograms",
+    //   "position": 1,
+    //   "content": {
+    //     "title": "Explore Programs",
+    //     "degreeLevel": "",
+    //     "fieldOfStudy": ""
+    //   }
+    // },
+    // {
+    //   "sectionKey": "featuredPrograms",
+    //   "componentType": "FeaturedPrograms",
+    //   "position": 2,
+    //   "content": {}
+    // },
     {
       "sectionKey": "featuredStories",
       "componentType": "FeaturedStories",
@@ -51,9 +51,54 @@
       }
     },
     {
+      "sectionKey": "learnSomething",
+      "componentType": "LearnSomething",
+      "position": 5,
+      "content": {
+        "cards": [
+          { "title": "Hands-on Learning", "desc": "Practical projects and real-world experience." },
+          { "title": "Career Support", "desc": "Dedicated career services and employer connections." }
+        ]
+      }
+    },
+    {
+      "sectionKey": "testimonial",
+      "componentType": "Testimonial",
+      "position": 6,
+      "content": {
+        "testimonials": [
+          { "quote": "Great experience!", "author": "Alumni" }
+        ]
+      }
+    },
+    {
+      "sectionKey": "learningExp",
+      "componentType": "LearningExp",
+      "position": 7,
+      "content": {
+        "cards": [
+          { "title": "Flexible Formats", "desc": "On-campus, online, and hybrid options." }
+        ]
+      }
+    },
+    {
+      "sectionKey": "newsAnnouncements",
+      "componentType": "NewsAnnouncements",
+      "position": 8,
+      "content": {
+        "items": []
+      }
+    },
+    {
+      "sectionKey": "featuredStories",
+      "componentType": "FeaturedStories",
+      "position": 9,
+      "content": {}
+    },
+    {
       "sectionKey": "cta",
       "componentType": "CtaSection",
-      "position": 5,
+      "position": 10,
       "content": {
         "title": "Ready to Start?",
         "description": "Apply today or request more information.",
@@ -63,11 +108,11 @@
         }
       }
     },
-    {
-      "sectionKey": "footer",
-      "componentType": "Footer",
-      "position": 6,
-      "content": {}
-    }
+    // {
+    //   "sectionKey": "footer",
+    //   "componentType": "Footer",
+    //   "position": 11,
+    //   "content": {}
+    // }
   ]
 }
