@@ -44,7 +44,7 @@
     "governmentEmployees.bannerTitle",
     "governmentEmployees.claimButton",
     "governmentEmployees.contactEmail",
-    "governmentEmployees.contactPhone",
+    "governmentEmployees.phoneNumber",
     "governmentEmployees.contactSupport",
     "governmentEmployees.groups.civilService.summary",
     "governmentEmployees.groups.civilService.support1",
@@ -102,9 +102,9 @@
       "en": "Email: govtservices@staustin.edu",
       "fr": "Email : govtservices@staustin.edu"
     },
-    "governmentEmployees.contactPhone": {
-      "en": "Phone: +237 670 000 000",
-      "fr": "T\u00e9l\u00e9phone : +237 670 000 000"
+    "governmentEmployees.phoneNumber": {
+      "en": "Phone: ",
+      "fr": "T\u00e9l\u00e9phone : "
     },
     "governmentEmployees.contactSupport": {
       "en": "Contact Support",

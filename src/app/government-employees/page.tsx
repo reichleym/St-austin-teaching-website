@@ -309,17 +309,20 @@ export default async function GovernmentEmployeesPage() {
                       translations,
                       fallbackTranslations,
                     )}
-                  </span>{" "}
+                  </span>
+                  <span>{data?.discountCard?.contactEmail}</span>
                 </p>
 
                 <p className="text-sm">
                   <span className="font-medium">
-                    {translate(
-                      "governmentEmployees.contactPhone",
+                    {
+                                         translate(
+                      "governmentEmployees.phoneNumber",
                       translations,
                       fallbackTranslations,
                     )}
-                  </span>{" "}
+                  </span>
+                  <span>{data?.discountCard?.phoneNumber}</span>
                 </p>
               </div>
             </aside>

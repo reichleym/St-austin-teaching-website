@@ -21,7 +21,7 @@ export default function StudentTestimonial({
   testimonials = [],
 }: Props) {
   return (
-    <section className="md:py-25 py-15">
+    <section className="md:py-25 text-center py-15">
       <div className="container">
         <div className="mb-12">
           {title && (
