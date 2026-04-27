@@ -250,7 +250,7 @@ export default async function GovernmentEmployeesPage() {
   };
 
   const isLoggedIn = false;
-  console.log("data>>", data);
+
   return (
     <>
       <BannerSection {...bannerContent}>
@@ -426,13 +426,15 @@ export default async function GovernmentEmployeesPage() {
 
               <div className="mt-10 rounded-lg bg-[#1E73BE] text-white p-7">
                 <h3 className="text-[30px] font-bold mb-3">
-                  {translate(
-                    "governmentEmployees.cta.title",
-                    translations,
-                    fallbackTranslations,
-                  ) ?? "Ready to Begin?"}
+                  {data.cta?.title ??
+                    translate(
+                      "governmentEmployees.cta.title",
+                      translations,
+                      fallbackTranslations,
+                    ) ??
+                    "Ready to Begin?"}
                 </h3>
-                <p className="mb-6">
+                {/* <p className="mb-6">
                   {data.cta?.buttons
                     ? data.cta?.title
                     : (translate(
@@ -441,7 +443,7 @@ export default async function GovernmentEmployeesPage() {
                         fallbackTranslations,
                       ) ??
                       "Apply now and indicate your government employee category so our team can guide your enrollment and support options.")}
-                </p>
+                </p> */}
                 <div className="flex gap-3 flex-wrap">
                   <Link
                     href={data.cta?.buttons?.[0]?.href ?? "/apply"}

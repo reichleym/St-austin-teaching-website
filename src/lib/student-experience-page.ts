@@ -26,8 +26,12 @@ export type StudentExperienceLearnSchedule = {
 
 export type StudentExperienceLearningDashboardCta = {
   title?: string;
-  desc?: string;
+  description?: string;
   image?: string;
+  button?: {
+    label?: string;
+    href?: string;
+  };
 };
 
 export type StudentExperienceCta = {
@@ -63,7 +67,10 @@ function normalizeObject(value: unknown): Record<string, unknown> | null {
   return null;
 }
 
-function getTranslationForLang(value: unknown, lang: Language): Record<string, unknown> | null {
+function getTranslationForLang(
+  value: unknown,
+  lang: Language,
+): Record<string, unknown> | null {
   const content = normalizeObject(value);
   if (!content) {
     return null;
@@ -106,12 +113,15 @@ async function fetchRows(): Promise<RawRow[]> {
   `;
 }
 
-export async function getStudentExperienceContent(langValue: string | null): Promise<StudentExperiencePayload> {
+export async function getStudentExperienceContent(
+  langValue: string | null,
+): Promise<StudentExperiencePayload> {
   const lang = toLanguage(langValue) ?? "en";
   const rows = await fetchRows();
 
   const payload: StudentExperiencePayload = {};
-  type StudentExperienceSectionValue = StudentExperiencePayload[keyof StudentExperiencePayload];
+  type StudentExperienceSectionValue =
+    StudentExperiencePayload[keyof StudentExperiencePayload];
 
   for (const row of rows) {
     const sectionKey = SECTION_COMPONENT_MAP[row.componentType];
@@ -129,7 +139,10 @@ export async function getStudentExperienceContent(langValue: string | null): Pro
 export async function getStudentExperienceSections(langValue: string | null) {
   const lang = toLanguage(langValue) ?? "en";
   const rows = await fetchRows();
-  const sections: Array<{ componentType: string; content: Record<string, unknown> | null }> = [];
+  const sections: Array<{
+    componentType: string;
+    content: Record<string, unknown> | null;
+  }> = [];
   for (const row of rows) {
     const translated = getTranslationForLang(row.content, lang);
     sections.push({ componentType: row.componentType, content: translated });
