@@ -15,16 +15,16 @@ export default function Home() {
     <div>
       {/* <Header /> */}
       <main className="flex-1">
-            <HeroSection />
-            <ExplorePrograms />
-            <FeaturedPrograms />
-            <WhyAustin button={true} whyAustinDesc={true} />
-            <LearnSomething />
-            <Testimonial />
-            <LearningExp />
-            <NewsAnnouncements />
-            <FeaturedStories />
-            <CtaSection className="pt-25" />
+        <HeroSection />
+        <ExplorePrograms />
+        <FeaturedPrograms />
+        <WhyAustin button={true} whyAustinDesc={true} />
+        <LearnSomething />
+        <Testimonial />
+        <LearningExp />
+        <NewsAnnouncements />
+        {/* <FeaturedStories /> */}
+        <CtaSection className="pt-25" />
       </main>
       {/* <Footer /> */}
     </div>
