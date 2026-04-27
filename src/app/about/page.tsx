@@ -247,7 +247,7 @@ export default async function AboutPage() {
                   <h5 className="text-lg font-medium mb-[10px] text-[#1E73BE] leading-tight">
                     {member.role}
                   </h5>
-                  <ExpandableText text={member.description} maxLength={120} />
+                  <ExpandableText text={member.description} maxLength={180} />
                 </div>
               </div>
             ))}

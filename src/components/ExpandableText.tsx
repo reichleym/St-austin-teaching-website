@@ -7,7 +7,7 @@ type Props = {
   maxLength?: number;
 };
 
-export default function ExpandableText({ text, maxLength = 120 }: Props) {
+export default function ExpandableText({ text, maxLength = 180 }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   if (!text) return null;
