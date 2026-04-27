@@ -11,6 +11,8 @@ import {
   type Language,
 } from "@/lib/i18n/catalog";
 import Link from "next/link";
+import Testimonial from "@/components/sections/Testimonial";
+import StudentTestimonial from "@/components/StudentTestimonial";
 
 function translate(
   key: string,
@@ -92,7 +94,6 @@ export default async function StudentExperiencePage() {
   return (
     <>
       <BannerSection {...bannerContent} />
-
       <Accreditation
         blockContent={blockContent}
         title={
@@ -104,7 +105,6 @@ export default async function StudentExperiencePage() {
           )
         }
       />
-
       <section className="md:pb-25 pb-15">
         <div className="container">
           <div className="grid md:grid-cols-2 md:gap-15 gap-10 items-center">
@@ -142,7 +142,6 @@ export default async function StudentExperiencePage() {
           </div>
         </div>
       </section>
-
       <section className="md:pb-25 pb-15">
         <div className="container">
           <div className="grid md:grid-cols-2 md:gap-15 gap-10 items-center">
@@ -163,16 +162,16 @@ export default async function StudentExperiencePage() {
                     fallbackTranslations,
                   )}
               </p>
-            <Link href={dashboard?.button?.href ?? "/portal"}>
-  <Button className="mt-6" variant="primary">
-    {dashboard?.button?.label ??
-      translate(
-        "studentExperience.accessPortal",
-        translations,
-        fallbackTranslations,
-      )}
-  </Button>
-</Link>
+              <Link href={dashboard?.button?.href ?? "/portal"}>
+                <Button className="mt-6" variant="primary">
+                  {dashboard?.button?.label ??
+                    translate(
+                      "studentExperience.accessPortal",
+                      translations,
+                      fallbackTranslations,
+                    )}
+                </Button>
+              </Link>
             </div>
             <div className="md:col-span-1 h-full">
               <img
@@ -184,8 +183,26 @@ export default async function StudentExperiencePage() {
           </div>
         </div>
       </section>
-
-      <CtaSection title={data.cta?.title} desc={data.cta?.desc} />
+      <StudentTestimonial
+        title={
+          data?.testimonials?.title ??
+          translate(
+            "studentExperience.testimonials",
+            translations,
+            fallbackTranslations,
+          )
+        }
+        description={
+          data?.testimonials?.description ??
+          translate(
+            "studentExperience.testimonialsDesc",
+            translations,
+            fallbackTranslations,
+          )
+        }
+        testimonials={data?.testimonials?.testimonials ?? []}
+      />
+      <CtaSection title={data?.cta?.title} desc={data?.cta?.desc} />
     </>
   );
 }

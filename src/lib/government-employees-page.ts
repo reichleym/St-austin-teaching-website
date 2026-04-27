@@ -11,6 +11,7 @@ export type GovBanner = {
 export type GovDiscountCard = {
   discountPercent?: number;
   contactEmail?: string;
+  phoneNumber?: string;
 };
 
 export type GovHowItWorks = {

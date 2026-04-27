@@ -250,7 +250,7 @@ export default async function GovernmentEmployeesPage() {
   };
 
   const isLoggedIn = false;
-
+  console.log("data", data);
   return (
     <>
       <BannerSection {...bannerContent}>
@@ -303,18 +303,23 @@ export default async function GovernmentEmployeesPage() {
                   )}
                 </p>
                 <p className="text-sm">
-                  {translate(
-                    "governmentEmployees.contactEmail",
-                    translations,
-                    fallbackTranslations,
-                  )}
+                  <span className="font-medium">
+                    {translate(
+                      "governmentEmployees.contactEmail",
+                      translations,
+                      fallbackTranslations,
+                    )}
+                  </span>{" "}
                 </p>
+
                 <p className="text-sm">
-                  {translate(
-                    "governmentEmployees.contactPhone",
-                    translations,
-                    fallbackTranslations,
-                  )}
+                  <span className="font-medium">
+                    {translate(
+                      "governmentEmployees.contactPhone",
+                      translations,
+                      fallbackTranslations,
+                    )}
+                  </span>{" "}
                 </p>
               </div>
             </aside>
@@ -387,18 +392,20 @@ export default async function GovernmentEmployeesPage() {
 
               <div className="mb-6">
                 <h2 className="text-3xl md:text-4xl font-bold mb-3 mt-6">
-                  {translate(
-                    "governmentEmployees.supportByGroupTitle",
-                    translations,
-                    fallbackTranslations,
-                  )}
+                  {data?.supportGroups?.title ??
+                    translate(
+                      "governmentEmployees.supportByGroupTitle",
+                      translations,
+                      fallbackTranslations,
+                    )}
                 </h2>
                 <p>
-                  {translate(
-                    "governmentEmployees.supportByGroupDesc",
-                    translations,
-                    fallbackTranslations,
-                  )}
+                  {data?.supportGroups?.description ??
+                    translate(
+                      "governmentEmployees.supportByGroupDesc",
+                      translations,
+                      fallbackTranslations,
+                    )}
                 </p>
               </div>
 

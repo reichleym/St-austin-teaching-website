@@ -44,7 +44,21 @@ export type StudentExperiencePayload = {
   iconCard?: StudentExperienceIconCard;
   learnSchedule?: StudentExperienceLearnSchedule;
   learningDashboardCta?: StudentExperienceLearningDashboardCta;
+  testimonials?: StudentTestimonialsSection;
   cta?: StudentExperienceCta;
+};
+
+export type StudentTestimonialItem = {
+  name: string;
+  course?: string;
+  profileImage?: string;
+  experience: string;
+};
+
+export type StudentTestimonialsSection = {
+  title?: string;
+  description?: string;
+  testimonials?: StudentTestimonialItem[];
 };
 
 const SECTION_COMPONENT_MAP: Record<string, keyof StudentExperiencePayload> = {
@@ -52,6 +66,7 @@ const SECTION_COMPONENT_MAP: Record<string, keyof StudentExperiencePayload> = {
   IconCard: "iconCard",
   LearnSchedule: "learnSchedule",
   LearningDashboardCta: "learningDashboardCta",
+  StudentTestimonialsSection: "testimonials",
   CtaSection: "cta",
 };
 
@@ -100,6 +115,7 @@ async function fetchRows(): Promise<RawRow[]> {
       'IconCard',
       'LearnSchedule',
       'LearningDashboardCta',
+      'StudentTestimonialsSection',
       'CtaSection'
     )
     order by case
@@ -107,7 +123,8 @@ async function fetchRows(): Promise<RawRow[]> {
       when "componentType" = 'IconCard' then 1
       when "componentType" = 'LearnSchedule' then 2
       when "componentType" = 'LearningDashboardCta' then 3
-      when "componentType" = 'CtaSection' then 4
+      when "componentType" = 'StudentTestimonialsSection' then 4
+      when "componentType" = 'CtaSection' then 5
       else 99
     end
   `;
