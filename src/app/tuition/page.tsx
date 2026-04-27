@@ -138,9 +138,9 @@ export default async function TuitionPage() {
                                         <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">{p.title ?? paymentPlans.title}</h2>
                                         <div className="">
                                             <CheckList listContent={p.listContent ?? paymentPlans.listContent ?? []} className="grid md:grid-cols-2 gap-6 space-y-0" classNamecheckboxList="p-3.5 border border-[#1E73BE]" />
-                                            <div className="mt-12 mx-auto block text-center">
+                                            {/* <div className="mt-12 mx-auto block text-center">
                                                 <button className="inline-flex rounded-[5px] bg-[#1E73BE] px-6 py-3 font-medium text-white">{p.buttonText ?? paymentPlans.buttonText}</button>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </section>
