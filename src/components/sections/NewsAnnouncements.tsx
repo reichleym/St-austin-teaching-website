@@ -26,9 +26,9 @@ export default function NewsAnnouncements({ title, items }: Props) {
             {title || t("newsAnnouncements.title")}
           </h2>
 
-          <Button variant="outline">
+          {/* <Button variant="outline">
             {t("newsAnnouncements.readMore")}
-          </Button>
+          </Button> */}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 md:gap-5 gap-10">
