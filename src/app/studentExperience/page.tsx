@@ -11,8 +11,7 @@ import {
   type Language,
 } from "@/lib/i18n/catalog";
 import Link from "next/link";
-import Testimonial from "@/components/sections/Testimonial";
-import StudentTestimonial from "@/components/StudentTestimonial";
+import ExpandableText from "@/components/ExpandableText";
 
 function translate(
   key: string,
@@ -183,25 +182,47 @@ export default async function StudentExperiencePage() {
           </div>
         </div>
       </section>
-      <StudentTestimonial
-        title={
-          data?.testimonials?.title ??
-          translate(
-            "studentExperience.testimonials",
-            translations,
-            fallbackTranslations,
-          )
-        }
-        description={
-          data?.testimonials?.description ??
-          translate(
-            "studentExperience.testimonialsDesc",
-            translations,
-            fallbackTranslations,
-          )
-        }
-        testimonials={data?.testimonials?.testimonials ?? []}
-      />
+
+      <section className="pb-25">
+        <div className="container">
+          <div className="flex flex-col items-center text-center mb-[50px]">
+            <h2 className="text-4xl md:text-[50px] leading-tight font-bold">
+              {data?.testimonials?.title ??
+                translate(
+                  "studentExperience.testimonials",
+                  translations,
+                  fallbackTranslations,
+                )}
+            </h2>
+            {data?.testimonials?.description && (
+              <p className="leading-tight">{data?.testimonials?.description}</p>
+            )}
+          </div>
+          <div className="grid md:grid-cols-4 gap-5">
+            {data?.testimonials?.testimonials?.map((item) => (
+              <div
+                key={item?.name}
+                className="card rounded-md bg-[#F5F5F5] overflow-hidden"
+              >
+                <img
+                  src={item?.profileImage}
+                  alt={item?.name}
+                  className="w-full h-[322px] object-cover"
+                />
+                <div className="p-5">
+                  <h4 className="font-semibold mb-[5px] text-[22px] leading-tight">
+                    {item?.name}
+                  </h4>
+                  <h5 className="text-lg font-medium mb-[10px] text-[#1E73BE] leading-tight">
+                    {item?.course}
+                  </h5>
+                  <ExpandableText text={item?.experience} maxLength={180} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       <CtaSection title={data?.cta?.title} desc={data?.cta?.desc} />
     </>
   );
