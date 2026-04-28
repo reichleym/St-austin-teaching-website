@@ -20,7 +20,7 @@ export type WhyAustinType = {
     href?: string;
     label?: string;
   };
-  items?: WhyAustinItem[];
+  whiteCards?: WhyAustinItem[];
 };
 
 export type LearnSomethingCard = {

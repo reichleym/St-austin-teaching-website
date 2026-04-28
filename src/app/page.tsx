@@ -16,7 +16,7 @@ import Button from "@/components/Button";
 export default async function Home() {
   const lang = await getServerLanguage();
   const data = await getHomePageContent(lang);
-
+console.log("data>>",data)
   return (
     <div>
       <main className="flex-1">
@@ -29,7 +29,7 @@ export default async function Home() {
         <WhyAustin
           secTitle={data?.whyAustin?.title}
           whyAustinDesc={data?.whyAustin?.whyAustinDesc}
-          whiteCards={data?.whyAustin?.items}
+          // whiteCards={data?.whyAustin?.items}
           button={
             data.whyAustin?.button ? (
               <Link href={data.whyAustin.button.href || "#"}>
