@@ -13,7 +13,9 @@ type CourseColumnMap = {
     duration?: string;
     image?: string;
     degreeLevel?: string;
+    degreeLevelFr?: string;
     fieldOfStudy?: string;
+    fieldOfStudyFr?: string;
     visibility?: string;
     translations?: string;
 };
@@ -62,6 +64,33 @@ function pickColumn(columnNames: string[], candidates: readonly string[]): strin
             return hit;
         }
     }
+    return undefined;
+}
+
+function pickLocalizedColumn(columnNames: string[], baseCandidates: readonly string[], localeSuffixes = ["_fr", "fr"]): string | undefined {
+    // look for columns that include a locale suffix and whose base matches a candidate
+    for (const col of columnNames) {
+        for (const suffix of localeSuffixes) {
+            if (col.toLowerCase().endsWith(suffix.toLowerCase())) {
+                const base = col.slice(0, -suffix.length);
+                for (const candidate of baseCandidates) {
+                    if (normalize(base) === normalize(candidate)) {
+                        return col;
+                    }
+                }
+            }
+        }
+    }
+
+    // fallback: check candidates with suffix appended
+    for (const suffix of localeSuffixes) {
+        for (const candidate of baseCandidates) {
+            const candidateWith = `${candidate}${suffix}`;
+            const hit = pickColumn(columnNames, [candidateWith]);
+            if (hit) return hit;
+        }
+    }
+
     return undefined;
 }
 
@@ -115,7 +144,9 @@ async function getCourseColumns(): Promise<CourseColumnMap> {
         duration: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.duration),
         image: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.image),
         degreeLevel: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
+        degreeLevelFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
         fieldOfStudy: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.fieldOfStudy),
+        fieldOfStudyFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.fieldOfStudy),
         visibility: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.visibility),
         translations: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.translations),
     };
@@ -379,11 +410,16 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number, la
     };
 }
 
-export async function getCourseFilters(): Promise<CourseFilters> {
+export async function getCourseFilters(language: string | null = null): Promise<CourseFilters> {
     const columns = await getCourseColumns();
+    const lang = toLanguage(language) ?? "en";
+
+    const degreeColumn = lang === "fr" && columns.degreeLevelFr ? columns.degreeLevelFr : columns.degreeLevel;
+    const fieldColumn = lang === "fr" && columns.fieldOfStudyFr ? columns.fieldOfStudyFr : columns.fieldOfStudy;
+
     const [degreeLevel, fieldOfStudy] = await Promise.all([
-        getDistinctValues(columns.tableName, columns.degreeLevel),
-        getDistinctValues(columns.tableName, columns.fieldOfStudy),
+        getDistinctValues(columns.tableName, degreeColumn),
+        getDistinctValues(columns.tableName, fieldColumn),
     ]);
 
     return { degreeLevel, fieldOfStudy };
@@ -402,15 +438,18 @@ export async function getCourses(filters: {
 
     addPublishedVisibilityCondition(conditions, columns);
 
-    if (filters.degreeLevel && columns.degreeLevel) {
+    const degreeColumn = language === "fr" && columns.degreeLevelFr ? columns.degreeLevelFr : columns.degreeLevel;
+    const fieldColumn = language === "fr" && columns.fieldOfStudyFr ? columns.fieldOfStudyFr : columns.fieldOfStudy;
+
+    if (filters.degreeLevel && degreeColumn) {
         params.push(filters.degreeLevel);
-        const quoted = quoteIdentifier(columns.degreeLevel);
+        const quoted = quoteIdentifier(degreeColumn);
         conditions.push(`lower(${quoted}::text) = lower($${params.length})`);
     }
 
-    if (filters.fieldOfStudy && columns.fieldOfStudy) {
+    if (filters.fieldOfStudy && fieldColumn) {
         params.push(filters.fieldOfStudy);
-        const quoted = quoteIdentifier(columns.fieldOfStudy);
+        const quoted = quoteIdentifier(fieldColumn);
         conditions.push(`lower(${quoted}::text) = lower($${params.length})`);
     }
 

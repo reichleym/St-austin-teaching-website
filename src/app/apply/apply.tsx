@@ -792,7 +792,7 @@ export default function ApplyPageContent({
             // Clear client navigation even if request fails.
         } finally {
             setIsLoggingOut(false);
-            router.push("/portal?auth=login");
+            router.push("/apply?auth=login&redirect=/apply");
             router.refresh();
         }
     };

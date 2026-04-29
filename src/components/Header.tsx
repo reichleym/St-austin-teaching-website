@@ -85,27 +85,27 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
     }, [pathname]);
 
     useEffect(() => {
-        if (pathname !== "/portal") {
+        const params = new URLSearchParams(window.location.search);
+        const authView = params.get("auth");
+        const redirectPath = getSafeRedirectPath(params.get("redirect"));
+
+        if (authView !== "login" && authView !== "signup") {
             setPostAuthRedirect(null);
             return;
         }
 
-        const params = new URLSearchParams(window.location.search);
-        const authView = params.get("auth");
-        const redirectPath = getSafeRedirectPath(params.get("redirect"));
-        setPostAuthRedirect(redirectPath);
+        setPostAuthRedirect(redirectPath ?? pathname ?? null);
 
         if (sessionUser) {
-            if (redirectPath) {
-                router.replace(redirectPath);
+            const nextPath = redirectPath ?? pathname;
+            if (nextPath) {
+                router.replace(nextPath);
                 router.refresh();
             }
             return;
         }
 
-        if (authView === "login" || authView === "signup") {
-            setActiveAuthView(authView);
-        }
+        setActiveAuthView(authView);
     }, [pathname, router, sessionUser]);
 
     function handleSearchInput() {
@@ -126,7 +126,8 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
         setPostAuthRedirect(null);
 
         if (sessionUser) {
-            goToPortal();
+            // If already signed in, send user to the apply flow instead of opening portal.
+            router.push("/apply");
             return;
         }
 
@@ -180,6 +181,23 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
         { label: t('header.topMenu.donations'), href: "/donations" },
         { label: t('header.topMenu.careers'), href: "/careers" },
     ];
+
+    const handleAuthModalClose = () => {
+        setActiveAuthView(null);
+
+        // If the auth modal was opened via URL params, clear them so subsequent
+        // navigations to the same URL can re-open the modal as expected.
+        if (typeof window !== "undefined") {
+            try {
+                const url = new URL(window.location.href);
+                url.searchParams.delete("auth");
+                url.searchParams.delete("redirect");
+                window.history.replaceState({}, "", url.toString());
+            } catch {
+                // ignore URL parsing errors
+            }
+        }
+    };
 
 
     return (
@@ -342,7 +360,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                                 onClick={goToPortal}
                                                 className="mt-3 w-full rounded-md border border-[#1E73BE] px-3 py-2 text-[14px] font-medium text-[#1E73BE] transition-colors duration-200 hover:bg-[#1E73BE] hover:text-white"
                                             >
-                                                {t('header.portal')}
+                                                {t('header.signIn')}
                                             </button>
 
                                             <button
@@ -361,7 +379,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                     ) : null}
                                 </div>
                             ) : (
-                                        <Button onClick={() => openPortalModal("login")}>{t('header.portal')}</Button>
+                                        <Button onClick={() => openPortalModal("login")}>{t('header.signIn')}</Button>
 
                             )}
                         </div>
@@ -452,7 +470,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                             onClick={goToPortal}
                                             className="w-full rounded-lg border border-[#1E73BE] px-4 py-2 text-center text-[14px] font-medium text-[#1E73BE]"
                                         >
-                                            {t('header.portal')}
+                                            {t('header.signIn')}
                                         </button>
 
                                         <button
@@ -474,7 +492,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                     onClick={() => openPortalModal("login")}
                                     className="w-full cursor-pointer rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors duration-200 hover:bg-blue-700"
                                 >
-                                    {t('header.portal')}
+                                    {t('header.signIn')}
                                 </button>
                             )}
                         </div>
@@ -485,7 +503,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
             <Modal
                 isOpen={activeAuthView !== null}
                 view={activeAuthView ?? "login"}
-                onClose={() => setActiveAuthView(null)}
+                onClose={handleAuthModalClose}
                 onViewChange={setActiveAuthView}
                 onAuthSuccess={handleAuthSuccess}
             />

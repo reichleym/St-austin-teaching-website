@@ -38,7 +38,17 @@ export async function GET(request: NextRequest) {
         );
     }
 
-    const requestLang = toLanguage(request.cookies.get("lang")?.value ?? null) ?? "en";
+    // Determine language in this order: URL `lang` param -> cookie -> Accept-Language header -> default 'en'
+    const urlLangParam = toLanguage(parseQueryParam(request.nextUrl.searchParams.get("lang")) ?? null);
+    const cookieLang = toLanguage(request.cookies.get("lang")?.value ?? null);
+    let requestLang = urlLangParam ?? cookieLang ?? null;
+
+    if (!requestLang) {
+        const accept = request.headers.get("accept-language") ?? "";
+        const match = accept.match(/^[a-zA-Z-]+/);
+        const primary = match ? match[0].split('-')[0] : null;
+        requestLang = toLanguage(primary) ?? "en";
+    }
     const degreeLevel = parseQueryParam(request.nextUrl.searchParams.get("degreeLevel"));
     const fieldOfStudy = parseQueryParam(request.nextUrl.searchParams.get("fieldOfStudy"));
     const includeFilters = parseBoolean(request.nextUrl.searchParams.get("includeFilters"));
@@ -54,7 +64,7 @@ export async function GET(request: NextRequest) {
     try {
         const [courses, filters] = await Promise.all([
             getCourses({ degreeLevel, fieldOfStudy, language: requestLang }),
-            includeFilters ? getCourseFilters() : Promise.resolve(undefined),
+            includeFilters ? getCourseFilters(requestLang) : Promise.resolve(undefined),
         ]);
 
         console.info("[api/courses] Request completed", {

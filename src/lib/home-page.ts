@@ -38,6 +38,7 @@ export type LearningExpCard = {
   title?: string;
   desc?: string;
   image?: string;
+  icon?: string;
 };
 
 export type LearningExpSection = {
@@ -51,6 +52,7 @@ export type NewsItem = {
   tag?: string;
   date?: string;
   image?: string;
+  icon?: string;
   title?: string;
   excerpt?: string;
 };

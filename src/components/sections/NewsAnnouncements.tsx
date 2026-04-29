@@ -10,6 +10,7 @@ type Props = {
     tag?: string;
     date?: string;
     image?: string;
+    icon?: string;
     title?: string;
     excerpt?: string;
   }[];
@@ -36,7 +37,7 @@ export default function NewsAnnouncements({ title, items }: Props) {
             <div key={index}>
               <div className="relative">
                 <img
-                  src={item.image || "/news-card-img.png"}
+                  src={(item as any).icon || item.image || "/news-card-img.png"}
                   alt={item.title}
                   className="w-full h-[200px] object-cover mb-4 rounded-[10px]"
                 />

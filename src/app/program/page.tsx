@@ -75,7 +75,7 @@ export default async function ProgramPage({
     if (isDatabaseConfigured) {
         try {
             const [filters, dbPrograms] = await Promise.all([
-                getCourseFilters(),
+                getCourseFilters(lang),
                 getCourses({
                     degreeLevel: selectedDegreeLevel || undefined,
                     fieldOfStudy: selectedFieldOfStudy || undefined,

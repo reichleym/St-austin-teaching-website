@@ -2,24 +2,6 @@
 
 import { LearningExpSection } from "@/lib/home-page";
 import { useTranslations } from "@/lib/useTranslations";
-
-const cardItems = [
-  {
-    icon: "/assignments.svg",
-    titleKey: "learningExperience.card1Title",
-    descriptionKey: "learningExperience.card1Desc",
-  },
-  {
-    icon: "/group-discussion-meeting.svg",
-    titleKey: "learningExperience.card2Title",
-    descriptionKey: "learningExperience.card2Desc",
-  },
-  {
-    icon: "/live-tv.svg",
-    titleKey: "learningExperience.card3Title",
-    descriptionKey: "learningExperience.card3Desc",
-  },
-];
 type LearningExpProps = {
   learningExp?: LearningExpSection;
 };
@@ -52,24 +34,27 @@ export default function LearningExp({ learningExp }: LearningExpProps) {
           <div className="space-y-5">
             {cards &&
               cards.length > 0 &&
-              cards.map((item, index) => (
-                <div className="bg-white p-5 rounded-[10px]" key={index}>
-                  <div className="flex items-center">
-                    <div className="text-4xl mr-5">
-                      <img
-                        src={item.image || "/assignments.svg"}
-                        alt={item.title}
-                      />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-xl mb-2 leading-tight">
-                        {item.title}
+              cards.map((item, index) => {
+                const src = (item as any).icon || (item as any).image || "/assignments.svg";
+                const cardTitle = (item as any).title || "";
+                const cardDesc = (item as any).desc || "";
+
+                return (
+                  <div className="bg-white p-5 rounded-[10px]" key={index}>
+                    <div className="flex items-center">
+                      <div className="text-4xl mr-5">
+                        <img src={src} alt={cardTitle} />
                       </div>
-                      <p className="leading-tight">{item.desc}</p>
+                      <div>
+                        <div className="font-semibold text-xl mb-2 leading-tight">
+                          {cardTitle}
+                        </div>
+                        <p className="leading-tight">{cardDesc}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
           </div>
         </div>
       </div>

@@ -44,3 +44,6 @@ body {
   padding-left: 15px;
   padding-right: 15px;
 }
+option {
+    background: #2873be;
+}

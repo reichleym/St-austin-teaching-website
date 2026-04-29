@@ -13,12 +13,14 @@ function parseAmountToCents(value: string): number | null {
 }
 
 type Props = {
+    title?: string;
+    description?: string;
     oneTimeAmounts: string[];
     designationOptions: string[];
     paymentMethods: Array<{ value: string; label: string }>;
 };
 
-export default function DonationsFormClient({ oneTimeAmounts, designationOptions, paymentMethods }: Props) {
+export default function DonationsFormClient({ title, description, oneTimeAmounts, designationOptions, paymentMethods }: Props) {
     const [selectedAmount, setSelectedAmount] = useState(oneTimeAmounts?.[1] ?? "");
     const frequency: DonationFrequency = "one_time";
     const [customAmount, setCustomAmount] = useState("");
@@ -75,7 +77,7 @@ export default function DonationsFormClient({ oneTimeAmounts, designationOptions
             }
 
             setFormSuccess(payload.message || "Donation submitted successfully.");
-        } catch (err) {
+        } catch {
             setFormError("Failed to submit donation.");
         } finally {
             setIsSubmitting(false);
@@ -106,8 +108,8 @@ export default function DonationsFormClient({ oneTimeAmounts, designationOptions
     return (
         <div className="rounded-[10px] bg-white">
             <div className="mb-10">
-                <h2 className="mb-3 text-3xl font-bold leading-tight md:text-[35px]">Make a Donation</h2>
-                <p className="text-[#333333]">Support our mission.</p>
+                <h2 className="mb-3 text-3xl font-bold leading-tight md:text-[35px]">{title ?? "Make a Donation"}</h2>
+                <p className="text-[#333333]">{description ?? "Support our mission."}</p>
             </div>
 
             {renderAmountGrid(oneTimeAmounts)}

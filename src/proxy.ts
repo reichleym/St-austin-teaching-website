@@ -7,8 +7,23 @@ export function proxy(request: NextRequest) {
     const path = request.nextUrl.pathname;
     const hasSessionCookie = Boolean(request.cookies.get(AUTH_COOKIE_NAME)?.value);
 
-    if (!hasSessionCookie && (path.startsWith("/portal/dashboard") || path.startsWith("/apply"))) {
+    if (!hasSessionCookie && path.startsWith("/portal/dashboard")) {
         const redirectUrl = new URL("/portal", request.url);
+        const requestedPath = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+
+        redirectUrl.searchParams.set("auth", "login");
+        redirectUrl.searchParams.set("redirect", requestedPath);
+
+        return NextResponse.redirect(redirectUrl);
+    }
+
+    if (!hasSessionCookie && path.startsWith("/apply")) {
+        const currentAuthView = request.nextUrl.searchParams.get("auth");
+        if (currentAuthView === "login" || currentAuthView === "signup") {
+            return NextResponse.next();
+        }
+
+        const redirectUrl = new URL("/apply", request.url);
         const requestedPath = `${request.nextUrl.pathname}${request.nextUrl.search}`;
 
         redirectUrl.searchParams.set("auth", "login");
