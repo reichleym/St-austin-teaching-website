@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, Suspense, useMemo, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "@/lib/useTranslations";
 
@@ -42,6 +43,51 @@ function ResetPasswordContent() {
         () => Boolean(email.trim() && tokenFromLink.trim()),
         [email, tokenFromLink]
     );
+
+    function PasswordField({
+        id,
+        label,
+        value,
+        onChange,
+        placeholder,
+    }: {
+        id: string;
+        label: string;
+        value: string;
+        onChange: (v: string) => void;
+        placeholder?: string;
+    }) {
+        const [visible, setVisible] = useState(false);
+
+        return (
+            <div>
+                <label htmlFor={id} className="mb-1 block text-[14px] font-medium text-[#323232]">
+                    {label}
+                </label>
+                <div className="relative">
+                    <input
+                        id={id}
+                        name={id}
+                        type={visible ? "text" : "password"}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        className="h-[42px] w-full rounded-[6px] border border-[#CFCFCF] px-3 text-[14px] outline-none focus:border-[#1E73BE]"
+                        placeholder={placeholder}
+                        autoComplete="new-password"
+                        required
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setVisible((v) => !v)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A7A7A]"
+                        aria-label={visible ? "Hide password" : "Show password"}
+                    >
+                        {visible ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -110,51 +156,39 @@ function ResetPasswordContent() {
                     {t("resetPassword.subtitle")}
                 </p>
 
-                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <form onSubmit={handleSubmit} className="mt-6 space-y-4" autoComplete="off">
                     <div>
                         <label htmlFor="reset-email" className="mb-1 block text-[14px] font-medium text-[#323232]">
                             {t("auth.email")}
                         </label>
                         <input
                             id="reset-email"
+                            name="reset-email"
                             type="email"
                             value={email}
                             onChange={(event) => setEmail(event.target.value)}
                             className="h-[42px] w-full rounded-[6px] border border-[#CFCFCF] px-3 text-[14px] outline-none focus:border-[#1E73BE]"
                             placeholder="email@example.com"
+                            autoComplete="email"
                             required
                         />
                     </div>
 
-                    <div>
-                        <label htmlFor="new-password" className="mb-1 block text-[14px] font-medium text-[#323232]">
-                            {t("resetPassword.newPassword")}
-                        </label>
-                        <input
-                            id="new-password"
-                            type="password"
-                            value={newPassword}
-                            onChange={(event) => setNewPassword(event.target.value)}
-                            className="h-[42px] w-full rounded-[6px] border border-[#CFCFCF] px-3 text-[14px] outline-none focus:border-[#1E73BE]"
-                            placeholder="Enter new password"
-                            required
-                        />
-                    </div>
+                    <PasswordField
+                        id="new-password"
+                        label={t("resetPassword.newPassword")}
+                        value={newPassword}
+                        onChange={setNewPassword}
+                        placeholder="Enter new password"
+                    />
 
-                    <div>
-                        <label htmlFor="confirm-password" className="mb-1 block text-[14px] font-medium text-[#323232]">
-                            {t("resetPassword.confirmPassword")}
-                        </label>
-                        <input
-                            id="confirm-password"
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(event) => setConfirmPassword(event.target.value)}
-                            className="h-[42px] w-full rounded-[6px] border border-[#CFCFCF] px-3 text-[14px] outline-none focus:border-[#1E73BE]"
-                            placeholder="Confirm password"
-                            required
-                        />
-                    </div>
+                    <PasswordField
+                        id="confirm-password"
+                        label={t("resetPassword.confirmPassword")}
+                        value={confirmPassword}
+                        onChange={setConfirmPassword}
+                        placeholder="Confirm password"
+                    />
 
                     {errorMessage ? (
                         <p className="text-[14px] font-medium text-[#B92A2A]">{errorMessage}</p>

@@ -2,7 +2,6 @@ import ExplorePrograms from "@/components/sections/ExplorePrograms";
 import FeaturedPrograms from "@/components/sections/FeaturedPrograms";
 import HeroSection from "@/components/sections/HeroSection";
 import CtaSection from "@/components/CtaSection";
-import FeaturedStories from "@/components/sections/FeaturedStories";
 import LearningExp from "@/components/sections/LearningExp";
 import LearnSomething from "@/components/sections/LearnSomething";
 import NewsAnnouncements from "@/components/sections/NewsAnnouncements";
@@ -16,7 +15,23 @@ import Button from "@/components/Button";
 export default async function Home() {
   const lang = await getServerLanguage();
   const data = await getHomePageContent(lang);
-console.log("data>>",data)
+  const whyAustinCards = (data?.whyAustin?.whiteCards ?? [])
+    .map((item) => ({
+      icon: item.icon,
+      title: item.title,
+      description: item.description ?? item.desc,
+    }))
+    .filter(
+      (
+        item,
+      ): item is { icon: string; title: string; description: string } =>
+        typeof item.icon === "string" &&
+        item.icon.length > 0 &&
+        typeof item.title === "string" &&
+        item.title.length > 0 &&
+        typeof item.description === "string" &&
+        item.description.length > 0,
+    );
   return (
     <div>
       <main className="flex-1">
@@ -29,7 +44,7 @@ console.log("data>>",data)
         <WhyAustin
           secTitle={data?.whyAustin?.title}
           whyAustinDesc={data?.whyAustin?.whyAustinDesc}
-          // whiteCards={data?.whyAustin?.items}
+          whiteCards={whyAustinCards.length > 0 ? whyAustinCards : undefined}
           button={
             data.whyAustin?.button ? (
               <Link href={data.whyAustin.button.href || "#"}>

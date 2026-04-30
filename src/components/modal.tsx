@@ -312,11 +312,18 @@ export default function Modal({
                     return;
                 }
 
-                if (typeof payload?.message === "string" && payload.message.trim()) {
-                    setInfoMessage(payload.message.trim());
-                }
-                onAuthSuccess?.(payload.user as AuthUser);
-                closeAndReset();
+                        if (typeof payload?.message === "string" && payload.message.trim()) {
+                            setInfoMessage(payload.message.trim());
+                        }
+
+                        // If the API returned a logged-in user object, complete auth immediately.
+                        // Otherwise, require email verification (redirect type) and show check-email view.
+                        if (payload?.user) {
+                            onAuthSuccess?.(payload.user as AuthUser);
+                            closeAndReset();
+                        } else {
+                            changeView("check-email");
+                        }
             } catch {
                 setErrorMessage(t("common.error"));
             } finally {
@@ -375,8 +382,11 @@ export default function Modal({
         }
 
         if (view === "check-email") {
-            window.open("https://mail.google.com", "_blank", "noopener,noreferrer");
-            changeView("new-password");
+            // Do not auto-open mail clients or progress to new-password here.
+            // The user should follow the link in their email (redirect type) to
+            // complete verification or password reset. If a developer token
+            // is provided (devResetToken) they can use the New Password view
+            // by navigating to it explicitly.
             return;
         }
 
@@ -675,17 +685,10 @@ export default function Modal({
                                 </p>
                             </div>
 
-                            <Button
-                                type="button"
-                                disabled={isSubmitting}
-                                className="mt-10 h-[44px] w-full rounded-[7px] text-[20px]"
-                                onClick={() => {
-                                    void handlePrimaryAction();
-                                }}
-                            >
-                                {t("common.continue")}
-                            </Button>
-
+                            {/* Removed the explicit 'Continue' button: users should follow the
+                                link in their email to complete verification or to reset their password.
+                                We intentionally do not auto-navigate from this view; the email link
+                                will drive the redirect flow (redirect type). */}
                             <div className="mt-10 text-center">
                                 <InlineAction
                                     className="text-[18px] text-[#333333]"

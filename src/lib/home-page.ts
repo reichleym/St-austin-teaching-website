@@ -10,6 +10,7 @@ export type HeroSectionType = {
 export type WhyAustinItem = {
   icon?: string;
   title?: string;
+  desc?: string;
   description?: string;
 };
 
@@ -20,6 +21,7 @@ export type WhyAustinType = {
     href?: string;
     label?: string;
   };
+  cards?: WhyAustinItem[];
   whiteCards?: WhyAustinItem[];
 };
 
@@ -205,6 +207,39 @@ function deepTranslate<T>(obj: T, lang: Language): T {
   return obj;
 }
 
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function normalizeWhyAustin(value: Record<string, unknown>): WhyAustinType {
+  const button = normalizeObject(value.button);
+  const buttonHref = asString(button?.href);
+  const buttonLabel = asString(button?.label);
+
+  const cardsRaw = (Array.isArray(value.whiteCards) ? value.whiteCards : Array.isArray(value.cards) ? value.cards : null) as
+    | unknown[]
+    | null;
+
+  const whiteCards = cardsRaw
+    ? cardsRaw
+        .map((card) => normalizeObject(card))
+        .filter((card): card is Record<string, unknown> => Boolean(card))
+        .map((card) => {
+          const icon = asString(card.icon);
+          const title = asString(card.title);
+          const description = asString(card.description) ?? asString(card.desc);
+          return { icon, title, description };
+        })
+    : undefined;
+
+  return {
+    title: asString(value.title),
+    whyAustinDesc: asString(value.whyAustinDesc),
+    button: buttonHref || buttonLabel ? { href: buttonHref, label: buttonLabel } : undefined,
+    whiteCards,
+  };
+}
+
 export async function getHomePageContent(
   langValue: string | null,
 ): Promise<HomePayload> {
@@ -222,6 +257,11 @@ export async function getHomePageContent(
 
     const translated = deepTranslate(base, lang);
     if (!translated) continue;
+
+    if (row.componentType === "WhyAustin") {
+      payload[key] = normalizeWhyAustin(translated as Record<string, unknown>) as SectionValueMap[typeof key];
+      continue;
+    }
 
     payload[key] = translated as SectionValueMap[typeof key];
   }
