@@ -1,6 +1,6 @@
 import BannerSection from "@/components/sections/BannerSection";
 import CheckList from "@/components/CheckList";
-import WhyAustin from "@/components/sections/WhyAustin";
+import ScholarshipsGrantsSection from "@/components/sections/ScholarshipsGrantsSection";
 import CtaSection from "@/components/CtaSection";
 import { getTuitionContent, getTuitionSections } from "@/lib/tuition-page";
 import { getServerLanguage } from "@/lib/i18n/server";
@@ -120,14 +120,14 @@ export default async function TuitionPage() {
                             );
                         }
 
-                        case "WhyAustin": {
+                        case "ScholarshipsGrantsSection": {
                             const w = (content as any) ?? scholarships;
                             const cards = (w.whiteCards && w.whiteCards.length ? w.whiteCards : defaultScholarshipCards).map((item: any, i: number) => ({
                                 icon: item.icon ?? defaultScholarshipCards[i].icon,
                                 title: item.title ?? defaultScholarshipCards[i].title,
                                 description: item.description ?? defaultScholarshipCards[i].description,
                             }));
-                            return <WhyAustin key={idx} whiteCards={cards} secTitle={w.secTitle ?? scholarships.secTitle} whyAustinDesc={null} button={null} />;
+                            return <ScholarshipsGrantsSection key={idx} title={w.secTitle ?? scholarships.secTitle} description={null} cards={cards} />;
                         }
 
                         case "PaymentPlansSection": {
@@ -187,7 +187,7 @@ export default async function TuitionPage() {
                     </div>
                 </div>
             </section>
-            <WhyAustin whiteCards={scholarshipsCards} secTitle={scholarships.secTitle ?? "Scholarships & Grants"} whyAustinDesc={null} button={null} />
+            <ScholarshipsGrantsSection title={scholarships.secTitle ?? "Scholarships & Grants"} description={null} cards={scholarshipsCards} />
             <section className="bg-[#F9F9F9] md:py-25 py-15">
                 <div className="container">
                     <h2 className="text-4xl md:text-[50px] leading-tight font-bold mb-12 text-center">{paymentPlans.title}</h2>

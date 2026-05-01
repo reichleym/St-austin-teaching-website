@@ -16,10 +16,15 @@ export type TuitionPayload = {
   cta?: TuitionCta;
 };
 
+const COMPONENT_TYPE_ALIASES: Record<string, string> = {
+  WhyAustin: "ScholarshipsGrantsSection",
+};
+
 const SECTION_COMPONENT_MAP: Record<string, keyof TuitionPayload> = {
   BannerSection: "banner",
   TuitionTableSection: "tuitionTable",
-  WhyAustin: "scholarships",
+  ScholarshipsGrantsSection: "scholarships",
+  WhyAustin: "scholarships", // backwards-compat for existing DB content
   PaymentPlansSection: "paymentPlans",
   CtaSection: "cta",
 };
@@ -53,10 +58,11 @@ async function fetchRows(): Promise<RawRow[]> {
     sql<RawRow[]>`
       select coalesce("componentType", "content"->>'componentType') as "componentType", "content"
       from "TuitionSection"
-      where coalesce("componentType", "content"->>'componentType') in ('BannerSection','TuitionTableSection','WhyAustin','PaymentPlansSection','CtaSection')
+      where coalesce("componentType", "content"->>'componentType') in ('BannerSection','TuitionTableSection','ScholarshipsGrantsSection','WhyAustin','PaymentPlansSection','CtaSection')
       order by case
         when coalesce("componentType", "content"->>'componentType') = 'BannerSection' then 0
         when coalesce("componentType", "content"->>'componentType') = 'TuitionTableSection' then 1
+        when coalesce("componentType", "content"->>'componentType') = 'ScholarshipsGrantsSection' then 2
         when coalesce("componentType", "content"->>'componentType') = 'WhyAustin' then 2
         when coalesce("componentType", "content"->>'componentType') = 'PaymentPlansSection' then 3
         when coalesce("componentType", "content"->>'componentType') = 'CtaSection' then 4
@@ -68,10 +74,11 @@ async function fetchRows(): Promise<RawRow[]> {
     sql<RawRow[]>`
       select coalesce("componentType", "content"->>'componentType') as "componentType", "content"
       from "TuitionPage"
-      where coalesce("componentType", "content"->>'componentType') in ('BannerSection','TuitionTableSection','WhyAustin','PaymentPlansSection','CtaSection')
+      where coalesce("componentType", "content"->>'componentType') in ('BannerSection','TuitionTableSection','ScholarshipsGrantsSection','WhyAustin','PaymentPlansSection','CtaSection')
       order by case
         when coalesce("componentType", "content"->>'componentType') = 'BannerSection' then 0
         when coalesce("componentType", "content"->>'componentType') = 'TuitionTableSection' then 1
+        when coalesce("componentType", "content"->>'componentType') = 'ScholarshipsGrantsSection' then 2
         when coalesce("componentType", "content"->>'componentType') = 'WhyAustin' then 2
         when coalesce("componentType", "content"->>'componentType') = 'PaymentPlansSection' then 3
         when coalesce("componentType", "content"->>'componentType') = 'CtaSection' then 4
@@ -114,7 +121,8 @@ export async function getTuitionSections(langValue: string | null) {
   const sections: Array<{ componentType: string; content: Record<string, unknown> | null }> = [];
   for (const row of rows) {
     const translated = getTranslationForLang(row.content, lang);
-    sections.push({ componentType: row.componentType, content: translated });
+    const componentType = COMPONENT_TYPE_ALIASES[row.componentType] ?? row.componentType;
+    sections.push({ componentType, content: translated });
   }
   return sections;
 }

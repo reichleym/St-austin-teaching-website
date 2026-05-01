@@ -1,0 +1,99 @@
+{
+  "generatedAt": "2026-04-30T07:26:16.461Z",
+  "pageInfo": {
+    "name": "About Page",
+    "slug": "about",
+    "route": "/about",
+    "file": "src/app/about/page.tsx"
+  },
+  "componentsUsed": [
+    {
+      "component": "BannerSection",
+      "occurrences": 1,
+      "propsUsed": []
+    },
+    {
+      "component": "CtaSection",
+      "occurrences": 1,
+      "propsUsed": [
+        "desc",
+        "title"
+      ]
+    },
+    {
+      "component": "ExpandableText",
+      "occurrences": 1,
+      "propsUsed": [
+        "maxLength",
+        "text"
+      ]
+    },
+    {
+      "component": "IconCard",
+      "occurrences": 1,
+      "propsUsed": [
+        "blockContent",
+        "classNameCard"
+      ]
+    }
+  ],
+  "translationKeys": [
+    "about.accreditation",
+    "about.history",
+    "about.historyDesc",
+    "about.leadership",
+    "about.mission",
+    "about.missionDesc",
+    "about.title",
+    "about.vision",
+    "about.visionDesc"
+  ],
+  "translationDefaults": {
+    "about.accreditation": {
+      "en": "Accreditation",
+      "fr": "Accréditation"
+    },
+    "about.history": {
+      "en": "Our History",
+      "fr": "Notre histoire"
+    },
+    "about.historyDesc": {
+      "en": "Founded in 1995, St. Austin's International University has been dedicated to providing career-focused education for over 25 years. Starting as a small institution with just 50 students, we have grown to serve thousands of students annually while maintaining our commitment to personalized education and career success.",
+      "fr": "Fondée en 1995, l'Université internationale Saint-Austin s'est consacrée à l'éducation axée sur la carrière depuis plus de 25 ans. Commençant comme une petite institution avec seulement 50 étudiants, nous avons grandi pour servir des milliers d'étudiants chaque année tout en maintenant notre engagement envers l'éducation personnalisée et la réussite professionnelle."
+    },
+    "about.leadership": {
+      "en": "Leadership Team",
+      "fr": "Équipe de direction"
+    },
+    "about.mission": {
+      "en": "Our Mission",
+      "fr": "Notre mission"
+    },
+    "about.missionDesc": {
+      "en": "To empower individuals through accessible, high-quality education that bridges academic excellence with practical career readiness.",
+      "fr": "Autonomiser les individus grâce à une éducation accessible et de haute qualité qui intègre l'excellence académique et la préparation à la carrière pratique."
+    },
+    "about.title": {
+      "en": "About St. Austin's International University",
+      "fr": "À propos de l'Université internationale Saint-Austin"
+    },
+    "about.vision": {
+      "en": "Our Vision",
+      "fr": "Notre vision"
+    },
+    "about.visionDesc": {
+      "en": "To be a global leader in career-focused higher education, recognized for innovation, inclusivity, and student success.",
+      "fr": "Être un leader mondial en matière d'éducation supérieure axée sur la carrière, reconnu pour l'innovation, l'inclusivité et la réussite des étudiants."
+    }
+  },
+  "dataSources": [
+    "@/lib/about-page",
+    "@/lib/i18n/catalog",
+    "@/lib/i18n/server",
+    "@/lib/student-experience-page"
+  ],
+  "pageNotes": [
+    "This file is auto-generated from the page.tsx source. It captures which components are used and which translation keys are referenced.",
+    "For full admin-driven content editing, extend this document with per-section content models and validation rules."
+  ]
+}

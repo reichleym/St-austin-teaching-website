@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-20T07:26:13.049694+00:00",
+  "generatedAt": "2026-04-30T07:48:07Z",
   "pageInfo": {
     "name": "Tuition Page",
     "slug": "tuition",
@@ -11,14 +11,6 @@
       "component": "BannerSection",
       "occurrences": 1,
       "propsUsed": []
-    },
-    {
-      "component": "Button",
-      "occurrences": 2,
-      "propsUsed": [
-        "className",
-        "variant"
-      ]
     },
     {
       "component": "CheckList",
@@ -37,20 +29,12 @@
       ]
     },
     {
-      "component": "Link",
-      "occurrences": 1,
+      "component": "ScholarshipsGrantsSection",
+      "occurrences": 2,
       "propsUsed": [
-        "href"
-      ]
-    },
-    {
-      "component": "WhyAustin",
-      "occurrences": 1,
-      "propsUsed": [
-        "button",
-        "secTitle",
-        "whiteCards",
-        "whyAustinDesc"
+        "cards",
+        "description",
+        "title"
       ]
     }
   ],

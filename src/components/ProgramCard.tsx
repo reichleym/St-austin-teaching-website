@@ -56,17 +56,16 @@ function ProgramDescription({ text }: { text?: string }) {
 
     return (
         <div>
-            <p ref={ref} style={clampStyle} className="transition-max-height duration-150 ease">
+            <p ref={ref} style={clampStyle} className="transition-max-height duration-150 ease pointer">
                 {text}
             </p>
             {isTruncated && (
                 <button
-                    type="button"
-                    className="text-sm text-primary-600 mt-2 underline"
-                    onClick={() => setExpanded((s) => !s)}
-                >
-                    {expanded ? 'Read less' : 'Read more'}
-                </button>
+          onClick={() => setExpanded(!expanded)}
+          className=" text-blue-600 font-medium hover:underline"
+        >
+          {expanded ? "See less" : "See more"}
+        </button>
             )}
         </div>
     );
