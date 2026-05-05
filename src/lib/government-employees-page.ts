@@ -75,6 +75,48 @@ function normalizeObject(value: unknown): Record<string, unknown> | null {
   return null;
 }
 
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function asNumber(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return undefined;
+}
+
+function asPhoneString(value: unknown): string | undefined {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : undefined;
+  }
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value);
+  }
+  return undefined;
+}
+
+function normalizeDiscountCard(value: Record<string, unknown>): GovDiscountCard {
+  const contactEmail = asString(value.contactEmail) ?? asString(value.email);
+  const phoneNumber =
+    asPhoneString(value.phoneNumber) ??
+    asPhoneString(value.phone) ??
+    asPhoneString(value.contactPhone);
+  const discountPercent =
+    asNumber(value.discountPercent) ??
+    asNumber(value.discount) ??
+    asNumber(value.discount_percentage);
+
+  return {
+    discountPercent,
+    contactEmail,
+    phoneNumber,
+  };
+}
+
 function getTranslationForLang(
   value: unknown,
   lang: Language,
@@ -163,8 +205,6 @@ export async function getGovernmentEmployeesContent(
   const rows = await fetchRows();
 
   const payload: GovernmentEmployeesPayload = {};
-  type GovernmentEmployeesSectionValue =
-    GovernmentEmployeesPayload[keyof GovernmentEmployeesPayload];
 
   for (const row of rows) {
     const sectionKey = SECTION_COMPONENT_MAP[row.componentType];
@@ -173,7 +213,28 @@ export async function getGovernmentEmployeesContent(
     const translated = getTranslationForLang(row.content, lang);
     if (!translated) continue;
 
-    payload[sectionKey] = translated as GovernmentEmployeesSectionValue;
+    switch (sectionKey) {
+      case "discountCard":
+        payload.discountCard = normalizeDiscountCard(translated);
+        break;
+      case "banner":
+        payload.banner = translated as GovBanner;
+        break;
+      case "howItWorks":
+        payload.howItWorks = translated as GovHowItWorks;
+        break;
+      case "supportGroups":
+        payload.supportGroups = translated as GovSupportGroupsSection;
+        break;
+      case "cta":
+        payload.cta = translated as GovCta;
+        break;
+      case "quickLinks":
+        payload.quickLinks = translated as GovQuickLinks;
+        break;
+      default:
+        break;
+    }
   }
 
   return payload;

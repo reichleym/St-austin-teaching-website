@@ -45,7 +45,8 @@ body {
   padding-right: 15px;
 }
 option {
-    background: #212728;
+    background: #1e73be;
+    color: #fff;
 }
 
 .hide-scrollbar {

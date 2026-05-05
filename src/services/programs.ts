@@ -3,6 +3,7 @@ export type ProgramCardItem = {
     title: string;
     description: string;
     time: string;
+    programType?: string;
     img: string;
     href: string;
 };

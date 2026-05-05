@@ -1,7 +1,5 @@
 import BannerSection from "@/components/sections/BannerSection";
-import Button from "@/components/Button";
 import Link from "next/link";
-import { FaAngleRight } from "react-icons/fa6";
 import GovernmentEmployeeDiscountCard from "@/components/government-employee/GovernmentEmployeeDiscountCard";
 import { getGovernmentEmployeesContent } from "@/lib/government-employees-page";
 import { getServerLanguage } from "@/lib/i18n/server";
@@ -82,45 +80,10 @@ export default async function GovernmentEmployeesPage() {
   //     translate("governmentEmployees.quickLinks.veteransSupport", translations, fallbackTranslations),
   // ];
 
-  const quickLinks = data.quickLinks?.links ?? [
-    translate(
-      "governmentEmployees.quickLinks.tuitionSupport",
-      translations,
-      fallbackTranslations,
-    ),
-    translate(
-      "governmentEmployees.quickLinks.flexibleSchedules",
-      translations,
-      fallbackTranslations,
-    ),
-    translate(
-      "governmentEmployees.quickLinks.advising",
-      translations,
-      fallbackTranslations,
-    ),
-    translate(
-      "governmentEmployees.quickLinks.creditForPriorLearning",
-      translations,
-      fallbackTranslations,
-    ),
-    translate(
-      "governmentEmployees.quickLinks.careerPathways",
-      translations,
-      fallbackTranslations,
-    ),
-    translate(
-      "governmentEmployees.quickLinks.veteransSupport",
-      translations,
-      fallbackTranslations,
-    ),
-  ];
-
-  const employeeGroups: EmployeeGroup[] = (
-    data.supportGroups?.groups as any[] | undefined
-  )?.map((g) => ({
-    title: g.title ?? "",
-    summary: g.summary ?? "",
-    support: g.support ?? [],
+  const employeeGroups: EmployeeGroup[] = data.supportGroups?.groups?.map((group) => ({
+    title: group.title ?? "",
+    summary: group.summary ?? "",
+    support: group.support ?? [],
   })) ?? [
     {
       title: translate(
@@ -250,7 +213,8 @@ export default async function GovernmentEmployeesPage() {
   };
 
   const isLoggedIn = false;
-  console.log("data", data);
+  const supportEmail = data.discountCard?.contactEmail ?? null;
+  const supportPhone = data.discountCard?.phoneNumber ?? null;
   return (
     <>
       <BannerSection {...bannerContent}>
@@ -302,28 +266,38 @@ export default async function GovernmentEmployeesPage() {
                     fallbackTranslations,
                   )}
                 </p>
-                <p className="text-sm">
-                  <span className="font-medium">
-                    {translate(
-                      "governmentEmployees.contactEmail",
-                      translations,
-                      fallbackTranslations,
-                    )}
-                  </span>
-                  <span>{data?.discountCard?.contactEmail}</span>
-                </p>
+                {supportEmail ? (
+                  <p className="text-sm">
+                    <span className="font-medium">
+                      {translate(
+                        "governmentEmployees.contactEmail",
+                        translations,
+                        fallbackTranslations,
+                      )}
+                    </span>
+                    <a className="hover:underline" href={`mailto:${supportEmail}`}>
+                      {supportEmail}
+                    </a>
+                  </p>
+                ) : null}
 
-                <p className="text-sm">
-                  <span className="font-medium">
-                    {
-                                         translate(
-                      "governmentEmployees.phoneNumber",
-                      translations,
-                      fallbackTranslations,
-                    )}
-                  </span>
-                  <span>{data?.discountCard?.phoneNumber}</span>
-                </p>
+                {supportPhone ? (
+                  <p className="text-sm">
+                    <span className="font-medium">
+                      {translate(
+                        "governmentEmployees.phoneNumber",
+                        translations,
+                        fallbackTranslations,
+                      )}
+                    </span>
+                    <a
+                      className="hover:underline"
+                      href={`tel:${String(supportPhone).replace(/[^\d+]/g, "")}`}
+                    >
+                      {supportPhone}
+                    </a>
+                  </p>
+                ) : null}
               </div>
             </aside>
 

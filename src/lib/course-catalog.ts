@@ -11,6 +11,9 @@ type CourseColumnMap = {
     description?: string;
     programContent?: string;
     duration?: string;
+    durationFr?: string;
+    programType?: string;
+    programTypeFr?: string;
     image?: string;
     degreeLevel?: string;
     degreeLevelFr?: string;
@@ -26,6 +29,7 @@ export type CourseCardItem = {
     description: string;
     programContent?: string;
     time: string;
+    programType?: string;
     img: string;
     href: string;
 };
@@ -40,7 +44,8 @@ const TEXT_COLUMN_CANDIDATES = {
     title: ["title", "course_name", "name", "program_name", "program_title"],
     description: ["description", "summary", "overview", "details"],
     programContent: ["program_content", "programContent", "programcontent"],
-    duration: ["duration", "time", "length", "timeline"],
+    duration: ["programDuration", "program_duration", "duration", "time", "length", "timeline"],
+    programType: ["programType", "program_type", "deliveryMode", "delivery_mode", "studyMode", "study_mode"],
     image: ["image", "image_url", "thumbnail", "cover_image", "banner_image"],
     degreeLevel: ["degree_level", "degree", "level", "program_level", "degree_type", "degreeLevel", "programLevel"],
     fieldOfStudy: ["field_of_study", "field", "study_field", "discipline", "major", "fieldOfStudy", "studyField"],
@@ -142,6 +147,9 @@ async function getCourseColumns(): Promise<CourseColumnMap> {
         description: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.description),
         programContent: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.programContent),
         duration: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.duration),
+        durationFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.duration),
+        programType: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.programType),
+        programTypeFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.programType),
         image: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.image),
         degreeLevel: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
         degreeLevelFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
@@ -180,6 +188,10 @@ function getSafeString(value: unknown, fallback = ""): string {
         return String(value);
     }
     return fallback;
+}
+
+function formatDbEnumLabel(value: string): string {
+    return value.replace(/_/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function getOptionalJsonString(value: unknown): string | undefined {
@@ -381,17 +393,27 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number, la
         "time",
         "length",
     ]);
-    const time = getSafeString(
-        language === "en"
-            ? columns.duration
-                ? row[columns.duration]
-                : undefined
-            : localizedDuration,
-        getSafeString(
-            language === "en" ? row.duration : null,
-            localizedDuration || durationFromProgramContent || "Duration TBD"
-        )
-    );
+    const durationColumn = language === "fr" ? columns.durationFr ?? columns.duration : columns.duration;
+    const durationFromColumns = durationColumn ? getSafeString(row[durationColumn], "") : "";
+    const time =
+        durationColumn
+            ? durationFromColumns || "TBD"
+            : getSafeString(
+                  language === "en" ? (columns.duration ? row[columns.duration] : undefined) : localizedDuration,
+                  getSafeString(
+                      language === "en" ? row.duration : null,
+                      localizedDuration || durationFromProgramContent || "TBD"
+                  )
+              );
+
+    const programTypeColumn = language === "fr" ? columns.programTypeFr ?? columns.programType : columns.programType;
+    const programTypeFromColumns = programTypeColumn ? getSafeString(row[programTypeColumn], "") : "";
+    const programType =
+        programTypeColumn
+            ? programTypeFromColumns
+                ? formatDbEnumLabel(programTypeFromColumns)
+                : "TBD"
+            : "TBD";
     const img = getSafeString(
         columns.image ? row[columns.image] : undefined,
         "/news-card-img.png"
@@ -405,6 +427,7 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number, la
         description,
         programContent,
         time,
+        programType,
         img,
         href: `/program/${encodeURIComponent(id)}`,
     };

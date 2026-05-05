@@ -666,5 +666,16 @@
     "filter": "Filtrer",
     "sort": "Trier",
     "all": "Tous"
+  },
+  "programDetail": {
+    "overviewHeading": "Vue d'ensemble",
+    "curriculumHeading": "Programme",
+    "careerOpportunitiesHeading": "Débouchés professionnels",
+    "tuitionHeading": "Frais de scolarité et frais",
+    "viewFinancialAid": "Voir l'aide financière",
+    "admissionRequirementsHeading": "Conditions d'admission",
+    "startApplicationTitle": "Commencer votre candidature",
+    "nextCohort": "Prochaine cohorte",
+    "emptyContent": "Le contenu n'est pas encore mis à jour"
   }
 }

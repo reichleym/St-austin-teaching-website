@@ -180,7 +180,7 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
         notFound();
     }
 
-    const bannerBadge = ["Online", program.time];
+    const bannerBadge = [program.programType ?? "TBD", program.time || "TBD"];
     
     // Parse content for fallback values only (will be overridden by language-specific content in client)
     const structuredContent = parseProgramContent(program.programContent);

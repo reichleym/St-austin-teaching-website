@@ -8,6 +8,7 @@ import { FaAngleRight } from "react-icons/fa6";
 import { getAdmissionsContent, getAdmissionsSections } from "@/lib/admissions-page";
 import { getServerLanguage } from "@/lib/i18n/server";
 import { getNestedValue, translationsMap, type Language } from "@/lib/i18n/catalog";
+import Link from "next/link";
 
 function translate(key: string, translations: Record<string, unknown>, fallbackTranslations: Record<string, unknown>) {
     const value = getNestedValue(translations, key);
@@ -94,7 +95,7 @@ export default async function AdmissionsPage() {
                                 descriptionKey: (content as any).description ? undefined : bannerContent.descriptionKey,
                                 bgImg: (content as any).bgImg ?? bannerContent.bgImg,
                             };
-                            return <BannerSection key={idx} {...b}><Button className="mt-6" variant="icon" icon={<FaAngleRight />} size="lg">{translate("admissions.explorePrograms", translations, fallbackTranslations)}</Button></BannerSection>;
+                            return <BannerSection key={idx} {...b}> <Link href="/program"><Button className="mt-6" variant="icon" icon={<FaAngleRight />} size="lg">{translate("admissions.explorePrograms", translations, fallbackTranslations)}</Button></Link></BannerSection>;
                         }
 
                         case "StepsSection": {

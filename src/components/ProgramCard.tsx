@@ -79,6 +79,7 @@ type ProgramCardItem = {
     descriptionKey?: string;
     time?: string;
     timeKey?: string;
+    programType?: string;
     badgeName?: string;
     badgeKey?: string;
     href?: string;
@@ -149,7 +150,10 @@ export default function ProgramCard({
         title: item.title ?? (item.titleKey ? t(item.titleKey) : ""),
         description: item.description ?? (item.descriptionKey ? t(item.descriptionKey) : ""),
         time: item.time ?? (item.timeKey ? t(item.timeKey) : ""),
-        badgeName: item.badgeName ?? (item.badgeKey ? t(item.badgeKey) : undefined),
+        badgeName:
+            item.badgeName ??
+            item.programType ??
+            (item.badgeKey ? t(item.badgeKey) : undefined),
     }));
     const badgeLabel = defaultBadgeLabel ?? t("programCard.defaultBadgeLabel");
     const viewLabel = viewProgramLabel ?? t("programCard.viewProgramLabel");

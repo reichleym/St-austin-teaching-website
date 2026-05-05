@@ -14,6 +14,9 @@ export const metadata: Metadata = {
     template: "%s | St. Austin's International University",
   },
   description: "St. Austin's International University provides career-focused higher education with bilingual support for English and French students.",
+  icons: {
+    icon: [{ url: "/favicon.png", type: "image/png", sizes: "192x192" }],
+  },
 };
 
 export default async function RootLayout({

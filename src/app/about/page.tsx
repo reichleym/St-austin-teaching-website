@@ -238,7 +238,7 @@ export default async function AboutPage() {
                 <img
                   src={member.image}
                   alt={member.name}
-                  className="w-full h-[322px] object-cover"
+                  className="w-full object-cover"
                 />
                 <div className="p-5">
                   <h4 className="font-semibold mb-[5px] text-[22px] leading-tight">

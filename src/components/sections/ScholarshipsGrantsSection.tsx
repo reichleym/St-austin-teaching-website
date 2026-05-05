@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useId, useRef } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Button from "../Button";
 
 export type ScholarshipGrantCard = {
@@ -9,6 +9,113 @@ export type ScholarshipGrantCard = {
   title: string;
   description: string;
 };
+
+const DESCRIPTION_COLLAPSED_LINES = 5;
+
+function ExpandableDescription({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  const paragraphRef = useRef<HTMLParagraphElement | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [canExpand, setCanExpand] = useState(false);
+
+  const checkOverflow = useCallback(() => {
+    const el = paragraphRef.current;
+    if (!el) return;
+    if (expanded) return;
+    const isOverflowing = el.scrollHeight > el.clientHeight + 1;
+    setCanExpand(isOverflowing);
+  }, [expanded]);
+
+  useEffect(() => {
+    if (expanded) return;
+    const raf = requestAnimationFrame(checkOverflow);
+    return () => cancelAnimationFrame(raf);
+  }, [checkOverflow, expanded, text]);
+
+  useEffect(() => {
+    const el = paragraphRef.current;
+    if (!el) return;
+
+    if (typeof ResizeObserver === "undefined") {
+      const onResize = () => checkOverflow();
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
+    }
+
+    const ro = new ResizeObserver(() => checkOverflow());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [checkOverflow]);
+
+  const showToggle = canExpand || expanded;
+
+  return (
+    <div>
+      <p
+        ref={paragraphRef}
+        className={className}
+        style={
+          expanded
+            ? undefined
+            : {
+                display: "-webkit-box",
+                WebkitLineClamp: DESCRIPTION_COLLAPSED_LINES,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }
+        }
+      >
+        {text}
+      </p>
+      {showToggle ? (
+        <button
+          type="button"
+          onClick={() => setExpanded((prev) => !prev)}
+          className="mt-2 text-sm font-semibold text-[#1E73BE] hover:underline"
+          aria-expanded={expanded}
+        >
+          {expanded ? "See less" : "See more"}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function ScholarshipCard({
+  item,
+  wrapClassName,
+  contentClassName,
+  imageClassName,
+  imageWidth,
+}: {
+  item: ScholarshipGrantCard;
+  wrapClassName?: string;
+  contentClassName?: string;
+  imageClassName?: string;
+  imageWidth?: number;
+}) {
+  return (
+    <div className={wrapClassName ?? "bg-white rounded-[10px] overflow-hidden"}>
+      <div className={contentClassName ?? "p-6"}>
+        <img
+          src={item.icon}
+          alt={item.title}
+          width={imageWidth}
+          className={imageClassName ?? "mb-4"}
+        />
+        <div className="text-xl font-semibold leading-tight mb-2.5">
+          {item.title}
+        </div>
+        <ExpandableDescription text={item.description} />
+      </div>
+    </div>
+  );
+}
 
 export default function ScholarshipsGrantsSection({
   title,
@@ -114,19 +221,11 @@ export default function ScholarshipsGrantsSection({
                       data-carousel-item="true"
                       className="snap-start shrink-0 w-[85%] max-w-[420px]"
                     >
-                      <div className="bg-white rounded-[10px] overflow-hidden h-full">
-                        <div className="p-6 flex flex-col items-center md:items-start text-center md:text-left h-full">
-                          <img
-                            src={item.icon}
-                            alt={item.title}
-                            className="mb-4"
-                          />
-                          <div className="text-xl font-semibold leading-tight mb-2.5">
-                            {item.title}
-                          </div>
-                          <p>{item.description}</p>
-                        </div>
-                      </div>
+                      <ScholarshipCard
+                        item={item}
+                        wrapClassName="bg-white rounded-[10px] overflow-hidden h-full"
+                        contentClassName="p-6 flex flex-col items-center md:items-start text-center md:text-left h-full"
+                      />
                     </div>
                   ))}
                 </div>
@@ -162,19 +261,11 @@ export default function ScholarshipsGrantsSection({
                           data-carousel-item="true"
                           className="snap-start shrink-0 w-[calc((100%-72px)/4)] min-w-[240px]"
                         >
-                          <div className="bg-white rounded-[10px] overflow-hidden h-full">
-                            <div className="p-6 h-full">
-                              <img
-                                src={item.icon}
-                                alt={item.title}
-                                className="mb-4"
-                              />
-                              <div className="text-xl font-semibold leading-tight mb-2.5">
-                                {item.title}
-                              </div>
-                              <p>{item.description}</p>
-                            </div>
-                          </div>
+                          <ScholarshipCard
+                            item={item}
+                            wrapClassName="bg-white rounded-[10px] overflow-hidden h-full"
+                            contentClassName="p-6 h-full"
+                          />
                         </div>
                       ))}
                     </div>
@@ -183,20 +274,14 @@ export default function ScholarshipsGrantsSection({
                   <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {cards.map((item, index) => (
                       <div
-                        className="bg-white rounded-[10px] overflow-hidden"
+                        className="h-full"
                         key={`${item.title}-${index}`}
                       >
-                        <div className="p-6">
-                          <img
-                            src={item.icon}
-                            alt={item.title}
-                            className="mb-4"
-                          />
-                          <div className="text-xl font-semibold leading-tight mb-2.5">
-                            {item.title}
-                          </div>
-                          <p>{item.description}</p>
-                        </div>
+                        <ScholarshipCard
+                          item={item}
+                          wrapClassName="bg-white rounded-[10px] overflow-hidden h-full"
+                          contentClassName="p-6 h-full"
+                        />
                       </div>
                     ))}
                   </div>
@@ -206,21 +291,15 @@ export default function ScholarshipsGrantsSection({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((item, index) => (
                   <div
-                    className="bg-white rounded-[10px] overflow-hidden"
+                    className="h-full"
                     key={`${item.title}-${index}`}
                   >
-                    <div className="p-6">
-                      <img
-                        src={item.icon}
-                        alt={item.title}
-                        width={70}
-                        className="mb-4"
-                      />
-                      <div className="text-xl font-semibold leading-tight mb-2.5">
-                        {item.title}
-                      </div>
-                      <p>{item.description}</p>
-                    </div>
+                    <ScholarshipCard
+                      item={item}
+                      wrapClassName="bg-white rounded-[10px] overflow-hidden h-full"
+                      contentClassName="p-6 h-full"
+                      imageWidth={70}
+                    />
                   </div>
                 ))}
               </div>

@@ -702,5 +702,16 @@
     "filter": "Filter",
     "sort": "Sort",
     "all": "All"
+  },
+  "programDetail": {
+    "overviewHeading": "Overview",
+    "curriculumHeading": "Curriculum",
+    "careerOpportunitiesHeading": "Career Opportunities",
+    "tuitionHeading": "Tuition & Fees",
+    "viewFinancialAid": "View Financial Aid",
+    "admissionRequirementsHeading": "Admission Requirements",
+    "startApplicationTitle": "Start Your Application",
+    "nextCohort": "Next Cohort",
+    "emptyContent": "Content is not updated yet"
   }
 }
