@@ -237,10 +237,53 @@ export async function sendAdminApplicationSubmittedEmail(input: {
 	});
 }
 
+export async function sendRequestInfoNotificationEmail(input: {
+	toEmail: string;
+	fullName: string;
+	email: string;
+	phone: string;
+	program: string;
+	message?: string;
+}): Promise<void> {
+	const recipient = input.toEmail.trim();
+	const safeFullName = (input.fullName || "").trim() || "Prospective Student";
+	const safeEmail = input.email.trim();
+	const safePhone = input.phone.trim();
+	const safeProgram = input.program.trim();
+	const safeMessage = (input.message || "").trim();
+
+	await sendEmail({
+		to: recipient,
+		subject: `Request info: ${safeFullName} - ${safeProgram}`,
+		text: [
+			"New Request Info submission",
+			"",
+			`Name: ${safeFullName}`,
+			`Email: ${safeEmail}`,
+			`Phone: ${safePhone}`,
+			`Program interest: ${safeProgram}`,
+			safeMessage ? `Message: ${safeMessage}` : "",
+			"",
+			"St. Austin Website",
+		]
+			.filter(Boolean)
+			.join("\n"),
+		html: `
+      <p><strong>New Request Info submission</strong></p>
+      <p><strong>Name:</strong> ${escapeHtml(safeFullName)}</p>
+      <p><strong>Email:</strong> ${escapeHtml(safeEmail)}</p>
+      <p><strong>Phone:</strong> ${escapeHtml(safePhone)}</p>
+      <p><strong>Program interest:</strong> ${escapeHtml(safeProgram)}</p>
+      ${safeMessage ? `<p><strong>Message:</strong><br/>${escapeHtml(safeMessage).replaceAll("\n", "<br/>")}</p>` : ""}
+      <p>St. Austin Website</p>
+    `,
+	});
+}
+
 export async function sendPasswordResetEmail(input: {
-    toEmail: string;
-    fullName?: string;
-    resetLink: string;
+	toEmail: string;
+	fullName?: string;
+	resetLink: string;
 }): Promise<void> {
     const recipient = input.toEmail.trim();
     const studentName = getGreetingName(input.fullName, "there");

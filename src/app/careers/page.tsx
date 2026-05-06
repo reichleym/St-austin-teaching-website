@@ -35,7 +35,7 @@ export default function CareersPage() {
     };
     loadCareers();
   }, []);
-  const email = "admissions@staustin.edu";
+  const email = "career@st-austin.org";
 
   return (
     <>

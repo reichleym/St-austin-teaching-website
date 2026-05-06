@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isSmtpConfigured, sendRequestInfoNotificationEmail } from "@/lib/mail";
+
+const REQUEST_INFO_NOTIFICATION_EMAIL = (process.env.REQUEST_INFO_NOTIFICATION_EMAIL || "infos@st-austin.org").trim();
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,17 +16,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log request (extend to email/DB later)
-    console.log('[Request Info Form]', {
+    if (!isSmtpConfigured()) {
+      return NextResponse.json(
+        { ok: false, error: "SMTP is not configured." },
+        { status: 503 }
+      );
+    }
+
+    await sendRequestInfoNotificationEmail({
+      toEmail: REQUEST_INFO_NOTIFICATION_EMAIL,
       fullName: fullName.trim(),
       email: email.trim(),
       phone: phone.trim(),
-      program,
-      message: message?.trim() || ''
+      program: String(program).trim(),
+      message: message?.trim() || "",
     });
-
-    // Simulate processing
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
     return NextResponse.json({ ok: true, message: 'Request submitted successfully' });
   } catch (error) {
@@ -34,4 +41,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

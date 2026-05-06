@@ -350,7 +350,7 @@ export default function FooterClient({ data }: { data: unknown }) {
         {/* Bottom */}
         <div className="md:flex justify-between border-t border-[#FFFFFF80] py-5 text-[16px]">
           <p>{t("footer.copyright")}</p>
-          <ul className="flex gap-3">
+          {/* <ul className="flex gap-3">
             <li>
               <a href="#" className="hover:opacity-80">
                 {t("footer.privacyPolicy")}
@@ -362,7 +362,7 @@ export default function FooterClient({ data }: { data: unknown }) {
                 {t("footer.termsOfService")}
               </a>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </div>
     </footer>
