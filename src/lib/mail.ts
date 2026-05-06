@@ -173,7 +173,68 @@ export async function sendApplicationInstructionEmail(input: {
             <p>We will contact you soon with the next update.</p>
             <p>St. Austin Admissions Team</p>
         `,
-    });
+	});
+}
+
+export async function sendAdminApplicationSubmittedEmail(input: {
+	toEmail: string;
+	applicantName: string;
+	applicantEmail: string;
+	phoneNumber: string;
+	program: string;
+	batchStart: string;
+	studentType: string;
+	highestEducation: string;
+	interestLevel: string;
+	interestArea: string;
+}): Promise<void> {
+	const recipient = input.toEmail.trim();
+	const safeApplicantName = (input.applicantName || "").trim() || "Applicant";
+	const safeApplicantEmail = input.applicantEmail.trim();
+	const safePhone = input.phoneNumber.trim();
+	const safeProgram = input.program.trim();
+	const safeBatchStart = input.batchStart.trim();
+	const safeStudentType = input.studentType.trim();
+	const safeHighestEducation = input.highestEducation.trim();
+	const safeInterestLevel = input.interestLevel.trim();
+	const safeInterestArea = input.interestArea.trim();
+
+	await sendEmail({
+		to: recipient,
+		subject: `New application submitted: ${safeApplicantName} - ${safeProgram}`,
+		text: [
+			"New application submitted",
+			"",
+			`Applicant: ${safeApplicantName}`,
+			`Email: ${safeApplicantEmail}`,
+			`Phone: ${safePhone}`,
+			"",
+			`Program: ${safeProgram}`,
+			`Intake batch: ${safeBatchStart}`,
+			`Student type: ${safeStudentType}`,
+			`Highest education: ${safeHighestEducation}`,
+			`Interest level: ${safeInterestLevel}`,
+			`Area of interest: ${safeInterestArea}`,
+			"",
+			"St. Austin Admissions Portal",
+		]
+			.filter(Boolean)
+			.join("\n"),
+		html: `
+      <p><strong>New application submitted</strong></p>
+      <p><strong>Applicant:</strong> ${escapeHtml(safeApplicantName)}</p>
+      <p><strong>Email:</strong> ${escapeHtml(safeApplicantEmail)}</p>
+      <p><strong>Phone:</strong> ${escapeHtml(safePhone)}</p>
+      <hr />
+      <p><strong>Program:</strong> ${escapeHtml(safeProgram)}</p>
+      <p><strong>Intake batch:</strong> ${escapeHtml(safeBatchStart)}</p>
+      <p><strong>Student type:</strong> ${escapeHtml(safeStudentType)}</p>
+      <p><strong>Highest education:</strong> ${escapeHtml(safeHighestEducation)}</p>
+      <p><strong>Interest level:</strong> ${escapeHtml(safeInterestLevel)}</p>
+      <p><strong>Area of interest:</strong> ${escapeHtml(safeInterestArea)}</p>
+      <p>St. Austin Admissions Portal</p>
+    `,
+	});
 }
 
 export async function sendPasswordResetEmail(input: {

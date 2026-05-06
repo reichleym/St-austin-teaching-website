@@ -2,7 +2,12 @@ import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { databaseEnvKeys, isDatabaseConfigured } from "@/lib/postgres";
 import { createCheckoutSession } from "@/lib/payment-gateway";
-import { getCurrentSessionUser, getCurrentUserGovernmentBenefit } from "@/lib/auth/server";
+import {
+    getCurrentSessionUser,
+    getCurrentUserGovernmentBenefit,
+    setCurrentUserApplicationStatus,
+} from "@/lib/auth/server";
+import { isSmtpConfigured, sendAdminApplicationSubmittedEmail } from "@/lib/mail";
 
 type FeePaymentMethod = "card" | "mtn_mobile_money" | "orange_money";
 
@@ -26,6 +31,9 @@ type SubmitApplicationBody = {
 
 const ALLOWED_BATCHES = new Set(["September", "January", "May"]);
 const BASE_APPLICATION_FEE_XAF = 25;
+// Temporarily disable application fee payments / checkout flow.
+const APPLY_PAYMENTS_ENABLED = false;
+const APPLY_ADMIN_NOTIFICATION_EMAIL = (process.env.APPLY_ADMIN_NOTIFICATION_EMAIL || "").trim();
 
 function serviceUnavailableResponse() {
     return NextResponse.json(
@@ -103,7 +111,7 @@ export async function POST(request: NextRequest) {
             highestEducation,
             interestLevel,
             interestArea,
-            payment,
+            payment = {},
         } = body;
 
         const sessionUser = await getCurrentSessionUser().catch(() => null);
@@ -148,6 +156,36 @@ export async function POST(request: NextRequest) {
             );
         }
 
+	        if (!APPLY_PAYMENTS_ENABLED) {
+	            await setCurrentUserApplicationStatus("under_review");
+	            try {
+	                if (
+	                    isSmtpConfigured() &&
+	                    APPLY_ADMIN_NOTIFICATION_EMAIL &&
+	                    isValidEmail(APPLY_ADMIN_NOTIFICATION_EMAIL)
+	                ) {
+	                    await sendAdminApplicationSubmittedEmail({
+	                        toEmail: APPLY_ADMIN_NOTIFICATION_EMAIL,
+	                        applicantName: `${normalizedFirstName} ${normalizedLastName}`.trim(),
+	                        applicantEmail: normalizedEmail,
+	                        phoneNumber: phoneNumber.trim(),
+                        program: program.trim(),
+                        batchStart: batchStart.trim(),
+                        studentType: studentType.trim(),
+                        highestEducation: highestEducation.trim(),
+                        interestLevel: interestLevel.trim(),
+                        interestArea: interestArea.trim(),
+                    });
+                }
+            } catch (emailError) {
+                console.error("[api/apply/submit] admin notification email failed", emailError);
+            }
+            return NextResponse.json({
+                ok: true,
+                status: "under_review",
+            });
+        }
+
         if (!payment?.method || !isValidPaymentMethod(payment.method)) {
             return NextResponse.json(
                 { ok: false, error: "Please choose a valid payment method." },
@@ -167,6 +205,7 @@ export async function POST(request: NextRequest) {
 
         const expectedDiscountAmount = Math.round((BASE_APPLICATION_FEE_XAF * approvedDiscountPercent) / 100);
         const expectedAmountXaf = Math.max(0, BASE_APPLICATION_FEE_XAF - expectedDiscountAmount);
+
         const submittedAmountXaf =
             typeof payment.amountXaf === "number" && Number.isFinite(payment.amountXaf) && payment.amountXaf > 0
                 ? Math.round(payment.amountXaf)
@@ -250,6 +289,9 @@ export async function POST(request: NextRequest) {
         });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to initiate payment.";
+        if (message === "Unauthorized.") {
+            return NextResponse.json({ ok: false, error: message }, { status: 401 });
+        }
         const isCampayCredentialError =
             /CamPay authentication failed/i.test(message) ||
             /Unable to log in with provided credentials/i.test(message) ||
