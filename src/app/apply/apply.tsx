@@ -206,6 +206,7 @@ function Stepper({
     steps: Exclude<StepId, "dashboard" | "submitted">[];
     allCompleted?: boolean;
 }) {
+    const { t } = useTranslations();
     const activeIndex = steps.indexOf(activeStep);
 
     return (
@@ -241,7 +242,7 @@ function Stepper({
                                             Fees
                                         </>
                                     ) : (
-                                        stepMeta[step].label
+                                        t(stepMeta[step].label)
                                     )}
                                 </p>
                             </div>
