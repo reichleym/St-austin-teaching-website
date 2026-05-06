@@ -99,16 +99,25 @@ const stepMeta = {
     fees: { label: "apply.title" },
 } as const;
 
-const batchStartOptions = ["September", "January", "May"];
+const batchStartOptions = [
+    { value: "September", labelKey: "apply.intake.september" },
+    { value: "January", labelKey: "apply.intake.january" },
+    { value: "May", labelKey: "apply.intake.may" },
+] as const;
 const highestEducationOptions = [
-    "High School Diploma",
-    "Associate Degree",
-    "Bachelor's Degree",
-    "Master's Degree",
-    "Doctorate",
-    "Other",
-];
-const interestLevelOptions = ["Exploring options", "Interested", "Very interested", "Ready to apply"];
+    { value: "High School Diploma", labelKey: "apply.education.highSchoolDiploma" },
+    { value: "Associate Degree", labelKey: "apply.education.associateDegree" },
+    { value: "Bachelor's Degree", labelKey: "apply.education.bachelorsDegree" },
+    { value: "Master's Degree", labelKey: "apply.education.mastersDegree" },
+    { value: "Doctorate", labelKey: "apply.education.doctorate" },
+    { value: "Other", labelKey: "apply.education.other" },
+] as const;
+const interestLevelOptions = [
+    { value: "Exploring options", labelKey: "apply.interest.exploringOptions" },
+    { value: "Interested", labelKey: "apply.interest.interested" },
+    { value: "Very interested", labelKey: "apply.interest.veryInterested" },
+    { value: "Ready to apply", labelKey: "apply.interest.readyToApply" },
+] as const;
 const defaultProgramOptions = ["Data Science", "Business Administration", "Public Health"];
 const baseApplicationFeeXAF = 25;
 const APPLY_PAYMENT_SESSION_KEY = "st_austin_apply_pending_payment";
@@ -153,36 +162,36 @@ function getInstructionChecklistForProgram(program: string): string[] {
 
     if (normalizedProgram.includes("data")) {
         return [
-            "Most recent transcript",
-            "Current resume/CV",
-            "Short statement of learning goals",
-            "Proof of identity document",
+            "apply.checklist.transcript",
+            "apply.checklist.resume",
+            "apply.checklist.learningGoalsStatement",
+            "apply.checklist.identityProof",
         ];
     }
 
     if (normalizedProgram.includes("business")) {
         return [
-            "Most recent transcript",
-            "Current resume/CV",
-            "Personal statement",
-            "Proof of identity document",
+            "apply.checklist.transcript",
+            "apply.checklist.resume",
+            "apply.checklist.personalStatement",
+            "apply.checklist.identityProof",
         ];
     }
 
     if (normalizedProgram.includes("public")) {
         return [
-            "Most recent transcript",
-            "Current resume/CV",
-            "Statement of purpose",
-            "Proof of identity document",
+            "apply.checklist.transcript",
+            "apply.checklist.resume",
+            "apply.checklist.statementOfPurpose",
+            "apply.checklist.identityProof",
         ];
     }
 
     return [
-        "Most recent transcript",
-        "Current resume/CV",
-        "Personal statement",
-        "Proof of identity document",
+        "apply.checklist.transcript",
+        "apply.checklist.resume",
+        "apply.checklist.personalStatement",
+        "apply.checklist.identityProof",
     ];
 }
 
@@ -237,9 +246,9 @@ function Stepper({
                                 >
                                     {step === "fees" ? (
                                         <>
-                                            Application
+                                            {t("apply.feesLabelLine1")}
                                             <br />
-                                            Fees
+                                            {t("apply.feesLabelLine2")}
                                         </>
                                     ) : (
                                         t(stepMeta[step].label)
@@ -448,7 +457,7 @@ export default function ApplyPageContent({
         [initialSessionUser?.fullName]
     );
     const hasSessionEmail = Boolean(initialSessionUser?.email?.trim());
-    const welcomeName = userNameParts.firstName || "Student";
+    const welcomeName = userNameParts.firstName || t("apply.studentFallback");
     const [applicationStatus, setApplicationStatus] = useState<ApplicationStatus>(initialApplicationStatus);
     const [currentStep, setCurrentStep] = useState<StepId>(
         initialApplicationStatus === "under_review" ? "submitted" : "dashboard"
@@ -525,18 +534,45 @@ export default function ApplyPageContent({
         }
 
         if (initialGovernmentBenefit.governmentVerificationStatus === "pending_review") {
-            return "Government employee discount is pending admin approval. Email your ID details to govtservices@staustin.edu.";
+            return format("apply.governmentDiscount.pendingReviewNotice", { email: "govtservices@staustin.edu" });
         }
 
         if (initialGovernmentBenefit.governmentVerificationStatus === "rejected") {
-            return "Your previous government employee discount request was not approved. Update your details on the Government Employees page and resubmit.";
+            return t("apply.governmentDiscount.rejectedNotice");
         }
 
         return "";
     }, [
         initialGovernmentBenefit.governmentVerificationStatus,
         initialGovernmentBenefit.isGovernmentEmployee,
+        format,
+        t,
     ]);
+
+    const intakeCommaList = useMemo(
+        () => batchStartOptions.map((option) => t(option.labelKey)).join(", "),
+        [t]
+    );
+
+    const intakeBulletList = useMemo(
+        () => batchStartOptions.map((option) => t(option.labelKey)).join(" • "),
+        [t]
+    );
+
+    const getBatchStartLabel = (value: string) => {
+        const matched = batchStartOptions.find((option) => option.value === value);
+        return matched ? t(matched.labelKey) : value;
+    };
+
+    const getHighestEducationLabel = (value: string) => {
+        const matched = highestEducationOptions.find((option) => option.value === value);
+        return matched ? t(matched.labelKey) : value;
+    };
+
+    const getInterestLevelLabel = (value: string) => {
+        const matched = interestLevelOptions.find((option) => option.value === value);
+        return matched ? t(matched.labelKey) : value;
+    };
 
     const updateForm = <K extends keyof ApplicationForm,>(key: K, value: ApplicationForm[K]) => {
         setValidationError("");
@@ -614,7 +650,7 @@ export default function ApplyPageContent({
         const context = readPendingPaymentContext();
 
         if (paymentResult === "cancelled") {
-            setSubmitError("Payment was cancelled. Please complete the payment to submit your application.");
+            setSubmitError(t("apply.errors.paymentCancelled"));
             clearPendingPaymentContext();
             cleanPaymentQueryParam();
             setCurrentStep("fees");
@@ -622,7 +658,7 @@ export default function ApplyPageContent({
         }
 
         if (!context) {
-            setSubmitError("We couldn't find your payment reference. Please try paying again.");
+            setSubmitError(t("apply.errors.paymentReferenceMissing"));
             cleanPaymentQueryParam();
             setCurrentStep("fees");
             return;
@@ -645,7 +681,7 @@ export default function ApplyPageContent({
                 const payload = await response.json().catch(() => ({}));
 
                 if (!response.ok || !payload?.ok) {
-                    setSubmitError(payload?.error || "Payment could not be confirmed. Please try again.");
+                    setSubmitError(payload?.error || t("apply.errors.paymentConfirmFailed"));
                     return;
                 }
 
@@ -661,7 +697,7 @@ export default function ApplyPageContent({
                 clearPendingPaymentContext();
                 cleanPaymentQueryParam();
             } catch {
-                setSubmitError("Unable to confirm payment right now. Please try again.");
+                setSubmitError(t("apply.errors.paymentConfirmUnavailable"));
             } finally {
                 setIsConfirmingPayment(false);
             }
@@ -672,60 +708,60 @@ export default function ApplyPageContent({
 
     const getStepValidationError = (): string | null => {
         if (currentStep === "program" && !form.program.trim()) {
-            return "Please select a program before continuing.";
+            return t("apply.validation.selectProgram");
         }
 
         if (currentStep === "batchStart" && !form.batchStart.trim()) {
-            return "Please select your batch start before continuing.";
+            return t("apply.validation.selectIntakeBatch");
         }
 
         if (currentStep === "studentInfo") {
             if (!form.firstName.trim()) {
-                return "Please enter your first name.";
+                return t("apply.validation.firstNameRequired");
             }
 
             if (!form.lastName.trim()) {
-                return "Please enter your last name.";
+                return t("apply.validation.lastNameRequired");
             }
 
             const email = form.email.trim();
             const phone = form.phoneNumber.trim();
 
             if (!email) {
-                return "Please enter your email address.";
+                return t("apply.validation.emailRequired");
             }
 
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                return "Please enter a valid email address.";
+                return t("apply.invalidEmail");
             }
 
             if (!phone) {
-                return "Please enter your cell phone number.";
+                return t("apply.validation.phoneRequired");
             }
 
             if (!form.highestEducation.trim()) {
-                return "Please select your highest level of education.";
+                return t("apply.validation.highestEducationRequired");
             }
 
             if (!form.interestLevel.trim()) {
-                return "Please select your level of interest.";
+                return t("apply.validation.interestLevelRequired");
             }
 
             if (!form.interestArea.trim()) {
-                return "Please enter your area of interest.";
+                return t("apply.validation.interestAreaRequired");
             }
         }
 
         if (currentStep === "fees") {
             if (!form.paymentMethod) {
-                return "Please choose a payment method.";
+                return t("apply.validation.paymentMethodRequired");
             }
 
             if (
                 (form.paymentMethod === "mtn_mobile_money" || form.paymentMethod === "orange_money") &&
                 !form.paymentPhoneNumber.trim()
             ) {
-                return "Please enter the mobile money phone number.";
+                return t("apply.validation.paymentPhoneRequired");
             }
         }
 
@@ -757,12 +793,12 @@ export default function ApplyPageContent({
             });
             const payload = await response.json().catch(() => ({}));
             if (!response.ok || !payload?.ok) {
-                setSubmitError(payload?.error || "Unable to submit application. Please try again.");
+                setSubmitError(payload?.error || t("apply.errors.submitFailed"));
                 return;
             }
 
             if (!payload?.payment?.checkoutUrl || !payload?.payment?.reference) {
-                setSubmitError("Unable to initiate CamPay checkout. Please try again.");
+                setSubmitError(t("apply.errors.checkoutInitFailed"));
                 return;
             }
 
@@ -773,7 +809,7 @@ export default function ApplyPageContent({
 
             window.location.href = payload.payment.checkoutUrl as string;
         } catch {
-            setSubmitError("Unable to submit application. Please try again.");
+            setSubmitError(t("apply.errors.submitFailed"));
         } finally {
             setIsSubmittingApplication(false);
         }
@@ -850,7 +886,7 @@ export default function ApplyPageContent({
                 <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                     <div>
                         <h2 className="text-[32px] font-semibold leading-none text-[#2F2F2F]" style={{ fontFamily: '"EB Garamond", serif' }}>
-                            Hi Welcome {welcomeName}
+                            {format("apply.dashboard.greeting", { name: welcomeName })}
                         </h2>
                     </div>
                     <Button
@@ -859,22 +895,22 @@ export default function ApplyPageContent({
                         disabled={isLoggingOut}
                         className="min-w-[84px] self-start px-4 py-[10px] text-[14px]"
                     >
-                        {isLoggingOut ? "Logging Out..." : "Log Out"}
+                        {isLoggingOut ? t("apply.dashboard.loggingOut") : t("apply.dashboard.logout")}
                     </Button>
                 </div>
 
                 <div className="mt-11 grid gap-6 text-[#2F2F2F] md:grid-cols-3">
                     <div>
-                        <p className="text-[20px] font-semibold">Email</p>
+                        <p className="text-[20px] font-semibold">{t("apply.dashboard.emailLabel")}</p>
                         <p className="mt-1 text-[18px]">{initialSessionUser?.email || form.email || "--"}</p>
                     </div>
                     <div>
-                        <p className="text-[20px] font-semibold">Phone Number</p>
+                        <p className="text-[20px] font-semibold">{t("apply.dashboard.phoneLabel")}</p>
                         <p className="mt-1 text-[18px] text-[#9C9C9C]">{form.phoneNumber || "--"}</p>
                     </div>
                     <div>
-                        <p className="text-[20px] font-semibold">User Since</p>
-                        <p className="mt-1 text-[18px] text-[#9C9C9C]">Portal Member</p>
+                        <p className="text-[20px] font-semibold">{t("apply.dashboard.userSinceLabel")}</p>
+                        <p className="mt-1 text-[18px] text-[#9C9C9C]">{t("apply.dashboard.userSinceValue")}</p>
                     </div>
                 </div>
             </div>
@@ -883,16 +919,16 @@ export default function ApplyPageContent({
                 <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                     <div>
                         <p className="text-[40px] font-semibold leading-[0.95]" style={{ fontFamily: '"EB Garamond", serif' }}>
-                            Admissions Open
+                            {t("apply.dashboard.admissionsOpen")}
                         </p>
-                        <p className="mt-2 text-[55px] font-semibold leading-[0.95]">September, January, May</p>
+                        <p className="mt-2 text-[55px] font-semibold leading-[0.95]">{intakeCommaList}</p>
                     </div>
 
                     <div className="rounded-[6px] bg-white px-4 py-2 text-[#2F2F2F]">
                         <div className="grid grid-cols-1 gap-2">
                             <div>
-                                <p className="text-[13px] font-medium text-[#33333380]">Available Intake Batches</p>
-                                <p className="text-[15px] font-semibold">September • January • May</p>
+                                <p className="text-[13px] font-medium text-[#33333380]">{t("apply.dashboard.availableBatchesLabel")}</p>
+                                <p className="text-[15px] font-semibold">{intakeBulletList}</p>
                             </div>
                         </div>
                     </div>
@@ -902,7 +938,7 @@ export default function ApplyPageContent({
                         onClick={goToNextStep}
                         className="flex min-h-[52px] min-w-[154px] cursor-pointer items-center justify-center gap-2 rounded-[4px] bg-white px-8 transition-opacity duration-200 hover:opacity-80"
                     >
-                        <span className="text-[18px] font-medium text-[#1E73BE]">Apply Now</span>
+                        <span className="text-[18px] font-medium text-[#1E73BE]">{t("apply.dashboard.applyNow")}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                             <path d="M10 1L19 10M19 10L10 19M19 10L1 10" stroke="#1E73BE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
@@ -915,17 +951,17 @@ export default function ApplyPageContent({
     const renderProgramStep = () => (
         <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Program
+                {t("apply.program.heading")}
             </h2>
 
             <div className="mt-5">
-                <FieldLabel sizeClass="text-[14px]">Select a Program</FieldLabel>
+                <FieldLabel sizeClass="text-[14px]">{t("apply.program.selectLabel")}</FieldLabel>
                 <Select
                     value={form.program}
                     onChange={(event) => updateForm("program", event.target.value)}
                     className="h-[40px] rounded-[3px] border-[#A7A7A7] px-3 text-[14px] text-[#8E8E8E]"
                 >
-                    <option value="">Choose your Program</option>
+                    <option value="">{t("apply.program.selectPlaceholder")}</option>
                     {availableProgramOptions.map((programOption) => (
                         <option key={programOption} value={programOption}>
                             {programOption}
@@ -935,8 +971,8 @@ export default function ApplyPageContent({
             </div>
 
             <ActionRow
-                backLabel="Back to Portal"
-                nextLabel="Save and Next"
+                backLabel={t("apply.backToPortal")}
+                nextLabel={t("apply.saveAndNext")}
                 onBack={goToPreviousStep}
                 onNext={goToNextStep}
                 errorMessage={validationError}
@@ -947,26 +983,26 @@ export default function ApplyPageContent({
     const renderBatchStartStep = () => (
         <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Batch Start
+                {t("apply.batchStart.heading")}
             </h2>
 
             <div className="mt-7">
-                <FieldLabel spacingClass="mb-5">Select Your Intake Batch</FieldLabel>
+                <FieldLabel spacingClass="mb-5">{t("apply.batchStart.question")}</FieldLabel>
                 <div className="space-y-4">
                     {batchStartOptions.map((batchStartOption) => (
                         <RadioOption
-                            key={batchStartOption}
-                            checked={form.batchStart === batchStartOption}
-                            title={batchStartOption}
-                            onClick={() => updateForm("batchStart", batchStartOption)}
+                            key={batchStartOption.value}
+                            checked={form.batchStart === batchStartOption.value}
+                            title={t(batchStartOption.labelKey)}
+                            onClick={() => updateForm("batchStart", batchStartOption.value)}
                         />
                     ))}
                 </div>
             </div>
 
             <ActionRow
-                backLabel="Back"
-                nextLabel="Save and Next"
+                backLabel={t("apply.back")}
+                nextLabel={t("apply.saveAndNext")}
                 onBack={goToPreviousStep}
                 onNext={goToNextStep}
                 errorMessage={validationError}
@@ -977,30 +1013,30 @@ export default function ApplyPageContent({
     const renderStudentTypeStep = () => (
         <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Student Type
+                {t("apply.studentType.heading")}
             </h2>
 
             <div className="mt-6">
-                <FieldLabel spacingClass="mb-5">Are you a local or international student?</FieldLabel>
+                <FieldLabel spacingClass="mb-5">{t("apply.studentType.question")}</FieldLabel>
                 <div className="space-y-4">
                     <RadioOption
                         checked={form.studentType === "national"}
-                        title="Local Student"
-                        description="Applying as a local applicant"
+                        title={t("apply.studentType.localTitle")}
+                        description={t("apply.studentType.localDescription")}
                         onClick={() => updateForm("studentType", "national")}
                     />
                     <RadioOption
                         checked={form.studentType === "international"}
-                        title="International Student"
-                        description="Applying as an international applicant"
+                        title={t("apply.studentType.internationalTitle")}
+                        description={t("apply.studentType.internationalDescription")}
                         onClick={() => updateForm("studentType", "international")}
                     />
                 </div>
             </div>
 
             <ActionRow
-                backLabel="Back"
-                nextLabel="Save and Next"
+                backLabel={t("apply.back")}
+                nextLabel={t("apply.saveAndNext")}
                 onBack={goToPreviousStep}
                 onNext={goToNextStep}
                 errorMessage={validationError}
@@ -1011,37 +1047,37 @@ export default function ApplyPageContent({
     const renderStudentInfoStep = () => (
         <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Student Information
+                {t("apply.studentInfo.heading")}
             </h2>
 
             <div className="mt-6">
                 <div className="grid gap-4 md:grid-cols-2">
                     <Input
-                        labelText="First Name"
+                        labelText={t("apply.firstName")}
                         type="text"
                         value={form.firstName}
                         onChange={(event) => updateForm("firstName", event.target.value)}
-                        placeholder="John"
+                        placeholder={t("apply.placeholders.firstName")}
                         className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
                     />
                     <Input
-                        labelText="Last Name"
+                        labelText={t("apply.lastName")}
                         type="text"
                         value={form.lastName}
                         onChange={(event) => updateForm("lastName", event.target.value)}
-                        placeholder="Doe"
+                        placeholder={t("apply.placeholders.lastName")}
                         className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
                     />
                 </div>
 
                 <div className="mt-4">
                     <Input
-                        labelText="Email Address"
+                        labelText={t("apply.email")}
                         type="email"
                         value={form.email}
                         onChange={(event) => updateForm("email", event.target.value)}
                         readOnly={hasSessionEmail}
-                        placeholder="you@example.com"
+                        placeholder={t("apply.placeholders.email")}
                         className={cn(
                             "h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]",
                             hasSessionEmail ? "bg-[#F2F5FA] text-[#5F5F5F]" : ""
@@ -1049,50 +1085,50 @@ export default function ApplyPageContent({
                     />
                     {hasSessionEmail ? (
                         <p className="mt-2 text-[13px] text-[#1E73BE]">
-                            Email is synced from your portal account.
+                            {t("apply.emailSyncedNotice")}
                         </p>
                     ) : null}
                 </div>
 
                 <div className="mt-4">
                     <Input
-                        labelText="Cell Phone"
+                        labelText={t("apply.cellPhone")}
                         type="text"
                         value={form.phoneNumber}
                         onChange={(event) => updateForm("phoneNumber", event.target.value)}
                         prependText="📞"
-                        placeholder="+1 234 567 8900"
+                        placeholder={t("apply.placeholders.phone")}
                         className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
                     />
                 </div>
 
                 <div className="mt-4">
-                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Highest Level of Education</FieldLabel>
+                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">{t("apply.highestEducationLabel")}</FieldLabel>
                     <Select
                         value={form.highestEducation}
                         onChange={(event) => updateForm("highestEducation", event.target.value)}
                         className="h-[40px] rounded-[3px] border-[#A7A7A7] px-3 text-[14px] text-[#6F6F6F]"
                     >
-                        <option value="">Select highest education</option>
+                        <option value="">{t("apply.highestEducationPlaceholder")}</option>
                         {highestEducationOptions.map((educationOption) => (
-                            <option key={educationOption} value={educationOption}>
-                                {educationOption}
+                            <option key={educationOption.value} value={educationOption.value}>
+                                {t(educationOption.labelKey)}
                             </option>
                         ))}
                     </Select>
                 </div>
 
                 <div className="mt-4">
-                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">Level of Interest</FieldLabel>
+                    <FieldLabel sizeClass="text-[14px]" weightClass="font-medium">{t("apply.interestLevelLabel")}</FieldLabel>
                     <Select
                         value={form.interestLevel}
                         onChange={(event) => updateForm("interestLevel", event.target.value)}
                         className="h-[40px] rounded-[3px] border-[#A7A7A7] px-3 text-[14px] text-[#6F6F6F]"
                     >
-                        <option value="">Select level of interest</option>
+                        <option value="">{t("apply.interestLevelPlaceholder")}</option>
                         {interestLevelOptions.map((interestLevelOption) => (
-                            <option key={interestLevelOption} value={interestLevelOption}>
-                                {interestLevelOption}
+                            <option key={interestLevelOption.value} value={interestLevelOption.value}>
+                                {t(interestLevelOption.labelKey)}
                             </option>
                         ))}
                     </Select>
@@ -1100,19 +1136,19 @@ export default function ApplyPageContent({
 
                 <div className="mt-4">
                     <Input
-                        labelText="Area of Interest"
+                        labelText={t("apply.interestAreaLabel")}
                         type="text"
                         value={form.interestArea}
                         onChange={(event) => updateForm("interestArea", event.target.value)}
-                        placeholder="AI, Public Health, Business Strategy..."
+                        placeholder={t("apply.placeholders.interestArea")}
                         className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
                     />
                 </div>
             </div>
 
             <ActionRow
-                backLabel="Back"
-                nextLabel="Save and Next"
+                backLabel={t("apply.back")}
+                nextLabel={t("apply.saveAndNext")}
                 onBack={goToPreviousStep}
                 onNext={goToNextStep}
                 errorMessage={validationError}
@@ -1123,35 +1159,49 @@ export default function ApplyPageContent({
     const renderReviewStep = () => (
         <FormCard>
             <h2 className="text-[24px] text-[#text-[22px] text-[#2F2F2F] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                Review
+                {t("apply.review.heading")}
             </h2>
             <p className="mt-5 text-[18px] font-medium text-[#333333]">
-                Please review your application before submitting.
+                {t("apply.review.description")}
             </p>
 
             <div className="mt-4 overflow-hidden rounded-[4px] border border-[#33333340]">
                 {[
-                    ["Program", form.program || availableProgramOptions[0] || "N/A"],
-                    ["Batch Start", form.batchStart],
-                    ["Student Type", form.studentType === "international" ? "International" : "National"],
-                    ["First Name", form.firstName || "N/A"],
-                    ["Last Name", form.lastName || "N/A"],
-                    ["Email", form.email || "N/A"],
-                    ["Cell Phone", form.phoneNumber || "N/A"],
-                    ["Highest Education", form.highestEducation || "N/A"],
-                    ["Level of Interest", form.interestLevel || "N/A"],
-                    ["Area of Interest", form.interestArea || "N/A"],
+                    ["apply.review.fields.program", form.program || availableProgramOptions[0] || t("apply.notAvailable")],
+                    ["apply.review.fields.batchStart", getBatchStartLabel(form.batchStart)],
+                    [
+                        "apply.review.fields.studentType",
+                        form.studentType === "international"
+                            ? t("apply.studentType.internationalShort")
+                            : t("apply.studentType.localShort"),
+                    ],
+                    ["apply.review.fields.firstName", form.firstName || t("apply.notAvailable")],
+                    ["apply.review.fields.lastName", form.lastName || t("apply.notAvailable")],
+                    ["apply.review.fields.email", form.email || t("apply.notAvailable")],
+                    ["apply.review.fields.phone", form.phoneNumber || t("apply.notAvailable")],
+                    [
+                        "apply.review.fields.highestEducation",
+                        form.highestEducation ? getHighestEducationLabel(form.highestEducation) : t("apply.notAvailable"),
+                    ],
+                    [
+                        "apply.review.fields.interestLevel",
+                        form.interestLevel ? getInterestLevelLabel(form.interestLevel) : t("apply.notAvailable"),
+                    ],
+                    ["apply.review.fields.interestArea", form.interestArea || t("apply.notAvailable")],
                 ].map(([label, value]) => (
                     <div
                         key={label}
                         className={cn(
                             "grid grid-cols-[1fr_auto] gap-4 border-b border-[#33333340] px-4 py-4 last:border-b-0",
-                            (label === "Batch Start" || label === "Email" || label === "Highest Education" || label === "Area of Interest")
+                            (label === "apply.review.fields.batchStart" ||
+                                label === "apply.review.fields.email" ||
+                                label === "apply.review.fields.highestEducation" ||
+                                label === "apply.review.fields.interestArea")
                                 ? "bg-[#FAFAFA]"
                                 : "bg-[#FFFFFF]"
                         )}
                     >
-                        <p className="text-[18px] font-medium text-[#333333]">{label}</p>
+                        <p className="text-[18px] font-medium text-[#333333]">{t(label)}</p>
                         <p className="text-[18px] text-[#33333380]">{value}</p>
                     </div>
                 ))}
@@ -1163,7 +1213,7 @@ export default function ApplyPageContent({
                     <path fillRule="evenodd" clipRule="evenodd" d="M2.39046 16.4928L8.67832 3.9994C10.0561 1.26062 13.9516 1.26062 15.3294 3.9994L21.6173 16.4928C22.8699 18.9939 21.0712 21.9453 18.2855 21.9453H5.75985C2.97916 21.9453 1.17547 18.9939 2.42803 16.4928H2.39046ZM3.51025 17.0543L9.79811 4.56091C10.7162 2.73506 13.2928 2.73506 14.2071 4.56091L20.495 17.0543C21.3417 18.7426 20.118 20.6935 18.2905 20.6935H5.76486C3.93612 20.6935 2.70861 18.7301 3.56035 17.0543H3.51025Z" fill="#FAAE14"/>
                 </svg>
                 <p className="min-w-0 leading-[1.45]">
-                    Application fee payment is required before this application can be submitted.
+                    {t("apply.review.feeRequiredNotice")}
                 </p>
             </div>
 
@@ -1173,10 +1223,10 @@ export default function ApplyPageContent({
                     onClick={goToPreviousStep}
                     className="min-w-[155px] min-h-[40px] cursor-pointer rounded-[5px] border border-[#D1D1D1] bg-white px-5 py-[5px] text-[18px] font-medium text-[#3B3B3B] transition-opacity duration-200 hover:opacity-80"
                 >
-                    Back
+                    {t("apply.back")}
                 </button>
                 <Button type="button" onClick={goToNextStep} className="min-w-[128px] px-5 py-[11px] text-[14px]">
-                    Continue to Payment
+                    {t("apply.review.continueToPayment")}
                 </Button>
             </div>
             {validationError ? (
@@ -1234,14 +1284,14 @@ export default function ApplyPageContent({
                     />
                     <RadioOption
                         checked={form.paymentMethod === "mtn_mobile_money"}
-                        title="MTN Mobile Money"
-                        description="You will confirm on your MTN mobile money phone."
+                        title={t("apply.paymentMethods.mtn.title")}
+                        description={t("apply.paymentMethods.mtn.description")}
                         onClick={() => updateForm("paymentMethod", "mtn_mobile_money")}
                     />
                     <RadioOption
                         checked={form.paymentMethod === "orange_money"}
-                        title="Orange Money"
-                        description="You will confirm on your Orange money phone."
+                        title={t("apply.paymentMethods.orange.title")}
+                        description={t("apply.paymentMethods.orange.description")}
                         onClick={() => updateForm("paymentMethod", "orange_money")}
                     />
                 </div>
@@ -1250,11 +1300,11 @@ export default function ApplyPageContent({
             {(form.paymentMethod === "mtn_mobile_money" || form.paymentMethod === "orange_money") ? (
                 <div className="mt-4">
                     <Input
-                        labelText="Payment Phone Number"
+                        labelText={t("apply.paymentPhoneLabel")}
                         type="text"
                         value={form.paymentPhoneNumber}
                         onChange={(event) => updateForm("paymentPhoneNumber", event.target.value)}
-                        placeholder="2376XXXXXXXX"
+                        placeholder={t("apply.placeholders.paymentPhone")}
                         className="h-[40px] rounded-[3px] border-[#A7A7A7] text-[14px] text-[#8E8E8E]"
                     />
                 </div>
@@ -1265,7 +1315,7 @@ export default function ApplyPageContent({
                     <path d="M12.0229 13.0564C11.824 13.0564 11.6333 12.9598 11.4926 12.7879C11.352 12.616 11.2729 12.3829 11.2729 12.1398V7.86198C11.2729 7.61886 11.352 7.38571 11.4926 7.2138C11.6333 7.04189 11.824 6.94531 12.0229 6.94531C12.2219 6.94531 12.4126 7.04189 12.5533 7.2138C12.6939 7.38571 12.7729 7.61886 12.7729 7.86198V12.1398C12.7729 12.3829 12.6939 12.616 12.5533 12.7879C12.4126 12.9598 12.2219 13.0564 12.0229 13.0564ZM11.0229 16.7231C11.0229 16.3989 11.1283 16.0881 11.3158 15.8588C11.5034 15.6296 11.7577 15.5009 12.0229 15.5009C12.2882 15.5009 12.5425 15.6296 12.7301 15.8588C12.9176 16.0881 13.0229 16.3989 13.0229 16.7231C13.0229 17.0472 12.9176 17.3581 12.7301 17.5873C12.5425 17.8165 12.2882 17.9453 12.0229 17.9453C11.7577 17.9453 11.5034 17.8165 11.3158 17.5873C11.1283 17.3581 11.0229 17.0472 11.0229 16.7231Z" fill="#FAAE14"/>
                     <path fillRule="evenodd" clipRule="evenodd" d="M2.39046 16.4928L8.67832 3.9994C10.0561 1.26062 13.9516 1.26062 15.3294 3.9994L21.6173 16.4928C22.8699 18.9939 21.0712 21.9453 18.2855 21.9453H5.75985C2.97916 21.9453 1.17547 18.9939 2.42803 16.4928H2.39046ZM3.51025 17.0543L9.79811 4.56091C10.7162 2.73506 13.2928 2.73506 14.2071 4.56091L20.495 17.0543C21.3417 18.7426 20.118 20.6935 18.2905 20.6935H5.76486C3.93612 20.6935 2.70861 18.7301 3.56035 17.0543H3.51025Z" fill="#FAAE14"/>
                 </svg>
-                <p className="min-w-0 leading-[1.45]">Your payment information is secure and encrypted.</p>
+                <p className="min-w-0 leading-[1.45]">{t("apply.paymentSecureNotice")}</p>
             </div>
 
             <div className="mt-15 flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
@@ -1274,7 +1324,7 @@ export default function ApplyPageContent({
                     onClick={goToPreviousStep}
                     className="min-w-[155px] min-h-[40px] cursor-pointer rounded-[5px] border border-[#D1D1D1] bg-white px-5 py-[5px] text-[18px] font-medium text-[#3B3B3B] transition-opacity duration-200 hover:opacity-80"
                 >
-                    Back
+                    {t("apply.back")}
                 </button>
                 <Button
                     type="button"
@@ -1283,8 +1333,8 @@ export default function ApplyPageContent({
                     className="min-w-[126px] px-5 py-[11px] text-[14px]"
                 >
                     {isSubmittingApplication || isConfirmingPayment
-                        ? "Submitting..."
-                        : `Pay ${applicationFeeSummary.finalAmount.toLocaleString()} XAF with CamPay`}
+                        ? t("apply.submitting")
+                        : format("apply.payWithCamPay", { amount: applicationFeeSummary.finalAmount.toLocaleString() })}
                 </Button>
             </div>
             {submitError ? (
@@ -1301,34 +1351,38 @@ export default function ApplyPageContent({
             <div className="rounded-[8px] border border-[#D8D8D8] bg-white p-5 md:p-6">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <h2 className="text-[24px] text-[#text-[22px] text-[#333333] font-semibold" style={{ fontFamily: '"EB Garamond", serif' }}>
-                        Your Application
+                        {t("apply.submitted.title")}
                     </h2>
                     <span className="inline-flex rounded-full border border-[#1E73BE] bg-[#287DC826] px-4 py-[6px] text-[16px] font-medium text-[#1E73BE]">
-                        Under Review
+                        {t("apply.submitted.statusUnderReview")}
                     </span>
                 </div>
 
                 <div className="mt-8 space-y-0">
                     {[
                         {
-                            title: "Application Fee Submitted",
-                            description: "Your application fee was submitted successfully through CamPay.",
-                            meta: `Confirmation email sent to ${submissionSummary?.confirmationEmail ?? form.email}.`,
+                            title: t("apply.submitted.timeline.feeSubmitted.title"),
+                            description: t("apply.submitted.timeline.feeSubmitted.description"),
+                            meta: format("apply.submitted.timeline.feeSubmitted.meta", {
+                                email: submissionSummary?.confirmationEmail ?? form.email,
+                            }),
                             active: true,
                         },
                         {
-                            title: "Application Under Review",
-                            description: `Your application for ${submissionSummary?.instructionProgram ?? form.program} is now under review.`,
-                            meta: "Estimated review time: 3-5 business days",
+                            title: t("apply.submitted.timeline.underReview.title"),
+                            description: format("apply.submitted.timeline.underReview.description", {
+                                program: submissionSummary?.instructionProgram ?? form.program,
+                            }),
+                            meta: t("apply.submitted.timeline.underReview.meta"),
                             active: true,
                         },
                         {
-                            title: "Document Verification",
-                            description: "Our admissions team will review your submitted documents after you complete the checklist.",
+                            title: t("apply.submitted.timeline.documentVerification.title"),
+                            description: t("apply.submitted.timeline.documentVerification.description"),
                         },
                         {
-                            title: "Admission Decision",
-                            description: "You will receive your admission decision by email after review is complete.",
+                            title: t("apply.submitted.timeline.admissionDecision.title"),
+                            description: t("apply.submitted.timeline.admissionDecision.description"),
                         },
                     ].map((item, index) => (
                         <div key={item.title} className="grid grid-cols-[44px_1fr] gap-5 pb-10 last:pb-0 md:grid-cols-[64px_1fr]">
@@ -1356,12 +1410,12 @@ export default function ApplyPageContent({
             </div>
 
             <div className="mt-6 rounded-[8px] border border-[#DADADA] bg-white px-6 py-5">
-                <p className="text-[18px] font-semibold text-[#333333]">Instruction Email Checklist</p>
+                <p className="text-[18px] font-semibold text-[#333333]">{t("apply.submitted.checklistTitle")}</p>
                 <ul className="mt-3 space-y-2 text-[16px] text-[#33333380]">
                     {(submissionSummary?.instructionChecklist ?? getInstructionChecklistForProgram(form.program)).map((item) => (
                         <li key={item} className="flex gap-2">
                             <span className="text-[#1E73BE]">•</span>
-                            <span>{item}</span>
+                            <span>{item.startsWith("apply.checklist.") ? t(item) : item}</span>
                         </li>
                     ))}
                 </ul>
@@ -1369,7 +1423,7 @@ export default function ApplyPageContent({
 
             <div className="mt-6 rounded-[8px] border border-[#DADADA] bg-white px-6 py-5 text-center text-[16px] text-[#33333380]">
                 <span className="inline-block max-w-[528px]">
-                    Application fee submitted successfully. Your application is under review and we will contact you soon.
+                    {t("apply.submitted.summaryNotice")}
                 </span>
             </div>
 
@@ -1379,7 +1433,7 @@ export default function ApplyPageContent({
                     onClick={() => router.push("/portal")}
                     className="h-[40px] w-[155px] cursor-pointer rounded-[5px] border border-[#33333340] bg-white px-5 py-0 text-[18px] font-medium leading-none text-[#333333] transition-opacity duration-200 hover:opacity-80"
                 >
-                    Back to Portal 
+                    {t("apply.backToPortal")}
                 </button>
             </div>
         </div>
@@ -1392,8 +1446,8 @@ export default function ApplyPageContent({
             ) : (
                 <div className="mx-auto max-w-[1000px]">
                     <SectionHeading
-                        title="Apply to St. Austin University"
-                        description="Complete your application in a few simple steps."
+                        title={t("apply.pageHeading.title")}
+                        description={t("apply.pageHeading.description")}
                     />
                     {currentStep !== "submitted" ? (
                         <Stepper

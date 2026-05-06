@@ -316,11 +316,180 @@
     "totalDue": "Total à payer",
     "choosePaymentMethod": "Choisir le mode de paiement",
     "cardOptionTitle": "Carte (paiement CamPay)",
-    "cardOptionDescription": "Payer en ligne par carte via le paiement sécurisé CamPay.",
-    "required": "Ce champ est obligatoire",
-    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
-    "invalidPhone": "Veuillez entrer un numéro de téléphone valide"
-  },
+	    "cardOptionDescription": "Payer en ligne par carte via le paiement sécurisé CamPay.",
+	    "required": "Ce champ est obligatoire",
+	    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+	    "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
+	    "studentFallback": "Étudiant",
+	    "notAvailable": "N/D",
+	    "back": "Retour",
+	    "backToPortal": "Retour au portail",
+	    "saveAndNext": "Enregistrer et continuer",
+	    "cellPhone": "Téléphone mobile",
+	    "emailSyncedNotice": "L’adresse e-mail est synchronisée depuis votre compte portail.",
+	    "feesLabelLine1": "Frais",
+	    "feesLabelLine2": "de dossier",
+	    "pageHeading": {
+	      "title": "Postuler à l'Université St. Austin",
+	      "description": "Complétez votre candidature en quelques étapes simples."
+	    },
+	    "dashboard": {
+	      "greeting": "Bienvenue, {name}",
+	      "logout": "Se déconnecter",
+	      "loggingOut": "Déconnexion...",
+	      "emailLabel": "E-mail",
+	      "phoneLabel": "Téléphone",
+	      "userSinceLabel": "Membre depuis",
+	      "userSinceValue": "Membre du portail",
+	      "admissionsOpen": "Admissions ouvertes",
+	      "availableBatchesLabel": "Sessions disponibles",
+	      "applyNow": "Postuler"
+	    },
+	    "program": {
+	      "heading": "Programme",
+	      "selectLabel": "Choisir un programme",
+	      "selectPlaceholder": "Choisissez votre programme"
+	    },
+	    "batchStart": {
+	      "heading": "Rentrée",
+	      "question": "Sélectionnez votre session d’entrée"
+	    },
+	    "studentType": {
+	      "heading": "Type d’étudiant",
+	      "question": "Êtes-vous un étudiant local ou international ?",
+	      "localTitle": "Étudiant local",
+	      "localDescription": "Candidature en tant qu'étudiant local",
+	      "internationalTitle": "Étudiant international",
+	      "internationalDescription": "Candidature en tant qu'étudiant international",
+	      "localShort": "National",
+	      "internationalShort": "International"
+	    },
+	    "studentInfo": {
+	      "heading": "Informations sur l’étudiant"
+	    },
+	    "highestEducationLabel": "Niveau d’éducation le plus élevé",
+	    "highestEducationPlaceholder": "Sélectionnez le niveau d’éducation",
+	    "interestLevelLabel": "Niveau d’intérêt",
+	    "interestLevelPlaceholder": "Sélectionnez le niveau d’intérêt",
+	    "interestAreaLabel": "Domaine d’intérêt",
+	    "placeholders": {
+	      "firstName": "Jean",
+	      "lastName": "Dupont",
+	      "email": "vous@exemple.com",
+	      "phone": "+33 6 12 34 56 78",
+	      "interestArea": "IA, Santé publique, Stratégie d’entreprise...",
+	      "paymentPhone": "2376XXXXXXXX"
+	    },
+	    "review": {
+	      "heading": "Vérification",
+	      "description": "Veuillez vérifier votre candidature avant de la soumettre.",
+	      "feeRequiredNotice": "Le paiement des frais de dossier est requis avant de pouvoir soumettre cette candidature.",
+	      "continueToPayment": "Continuer vers le paiement",
+	      "fields": {
+	        "program": "Programme",
+	        "batchStart": "Rentrée",
+	        "studentType": "Type d’étudiant",
+	        "firstName": "Prénom",
+	        "lastName": "Nom",
+	        "email": "E-mail",
+	        "phone": "Téléphone mobile",
+	        "highestEducation": "Niveau d’éducation",
+	        "interestLevel": "Niveau d’intérêt",
+	        "interestArea": "Domaine d’intérêt"
+	      }
+	    },
+	    "paymentPhoneLabel": "Numéro de téléphone pour le paiement",
+	    "paymentSecureNotice": "Vos informations de paiement sont sécurisées et chiffrées.",
+	    "paymentMethods": {
+	      "mtn": {
+	        "title": "MTN Mobile Money",
+	        "description": "Vous confirmerez sur votre téléphone MTN Mobile Money."
+	      },
+	      "orange": {
+	        "title": "Orange Money",
+	        "description": "Vous confirmerez sur votre téléphone Orange Money."
+	      }
+	    },
+	    "payWithCamPay": "Payer {amount} XAF avec CamPay",
+	    "submitted": {
+	      "title": "Votre candidature",
+	      "statusUnderReview": "En cours d’examen",
+	      "checklistTitle": "Liste de vérification (e-mail)",
+	      "summaryNotice": "Les frais de dossier ont été payés avec succès. Votre candidature est en cours d’examen et nous vous contacterons bientôt.",
+	      "timeline": {
+	        "feeSubmitted": {
+	          "title": "Frais de dossier payés",
+	          "description": "Vos frais de dossier ont été payés avec succès via CamPay.",
+	          "meta": "E-mail de confirmation envoyé à {email}."
+	        },
+	        "underReview": {
+	          "title": "Candidature en cours d’examen",
+	          "description": "Votre candidature pour {program} est maintenant en cours d’examen.",
+	          "meta": "Délai estimé : 3 à 5 jours ouvrés"
+	        },
+	        "documentVerification": {
+	          "title": "Vérification des documents",
+	          "description": "Notre équipe d’admissions examinera vos documents après que vous ayez complété la liste de vérification."
+	        },
+	        "admissionDecision": {
+	          "title": "Décision d’admission",
+	          "description": "Vous recevrez votre décision d’admission par e-mail une fois l’examen terminé."
+	        }
+	      }
+	    },
+	    "governmentDiscount": {
+	      "pendingReviewNotice": "La réduction pour fonctionnaires est en attente de validation. Envoyez les détails de votre pièce d’identité à {email}.",
+	      "rejectedNotice": "Votre précédente demande de réduction pour fonctionnaires n’a pas été approuvée. Mettez à jour vos informations sur la page Fonctionnaires et soumettez à nouveau."
+	    },
+	    "validation": {
+	      "selectProgram": "Veuillez sélectionner un programme avant de continuer.",
+	      "selectIntakeBatch": "Veuillez sélectionner votre session de rentrée avant de continuer.",
+	      "firstNameRequired": "Veuillez saisir votre prénom.",
+	      "lastNameRequired": "Veuillez saisir votre nom.",
+	      "emailRequired": "Veuillez saisir votre adresse e-mail.",
+	      "phoneRequired": "Veuillez saisir votre numéro de téléphone mobile.",
+	      "highestEducationRequired": "Veuillez sélectionner votre niveau d’éducation le plus élevé.",
+	      "interestLevelRequired": "Veuillez sélectionner votre niveau d’intérêt.",
+	      "interestAreaRequired": "Veuillez saisir votre domaine d’intérêt.",
+	      "paymentMethodRequired": "Veuillez choisir un mode de paiement.",
+	      "paymentPhoneRequired": "Veuillez saisir le numéro de téléphone Mobile Money."
+	    },
+	    "errors": {
+	      "paymentCancelled": "Le paiement a été annulé. Veuillez finaliser le paiement pour soumettre votre candidature.",
+	      "paymentReferenceMissing": "Nous n’avons pas trouvé votre référence de paiement. Veuillez réessayer.",
+	      "paymentConfirmFailed": "Le paiement n’a pas pu être confirmé. Veuillez réessayer.",
+	      "paymentConfirmUnavailable": "Impossible de confirmer le paiement pour le moment. Veuillez réessayer.",
+	      "submitFailed": "Impossible de soumettre la candidature. Veuillez réessayer.",
+	      "checkoutInitFailed": "Impossible de démarrer le paiement CamPay. Veuillez réessayer."
+	    },
+	    "intake": {
+	      "september": "Septembre",
+	      "january": "Janvier",
+	      "may": "Mai"
+	    },
+	    "education": {
+	      "highSchoolDiploma": "Diplôme d’études secondaires",
+	      "associateDegree": "Diplôme universitaire de 1er cycle",
+	      "bachelorsDegree": "Licence",
+	      "mastersDegree": "Master",
+	      "doctorate": "Doctorat",
+	      "other": "Autre"
+	    },
+	    "interest": {
+	      "exploringOptions": "Exploration",
+	      "interested": "Intéressé",
+	      "veryInterested": "Très intéressé",
+	      "readyToApply": "Prêt à postuler"
+	    },
+	    "checklist": {
+	      "transcript": "Relevé de notes le plus récent",
+	      "resume": "CV à jour",
+	      "learningGoalsStatement": "Courte déclaration d’objectifs d’apprentissage",
+	      "personalStatement": "Lettre de motivation",
+	      "statementOfPurpose": "Lettre d’intention",
+	      "identityProof": "Pièce d’identité"
+	    }
+	  },
   "resetPassword": {
     "title": "Réinitialiser votre mot de passe",
     "subtitle": "Récupérer l'accès à votre compte",

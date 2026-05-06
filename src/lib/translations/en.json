@@ -355,7 +355,176 @@
     "cardOptionDescription": "Pay online using card through CamPay secure checkout.",
     "required": "This field is required",
     "invalidEmail": "Please enter a valid email",
-    "invalidPhone": "Please enter a valid phone number"
+    "invalidPhone": "Please enter a valid phone number",
+    "studentFallback": "Student",
+    "notAvailable": "N/A",
+    "back": "Back",
+    "backToPortal": "Back to Portal",
+    "saveAndNext": "Save and Next",
+    "cellPhone": "Cell Phone",
+    "emailSyncedNotice": "Email is synced from your portal account.",
+    "feesLabelLine1": "Application",
+    "feesLabelLine2": "Fees",
+    "pageHeading": {
+      "title": "Apply to St. Austin University",
+      "description": "Complete your application in a few simple steps."
+    },
+    "dashboard": {
+      "greeting": "Hi, welcome {name}",
+      "logout": "Log Out",
+      "loggingOut": "Logging Out...",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone Number",
+      "userSinceLabel": "User Since",
+      "userSinceValue": "Portal Member",
+      "admissionsOpen": "Admissions Open",
+      "availableBatchesLabel": "Available Intake Batches",
+      "applyNow": "Apply Now"
+    },
+    "program": {
+      "heading": "Program",
+      "selectLabel": "Select a Program",
+      "selectPlaceholder": "Choose your Program"
+    },
+    "batchStart": {
+      "heading": "Batch Start",
+      "question": "Select Your Intake Batch"
+    },
+    "studentType": {
+      "heading": "Student Type",
+      "question": "Are you a local or international student?",
+      "localTitle": "Local Student",
+      "localDescription": "Applying as a local applicant",
+      "internationalTitle": "International Student",
+      "internationalDescription": "Applying as an international applicant",
+      "localShort": "National",
+      "internationalShort": "International"
+    },
+    "studentInfo": {
+      "heading": "Student Information"
+    },
+    "highestEducationLabel": "Highest Level of Education",
+    "highestEducationPlaceholder": "Select highest education",
+    "interestLevelLabel": "Level of Interest",
+    "interestLevelPlaceholder": "Select level of interest",
+    "interestAreaLabel": "Area of Interest",
+    "placeholders": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "you@example.com",
+      "phone": "+1 234 567 8900",
+      "interestArea": "AI, Public Health, Business Strategy...",
+      "paymentPhone": "2376XXXXXXXX"
+    },
+    "review": {
+      "heading": "Review",
+      "description": "Please review your application before submitting.",
+      "feeRequiredNotice": "Application fee payment is required before this application can be submitted.",
+      "continueToPayment": "Continue to Payment",
+      "fields": {
+        "program": "Program",
+        "batchStart": "Batch Start",
+        "studentType": "Student Type",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "phone": "Cell Phone",
+        "highestEducation": "Highest Education",
+        "interestLevel": "Level of Interest",
+        "interestArea": "Area of Interest"
+      }
+    },
+    "paymentPhoneLabel": "Payment Phone Number",
+    "paymentSecureNotice": "Your payment information is secure and encrypted.",
+    "paymentMethods": {
+      "mtn": {
+        "title": "MTN Mobile Money",
+        "description": "You will confirm on your MTN mobile money phone."
+      },
+      "orange": {
+        "title": "Orange Money",
+        "description": "You will confirm on your Orange money phone."
+      }
+    },
+    "payWithCamPay": "Pay {amount} XAF with CamPay",
+    "submitted": {
+      "title": "Your Application",
+      "statusUnderReview": "Under Review",
+      "checklistTitle": "Instruction Email Checklist",
+      "summaryNotice": "Application fee submitted successfully. Your application is under review and we will contact you soon.",
+      "timeline": {
+        "feeSubmitted": {
+          "title": "Application Fee Submitted",
+          "description": "Your application fee was submitted successfully through CamPay.",
+          "meta": "Confirmation email sent to {email}."
+        },
+        "underReview": {
+          "title": "Application Under Review",
+          "description": "Your application for {program} is now under review.",
+          "meta": "Estimated review time: 3-5 business days"
+        },
+        "documentVerification": {
+          "title": "Document Verification",
+          "description": "Our admissions team will review your submitted documents after you complete the checklist."
+        },
+        "admissionDecision": {
+          "title": "Admission Decision",
+          "description": "You will receive your admission decision by email after review is complete."
+        }
+      }
+    },
+    "governmentDiscount": {
+      "pendingReviewNotice": "Government employee discount is pending admin approval. Email your ID details to {email}.",
+      "rejectedNotice": "Your previous government employee discount request was not approved. Update your details on the Government Employees page and resubmit."
+    },
+    "validation": {
+      "selectProgram": "Please select a program before continuing.",
+      "selectIntakeBatch": "Please select your batch start before continuing.",
+      "firstNameRequired": "Please enter your first name.",
+      "lastNameRequired": "Please enter your last name.",
+      "emailRequired": "Please enter your email address.",
+      "phoneRequired": "Please enter your cell phone number.",
+      "highestEducationRequired": "Please select your highest level of education.",
+      "interestLevelRequired": "Please select your level of interest.",
+      "interestAreaRequired": "Please enter your area of interest.",
+      "paymentMethodRequired": "Please choose a payment method.",
+      "paymentPhoneRequired": "Please enter the mobile money phone number."
+    },
+    "errors": {
+      "paymentCancelled": "Payment was cancelled. Please complete the payment to submit your application.",
+      "paymentReferenceMissing": "We couldn't find your payment reference. Please try paying again.",
+      "paymentConfirmFailed": "Payment could not be confirmed. Please try again.",
+      "paymentConfirmUnavailable": "Unable to confirm payment right now. Please try again.",
+      "submitFailed": "Unable to submit application. Please try again.",
+      "checkoutInitFailed": "Unable to initiate CamPay checkout. Please try again."
+    },
+    "intake": {
+      "september": "September",
+      "january": "January",
+      "may": "May"
+    },
+    "education": {
+      "highSchoolDiploma": "High School Diploma",
+      "associateDegree": "Associate Degree",
+      "bachelorsDegree": "Bachelor's Degree",
+      "mastersDegree": "Master's Degree",
+      "doctorate": "Doctorate",
+      "other": "Other"
+    },
+    "interest": {
+      "exploringOptions": "Exploring options",
+      "interested": "Interested",
+      "veryInterested": "Very interested",
+      "readyToApply": "Ready to apply"
+    },
+    "checklist": {
+      "transcript": "Most recent transcript",
+      "resume": "Current resume/CV",
+      "learningGoalsStatement": "Short statement of learning goals",
+      "personalStatement": "Personal statement",
+      "statementOfPurpose": "Statement of purpose",
+      "identityProof": "Proof of identity document"
+    }
   },
   "resetPassword": {
     "title": "Reset Your Password",
