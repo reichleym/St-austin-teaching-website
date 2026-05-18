@@ -1,42 +1,63 @@
 /** @type {import('next-sitemap').IConfig} */
 
 module.exports = {
-  siteUrl: 'https://www.st-austin.org',
-
+  siteUrl: "https://www.st-austin.org",
   generateRobotsTxt: true,
 
-  exclude: ['/admin/*'],
+  exclude: ["/admin/*"],
 
   robotsTxtOptions: {
     policies: [
       {
-        userAgent: '*',
-        allow: '/',
+        userAgent: "*",
+        allow: "/",
       },
     ],
   },
 
-  additionalPaths: async (config) => {
+  additionalPaths: async () => {
+    // Static pages
+    const staticPages = [
+      "/",
+      "/about",
+      "/admissions",
+      "/apply",
+      "/careers",
+      "/donations",
+      "/government-employees",
+      "/portal",
+      "/program",
+      "/request-info",
+      "/studentExperience",
+      "/tuition",
+    ].map((path) => ({
+      loc: path,
+      changefreq: "weekly",
+      priority: 1.0,
+      lastmod: new Date().toISOString(),
+    }));
+
     try {
-      const response = await fetch(
-        'https://www.st-austin.org/api/courses'
-      )
+      // Dynamic program pages
+      const response = await fetch("https://www.st-austin.org/api/courses");
 
-      const result = await response.json()
+      const result = await response.json();
 
-      if (!result?.ok || !Array.isArray(result.data)) {
-        return []
-      }
+      const dynamicPrograms =
+        result?.ok && Array.isArray(result.data)
+          ? result.data.map((program) => ({
+              loc: `/program/${program.id}`,
+              changefreq: "weekly",
+              priority: 0.8,
+              lastmod: new Date().toISOString(),
+            }))
+          : [];
 
-      return result.data.map((program) => ({
-        loc: `/program/${program.id}`,
-        changefreq: 'weekly',
-        priority: 0.8,
-        lastmod: new Date().toISOString(),
-      }))
+      return [...staticPages, ...dynamicPrograms];
     } catch (error) {
-      console.error('Sitemap generation failed:', error)
-      return []
+      console.error("Sitemap generation failed:", error);
+
+      return staticPages;
     }
   },
-}
+};
