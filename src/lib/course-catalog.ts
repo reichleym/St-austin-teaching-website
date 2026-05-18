@@ -303,6 +303,12 @@ function toLocalizedProgramContent(
         ? (isRecord(parsedProgramContent?.en) ? (parsedProgramContent?.en as Record<string, unknown>) : {})
         : (parsedProgramContent ?? {});
 
+    const enFromTranslations = getTranslationForLanguage(rawTranslations, "en");
+    const mergedEnContent =
+        enFromTranslations && Object.keys(enFromTranslations).length > 0
+            ? { ...enContent, ...enFromTranslations }
+            : enContent;
+
     const frFromProgramContent = hasLocalizedContent
         ? (isRecord(parsedProgramContent?.fr) ? (parsedProgramContent?.fr as Record<string, unknown>) : {})
         : {};
@@ -313,7 +319,7 @@ function toLocalizedProgramContent(
             ? { ...frFromProgramContent, ...frFromTranslations }
             : frFromProgramContent;
 
-    const result: Record<string, unknown> = { en: enContent };
+    const result: Record<string, unknown> = { en: mergedEnContent };
     if (Object.keys(frContent).length > 0) {
         result.fr = frContent;
     }
@@ -352,7 +358,7 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number, la
     const id = String(idValue);
 
     const rawTranslations = columns.translations ? row[columns.translations] : row.translations;
-    const translation = language === "en" ? null : getTranslationForLanguage(rawTranslations, language);
+    const translation = getTranslationForLanguage(rawTranslations, language);
 
     const title = getSafeString(
         translation?.title ?? (columns.title ? row[columns.title] : undefined),
@@ -361,13 +367,13 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number, la
     const rawProgramContent = columns.programContent ? row[columns.programContent] : row.programContent;
     const parsedProgramContent = getProgramContentObject(rawProgramContent);
     const descriptionFromProgramContent = pickProgramContentText(parsedProgramContent, [
-        "overview",
         "description",
+        "overview",
         "summary",
     ]);
     const localizedDescription = pickProgramContentText(translation, [
-        "overview",
         "description",
+        "overview",
         "summary",
         "details",
     ]);

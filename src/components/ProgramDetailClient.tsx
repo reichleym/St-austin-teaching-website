@@ -34,9 +34,19 @@ function getNonEmptyString(value: unknown): string | null {
   return null;
 }
 
+function parseLooseList(text: string): string[] {
+  return text
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => line.replace(/^[-*•\u2022]\s+/, '').trim())
+    .filter((line) => line.length > 0);
+}
+
 function getStringList(value: unknown): string[] {
   if (!Array.isArray(value)) {
-    return [];
+    const asString = getNonEmptyString(value);
+    return asString ? parseLooseList(asString) : [];
   }
 
   return value
@@ -155,11 +165,11 @@ export default function ProgramDetailClient({
                 {finalCurriculum.length > 0 ? (
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {finalCurriculum.map((item, index) => (
-                      <li className="flex gap-4 items-center" key={`${item}-${index}`}>
-                        <span className="bg-[#1E73BE] font-semibold text-white w-11 h-11 rounded-full flex items-center justify-center">
+                      <li className="flex gap-4 items-start" key={`${item}-${index}`}>
+                        <span className="bg-[#1E73BE] font-semibold text-white w-11 h-11 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                           {String(index + 1).padStart(2, '0')}
                         </span>
-                        {item}
+                        <span className="leading-relaxed">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -173,11 +183,11 @@ export default function ProgramDetailClient({
                   <div className="flex flex-wrap gap-5">
                     {finalCareerOpportunities.map((tag, index) => (
                       <span
-                        className="bg-[#1E73BE1A] p-3 border border-[#1E73BE] font-semibold flex items-center gap-2.5"
+                        className="bg-[#1E73BE1A] p-3 border border-[#1E73BE] font-semibold flex items-start gap-2.5 leading-relaxed"
                         key={`${tag}-${index}`}
                       >
-                        <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE]" />
-                        {tag}
+                        <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE] shrink-0 mt-0.5" />
+                        <span>{tag}</span>
                       </span>
                     ))}
                   </div>
@@ -201,9 +211,9 @@ export default function ProgramDetailClient({
                 {finalAdmissionRequirements.length > 0 ? (
                   <ul className="space-y-3">
                     {finalAdmissionRequirements.map((item, index) => (
-                      <li className="flex gap-2.5 items-center" key={`${item}-${index}`}>
-                        <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE]" />
-                        {item}
+                      <li className="flex gap-2.5 items-start" key={`${item}-${index}`}>
+                        <IoIosCheckmarkCircleOutline size={24} className="text-[#1E73BE] shrink-0 mt-0.5" />
+                        <span className="leading-relaxed">{item}</span>
                       </li>
                     ))}
                   </ul>

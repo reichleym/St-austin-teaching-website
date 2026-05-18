@@ -33,9 +33,19 @@ function getNonEmptyString(value: unknown): string | null {
     return null;
 }
 
+function parseLooseList(text: string): string[] {
+    return text
+        .split(/\r?\n+/)
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .map((line) => line.replace(/^[-*•\u2022]\s+/, "").trim())
+        .filter((line) => line.length > 0);
+}
+
 function getStringList(value: unknown): string[] {
     if (!Array.isArray(value)) {
-        return [];
+        const asString = getNonEmptyString(value);
+        return asString ? parseLooseList(asString) : [];
     }
 
     return value
