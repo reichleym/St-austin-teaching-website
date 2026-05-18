@@ -1,9 +1,7 @@
 /** @type {import('next-sitemap').IConfig} */
 
 module.exports = {
-  // siteUrl: 'https://www.st-austin.org',
-  siteUrl: "http://localhost:3000",
-
+  siteUrl: "https://www.st-austin.org",
   generateRobotsTxt: true,
 
   exclude: ["/admin/*"],
@@ -41,9 +39,7 @@ module.exports = {
 
     try {
       // Dynamic program pages
-      // const response = await fetch("https://www.st-austin.org/api/courses");
-
-      const response = await fetch("http://localhost:3000/api/courses");
+      const response = await fetch("https://www.st-austin.org/api/courses");
 
       const result = await response.json();
 
