@@ -7,6 +7,7 @@
     "dev:turbo": "next dev --turbopack",
     "clean": "rm -rf .next",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "eslint"
   },
@@ -15,6 +16,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.577.0",
     "next": "16.2.0",
+    "next-sitemap": "^4.2.3",
     "nodemailer": "^8.0.5",
     "postgres": "^3.4.8",
     "react": "19.2.4",
