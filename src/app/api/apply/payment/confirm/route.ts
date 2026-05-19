@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { databaseEnvKeys, isDatabaseConfigured } from "@/lib/postgres";
 import { setCurrentUserApplicationStatus } from "@/lib/auth/server";
-import { getCampayTransactionStatus } from "@/lib/campay";
+// Campay integration commented out for apply-now flow.
+// import { getCampayTransactionStatus } from "@/lib/campay";
 import { isSmtpConfigured, sendApplicationInstructionEmail } from "@/lib/mail";
 
 type ConfirmPaymentBody = {
@@ -100,6 +101,8 @@ export async function POST(request: Request) {
             );
         }
 
+        /*
+        // Campay transaction check commented out for apply-now flow.
         const transaction = await getCampayTransactionStatus(reference);
         const paymentStatus = String(transaction.status || "").toUpperCase();
         const successfulStatuses = new Set(["SUCCESSFUL", "SUCCESS", "COMPLETED", "PAID"]);
@@ -119,6 +122,11 @@ export async function POST(request: Request) {
                 { status: 409 }
             );
         }
+        */
+
+        // Fallback when Campay is disabled: treat as successful for apply-now flow.
+        const paymentStatus = "SUCCESSFUL";
+        const transaction = {};
 
         try {
             await setCurrentUserApplicationStatus("under_review");

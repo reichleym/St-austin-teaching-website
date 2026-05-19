@@ -257,6 +257,8 @@ export async function POST(request: NextRequest) {
             paymentMethodTypes: [...paymentMethodTypes],
         });
 
+        /*
+        // Campay integration temporarily commented out for apply-now flow.
         if (!checkout) {
             return NextResponse.json(
                 {
@@ -276,6 +278,7 @@ export async function POST(request: NextRequest) {
                 { status: 500 }
             );
         }
+        */
 
         return NextResponse.json({
             ok: true,
@@ -297,6 +300,8 @@ export async function POST(request: NextRequest) {
             /Unable to log in with provided credentials/i.test(message) ||
             /CamPay authentication request failed/i.test(message);
 
+        /*
+        // CamPay-specific credential errors are temporarily ignored for apply-now flow.
         if (isCampayCredentialError) {
             return NextResponse.json(
                 {
@@ -306,6 +311,7 @@ export async function POST(request: NextRequest) {
                 { status: 502 }
             );
         }
+        */
 
         return NextResponse.json({ ok: false, error: message }, { status: 400 });
     }
