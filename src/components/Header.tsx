@@ -218,22 +218,22 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                     </Link>
 
                 </div> */}
-<div className="container py-2 flex justify-end gap-5 items-center">
-    {topMenuItem.map((topItem) => (
-        <Link
-            key={topItem.label}
-            href={topItem.href}
-            className={`text-sm md:text-base pb-1 font-medium text-white hover:opacity-75 hover:border-b-2 hover:pb-1 transition-opacity duration-200 leading-6 align-center ${
-                pathname === topItem.href ? "active border-b-2 pb-1 border-white" : ""
-            }`}
-        >
-            {topItem.label}
-        </Link>
-    ))}
-    <Link href="/apply" className="inline-flex">
-        <Button variant="white" className="px-4">{t('header.applyNow')}</Button>
-    </Link>
-</div>
+            <div className="container py-2 flex justify-end gap-5 items-center">
+                {topMenuItem.map((topItem) => (
+                    <Link
+                        key={topItem.label}
+                        href={topItem.href}
+                        className={`text-[13px] md:text-base pb-1 text-white hover:opacity-75 hover:border-b-2 hover:pb-1 transition-opacity duration-200 leading-6 align-center ${
+                            pathname === topItem.href ? "active border-b-2 pb-1 border-white" : ""
+                        }`}
+                    >
+                        {topItem.label}
+                    </Link>
+                ))}
+                <Link href="/apply" className="inline-flex">
+                    <Button variant="white" className="px-4">{t('header.applyNow')}</Button>
+                </Link>
+            </div>
             </div>
 
             <nav className="container md:py-5 py-3">
@@ -409,7 +409,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                             ))}
                         </div>
                         <div className="mt-4 flex flex-col space-y-3 border-t pt-4">
-                            <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2">
+                            {/* <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2">
                                 <input
                                     type="text"
                                     placeholder={t('header.search')}
@@ -417,7 +417,7 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                 />
 
                             <Search className="w-5 h-5 text-gray-500 ml-2" />
-                            </div>
+                            </div> */}
 
                             {/* Mobile Language Switch */}
                             <div className="relative mt-3">

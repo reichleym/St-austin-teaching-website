@@ -1087,7 +1087,7 @@ export default function ApplyPageContent({
                 </span>
             </div>
 
-            <div className="mt-6 flex justify-center">
+            {/* <div className="mt-6 flex justify-center">
                 <button
                     type="button"
                     onClick={() => router.push("/portal")}
@@ -1095,7 +1095,7 @@ export default function ApplyPageContent({
                 >
                     {t("apply.backToPortal")}
                 </button>
-            </div>
+            </div> */}
         </div>
     );
 

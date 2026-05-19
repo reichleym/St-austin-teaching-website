@@ -415,10 +415,10 @@
 	      "title": "Votre candidature",
 	      "statusUnderReview": "En cours d’examen",
 	      "checklistTitle": "Liste de vérification (e-mail)",
-	      "summaryNotice": "Les frais de dossier ont été payés avec succès. Votre candidature est en cours d’examen et nous vous contacterons bientôt.",
+	      "summaryNotice": "Votre candidature a été soumise avec succès. Elle est en cours d'examen et nous vous contacterons prochainement.",
 	      "timeline": {
 	        "feeSubmitted": {
-	          "title": "Frais de dossier payés",
+	          "title": "Candidature soumise",
 	          "description": "Vos frais de dossier ont été payés avec succès via CamPay.",
 	          "meta": "E-mail de confirmation envoyé à {email}."
 	        },

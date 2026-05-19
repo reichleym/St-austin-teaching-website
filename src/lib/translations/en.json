@@ -451,11 +451,11 @@
       "title": "Your Application",
       "statusUnderReview": "Under Review",
       "checklistTitle": "Instruction Email Checklist",
-      "summaryNotice": "Application fee submitted successfully. Your application is under review and we will contact you soon.",
+      "summaryNotice": "Application submitted successfully. Your application is under review and we will contact you soon.",
       "timeline": {
         "feeSubmitted": {
-          "title": "Application Fee Submitted",
-          "description": "Your application fee was submitted successfully through CamPay.",
+          "title": "Application Submitted",
+          "description": "Votre candidature a été soumise avec succès.",
           "meta": "Confirmation email sent to {email}."
         },
         "underReview": {
