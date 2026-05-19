@@ -283,9 +283,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
             ok: true,
             payment: {
-                provider: checkout.provider,
-                reference: checkout.reference,
-                checkoutUrl: checkout.checkoutUrl,
+                provider: checkout?.provider ?? null,
+                reference: checkout?.reference ?? null,
+                checkoutUrl: checkout?.checkoutUrl ?? null,
                 applicationReference,
                 amountXaf: expectedAmountXaf,
             },
