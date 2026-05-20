@@ -7,7 +7,11 @@ import {
     getCurrentUserGovernmentBenefit,
     setCurrentUserApplicationStatus,
 } from "@/lib/auth/server";
-import { isSmtpConfigured, sendAdminApplicationSubmittedEmail } from "@/lib/mail";
+import {
+    isSmtpConfigured,
+    sendAdminApplicationSubmittedEmail,
+    sendApplicantApplicationSubmittedEmail,
+} from "@/lib/mail";
 
 type FeePaymentMethod = "card" | "mtn_mobile_money" | "orange_money";
 
@@ -156,19 +160,42 @@ export async function POST(request: NextRequest) {
             );
         }
 
-	        if (!APPLY_PAYMENTS_ENABLED) {
-	            await setCurrentUserApplicationStatus("under_review");
-	            try {
-	                if (
-	                    isSmtpConfigured() &&
-	                    APPLY_ADMIN_NOTIFICATION_EMAIL &&
-	                    isValidEmail(APPLY_ADMIN_NOTIFICATION_EMAIL)
-	                ) {
-	                    await sendAdminApplicationSubmittedEmail({
-	                        toEmail: APPLY_ADMIN_NOTIFICATION_EMAIL,
-	                        applicantName: `${normalizedFirstName} ${normalizedLastName}`.trim(),
-	                        applicantEmail: normalizedEmail,
-	                        phoneNumber: phoneNumber.trim(),
+        if (!APPLY_PAYMENTS_ENABLED) {
+            await setCurrentUserApplicationStatus("under_review");
+
+            const portalLink = `${getBaseUrl(request)}/apply`;
+            let confirmationEmailMessage = "Confirmation email has been sent.";
+
+            try {
+                if (!isSmtpConfigured()) {
+                    confirmationEmailMessage =
+                        "Application submitted. Confirmation email is temporarily unavailable.";
+                } else {
+                    await sendApplicantApplicationSubmittedEmail({
+                        toEmail: normalizedEmail,
+                        applicantName: `${normalizedFirstName} ${normalizedLastName}`.trim(),
+                        program: program.trim(),
+                        batchStart: batchStart.trim(),
+                        portalLink,
+                    });
+                }
+            } catch (emailError) {
+                console.error("[api/apply/submit] applicant confirmation email failed", emailError);
+                confirmationEmailMessage =
+                    "Application submitted. We could not send the confirmation email right now.";
+            }
+
+            try {
+                if (
+                    isSmtpConfigured() &&
+                    APPLY_ADMIN_NOTIFICATION_EMAIL &&
+                    isValidEmail(APPLY_ADMIN_NOTIFICATION_EMAIL)
+                ) {
+                    await sendAdminApplicationSubmittedEmail({
+                        toEmail: APPLY_ADMIN_NOTIFICATION_EMAIL,
+                        applicantName: `${normalizedFirstName} ${normalizedLastName}`.trim(),
+                        applicantEmail: normalizedEmail,
+                        phoneNumber: phoneNumber.trim(),
                         program: program.trim(),
                         batchStart: batchStart.trim(),
                         studentType: studentType.trim(),
@@ -180,9 +207,14 @@ export async function POST(request: NextRequest) {
             } catch (emailError) {
                 console.error("[api/apply/submit] admin notification email failed", emailError);
             }
+
             return NextResponse.json({
                 ok: true,
                 status: "under_review",
+                emails: {
+                    confirmationEmail: normalizedEmail,
+                    confirmationEmailMessage,
+                },
             });
         }
 

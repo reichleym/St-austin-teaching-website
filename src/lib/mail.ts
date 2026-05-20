@@ -176,6 +176,53 @@ export async function sendApplicationInstructionEmail(input: {
 	});
 }
 
+export async function sendApplicantApplicationSubmittedEmail(input: {
+    toEmail: string;
+    applicantName?: string;
+    program: string;
+    batchStart?: string;
+    portalLink?: string;
+}): Promise<void> {
+    const recipient = input.toEmail.trim();
+    const applicantName = getGreetingName(input.applicantName, "Applicant");
+    const safeProgram = input.program.trim();
+    const safeBatch = (input.batchStart || "").trim();
+    const safePortalLink = (input.portalLink || "").trim();
+
+    await sendEmail({
+        to: recipient,
+        subject: "Application submitted: next steps",
+        text: [
+            `Hello ${applicantName},`,
+            "",
+            "We have received your application.",
+            `Program: ${safeProgram}`,
+            safeBatch ? `Intake batch: ${safeBatch}` : "",
+            "",
+            "Your application is now under review.",
+            "Estimated review time: 3–5 business days.",
+            safePortalLink ? `You can track your application here: ${safePortalLink}` : "",
+            "",
+            "We will contact you soon with the next update.",
+            "",
+            "St. Austin Admissions Team",
+        ]
+            .filter(Boolean)
+            .join("\n"),
+        html: `
+            <p>Hello ${escapeHtml(applicantName)},</p>
+            <p>We have received your application.</p>
+            <p><strong>Program:</strong> ${escapeHtml(safeProgram)}</p>
+            ${safeBatch ? `<p><strong>Intake batch:</strong> ${escapeHtml(safeBatch)}</p>` : ""}
+            <p>Your application is now under review.</p>
+            <p><strong>Estimated review time:</strong> 3–5 business days.</p>
+            ${safePortalLink ? `<p><a href="${escapeHtml(safePortalLink)}">Track your application</a></p>` : ""}
+            <p>We will contact you soon with the next update.</p>
+            <p>St. Austin Admissions Team</p>
+        `,
+    });
+}
+
 export async function sendAdminApplicationSubmittedEmail(input: {
 	toEmail: string;
 	applicantName: string;

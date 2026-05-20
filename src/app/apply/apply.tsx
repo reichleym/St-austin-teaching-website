@@ -714,7 +714,7 @@ export default function ApplyPageContent({
                     <button
                         type="button"
                         onClick={goToNextStep}
-                        className="flex min-h-[52px] min-w-[154px] cursor-pointer items-center justify-center gap-2 rounded-[4px] bg-white px-8 transition-opacity duration-200 hover:opacity-80"
+                        className="flex min-h-[52px] min-w-[180px] cursor-pointer items-center justify-center gap-2 rounded-[4px] bg-white px-8 transition-opacity duration-200 hover:opacity-80"
                     >
                         <span className="text-[18px] font-medium text-[#1E73BE]">{t("apply.dashboard.applyNow")}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
