@@ -325,6 +325,16 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                         >
                                             {t('languages.fr')}
                                         </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setLang('es');
+                                                setIsLangMenuOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-100"
+                                        >
+                                            {t('languages.es')}
+                                        </button>
                                     </div>
                                 )}
                             </div>
@@ -448,6 +458,15 @@ export default function Header({ initialSessionUser = null }: HeaderProps) {
                                             className="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm"
                                         >
                                             {t('languages.fr')}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setLang('es');
+                                                setIsLangMenuOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm"
+                                        >
+                                            {t('languages.es')}
                                         </button>
                                     </div>
                                 )}

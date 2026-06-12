@@ -12,13 +12,17 @@ type CourseColumnMap = {
     programContent?: string;
     duration?: string;
     durationFr?: string;
+    durationEs?: string;
     programType?: string;
     programTypeFr?: string;
+    programTypeEs?: string;
     image?: string;
     degreeLevel?: string;
     degreeLevelFr?: string;
+    degreeLevelEs?: string;
     fieldOfStudy?: string;
     fieldOfStudyFr?: string;
+    fieldOfStudyEs?: string;
     visibility?: string;
     translations?: string;
 };
@@ -148,13 +152,17 @@ async function getCourseColumns(): Promise<CourseColumnMap> {
         programContent: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.programContent),
         duration: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.duration),
         durationFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.duration),
+        durationEs: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.duration, ["_es", "es"]),
         programType: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.programType),
         programTypeFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.programType),
+        programTypeEs: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.programType, ["_es", "es"]),
         image: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.image),
         degreeLevel: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
         degreeLevelFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel),
+        degreeLevelEs: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.degreeLevel, ["_es", "es"]),
         fieldOfStudy: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.fieldOfStudy),
         fieldOfStudyFr: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.fieldOfStudy),
+        fieldOfStudyEs: pickLocalizedColumn(columnNames, TEXT_COLUMN_CANDIDATES.fieldOfStudy, ["_es", "es"]),
         visibility: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.visibility),
         translations: pickColumn(columnNames, TEXT_COLUMN_CANDIDATES.translations),
     };
@@ -319,9 +327,22 @@ function toLocalizedProgramContent(
             ? { ...frFromProgramContent, ...frFromTranslations }
             : frFromProgramContent;
 
+    const esFromProgramContent = hasLocalizedContent
+        ? (isRecord(parsedProgramContent?.es) ? (parsedProgramContent?.es as Record<string, unknown>) : {})
+        : {};
+
+    const esFromTranslations = getTranslationForLanguage(rawTranslations, "es");
+    const esContent =
+        esFromTranslations && Object.keys(esFromTranslations).length > 0
+            ? { ...esFromProgramContent, ...esFromTranslations }
+            : esFromProgramContent;
+
     const result: Record<string, unknown> = { en: mergedEnContent };
     if (Object.keys(frContent).length > 0) {
         result.fr = frContent;
+    }
+    if (Object.keys(esContent).length > 0) {
+        result.es = esContent;
     }
 
     try {
@@ -377,42 +398,32 @@ function mapCourseRow(row: DbCourse, columns: CourseColumnMap, index: number, la
         "summary",
         "details",
     ]);
-    const description = getSafeString(
-        language === "en"
-            ? columns.description
-                ? row[columns.description]
-                : undefined
-            : localizedDescription,
-        getSafeString(
-            language === "en" ? row.description : null,
-            localizedDescription || descriptionFromProgramContent || "Program information coming soon."
-        )
-    );
+    const description =
+        localizedDescription ||
+        descriptionFromProgramContent ||
+        getSafeString(columns.description ? row[columns.description] : undefined, "Program information coming soon.");
+
     const durationFromProgramContent = pickProgramContentText(parsedProgramContent, [
         "duration",
         "timeline",
         "time",
     ]);
-    const localizedDuration = pickProgramContentText(translation, [
-        "duration",
-        "timeline",
-        "time",
-        "length",
-    ]);
-    const durationColumn = language === "fr" ? columns.durationFr ?? columns.duration : columns.duration;
+    const localizedDuration = pickProgramContentText(translation, ["duration", "timeline", "time", "length"]);
+    const durationColumn =
+        language === "fr"
+            ? columns.durationFr ?? columns.duration
+            : language === "es"
+            ? columns.durationEs ?? columns.duration
+            : columns.duration;
     const durationFromColumns = durationColumn ? getSafeString(row[durationColumn], "") : "";
-    const time =
-        durationColumn
-            ? durationFromColumns || "TBD"
-            : getSafeString(
-                  language === "en" ? (columns.duration ? row[columns.duration] : undefined) : localizedDuration,
-                  getSafeString(
-                      language === "en" ? row.duration : null,
-                      localizedDuration || durationFromProgramContent || "TBD"
-                  )
-              );
+    const time = localizedDuration || durationFromProgramContent || durationFromColumns || "TBD";
 
-    const programTypeColumn = language === "fr" ? columns.programTypeFr ?? columns.programType : columns.programType;
+    const programTypeColumn =
+        language === "fr"
+            ? columns.programTypeFr ?? columns.programType
+            : language === "es"
+            ? columns.programTypeEs ?? columns.programType
+            : columns.programType;
     const programTypeFromColumns = programTypeColumn ? getSafeString(row[programTypeColumn], "") : "";
     const programType =
         programTypeColumn
@@ -443,8 +454,18 @@ export async function getCourseFilters(language: string | null = null): Promise<
     const columns = await getCourseColumns();
     const lang = toLanguage(language) ?? "en";
 
-    const degreeColumn = lang === "fr" && columns.degreeLevelFr ? columns.degreeLevelFr : columns.degreeLevel;
-    const fieldColumn = lang === "fr" && columns.fieldOfStudyFr ? columns.fieldOfStudyFr : columns.fieldOfStudy;
+    const degreeColumn =
+        lang === "fr"
+            ? columns.degreeLevelFr ?? columns.degreeLevel
+            : lang === "es"
+            ? columns.degreeLevelEs ?? columns.degreeLevel
+            : columns.degreeLevel;
+    const fieldColumn =
+        lang === "fr"
+            ? columns.fieldOfStudyFr ?? columns.fieldOfStudy
+            : lang === "es"
+            ? columns.fieldOfStudyEs ?? columns.fieldOfStudy
+            : columns.fieldOfStudy;
 
     const [degreeLevel, fieldOfStudy] = await Promise.all([
         getDistinctValues(columns.tableName, degreeColumn),
@@ -467,8 +488,18 @@ export async function getCourses(filters: {
 
     addPublishedVisibilityCondition(conditions, columns);
 
-    const degreeColumn = language === "fr" && columns.degreeLevelFr ? columns.degreeLevelFr : columns.degreeLevel;
-    const fieldColumn = language === "fr" && columns.fieldOfStudyFr ? columns.fieldOfStudyFr : columns.fieldOfStudy;
+    const degreeColumn =
+        language === "fr"
+            ? columns.degreeLevelFr ?? columns.degreeLevel
+            : language === "es"
+            ? columns.degreeLevelEs ?? columns.degreeLevel
+            : columns.degreeLevel;
+    const fieldColumn =
+        language === "fr"
+            ? columns.fieldOfStudyFr ?? columns.fieldOfStudy
+            : language === "es"
+            ? columns.fieldOfStudyEs ?? columns.fieldOfStudy
+            : columns.fieldOfStudy;
 
     if (filters.degreeLevel && degreeColumn) {
         params.push(filters.degreeLevel);

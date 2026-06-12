@@ -1,0 +1,785 @@
+{
+  "header": {
+    "topMenu": {
+      "governmentEmployees": "Empleados del Gobierno",
+      "requestInfo": "Solicitar Información",
+      "donations": "Donaciones",
+      "careers": "Carreras"
+    },
+    "menu": {
+      "programs": "Programas",
+      "careers": "Carreras",
+      "admissions": "Admisiones",
+      "tuition": "Matrícula y Ayuda",
+      "studentExperience": "Experiencia Estudiantil",
+      "about": "Acerca de"
+    },
+    "applyNow": "Aplicar Ahora",
+    "portal": "Portal",
+    "signIn": "Iniciar Sesión",
+    "logOut": "Cerrar Sesión",
+    "search": "Buscar..."
+  },
+  "hero": {
+    "title": "Educación que te lleva directamente a tu carrera",
+    "desc": "Aprende habilidades prácticas y adquiere experiencia real que te prepare para entrar directamente en tu carrera con confianza."
+  },
+  "footer": {
+    "campus": "Nuestro campus",
+    "resources": "Recursos",
+    "contactUs": "Contáctenos",
+    "requestInfo": "Solicitar información",
+    "talkToAdvisor": "Hablar con un asesor",
+    "governmentEmployee": "Empleado gubernamental",
+    "address": "123 University Ave, Austin, TX 78701",
+    "phone": "(512) 555-0100",
+    "email": "info@staustin.edu",
+    "copyright": "Copyright @ 2026. Todos los derechos reservados por la Universidad Internacional St. Austin",
+    "privacyPolicy": "Política de privacidad",
+    "termsOfService": "Términos de servicio",
+    "desc": "Potenciando carreras a través de una educación accesible y de alta calidad. Acreditada y reconocida por la excelencia académica."
+  },
+  "languages": {
+    "en": "🇺🇸 EN",
+    "fr": "🇫🇷 FR",
+    "es": "🇪🇸 ES"
+  },
+  "cta": {
+    "title": "¿Listo para comenzar tu viaje?",
+    "desc": "Da el siguiente paso hacia tu futuro. Nuestro equipo de admisiones está aquí para guiarte en cada paso del proceso.",
+    "applyNow": "Aplica ahora",
+    "requestInfo": "Solicitar información",
+    "talkToAdvisor": "Hablar con un asesor"
+  },
+  "explorePrograms": {
+    "title": "Explorar programas",
+    "degreeLevel": "Selecciona el nivel de grado",
+    "fieldOfStudy": "Campo de estudio",
+    "allDegreeLevels": "Todos los niveles de grado",
+    "allFieldsOfStudy": "Todos los campos de estudio",
+    "search": "Buscar",
+    "searching": "Buscando..."
+  },
+  "featuredPrograms": {
+    "title": "Programas destacados",
+    "desc": "Explora nuestros programas más populares diseñados para el éxito profesional",
+    "allTab": "Todos",
+    "defaultBadge": "Programa",
+    "viewProgram": "Ver programa",
+    "viewMore": "Ver más",
+    "loadingError": "No pudimos cargar los programas en este momento.",
+    "retry": "Reintentar",
+    "noCourses": "No se encontraron cursos para este nivel de grado.",
+    "fallbackPrograms": {
+      "businessAdministration": {
+        "title": "Administración de empresas",
+        "description": "Desarrolla el pensamiento estratégico y las habilidades de liderazgo para el mundo empresarial moderno.",
+        "duration": "3 years"
+      },
+      "computerScience": {
+        "title": "Informática",
+        "description": "Domina algoritmos, ingeniería de software y tecnología de vanguardia."
+      },
+      "dataScience": {
+        "title": "Ciencia de datos",
+        "description": "Analiza e interpreta datos complejos para impulsar una toma de decisiones informada.",
+        "duration": "2 years"
+      },
+      "mba": {
+        "title": "Maestría en Administración de Empresas",
+        "description": "Avanza en tu carrera con perspicacia empresarial de nivel ejecutivo y formación en liderazgo.",
+        "duration": "2 years"
+      }
+    }
+  },
+  "admissions": {
+    "title": "Admisiones",
+    "subtitle": "Tu camino hacia el éxito comienza aquí",
+    "desc": "Únete a la Universidad Internacional St. Austin y libera tu potencial. Nuestro proceso de admisión está diseñado para ser sencillo y de apoyo.",
+    "requirements": "Requisitos de admisión",
+    "requirementsDesc": "Para ser considerado para la admisión, los solicitantes deben cumplir con los siguientes requisitos:",
+    "req1": "Diploma de escuela secundaria o equivalente (GED)",
+    "req2": "Promedio mínimo de 2.5",
+    "req3": "Puntaje TOEFL de 79+ (para estudiantes internacionales)",
+    "req4": "Formulario de solicitud completado",
+    "req5": "Dos cartas de recomendación",
+    "steps": "Pasos de la solicitud",
+    "stepsTitle": "Cómo postularse",
+    "step1Title": "Enviar solicitud",
+    "step1Desc": "Completa nuestro formulario de solicitud en línea con tu información personal y académica.",
+    "step2Title": "Enviar documentos",
+    "step2Desc": "Sube tus certificados, resultados de exámenes y cartas de recomendación.",
+    "step3Title": "Revisión y entrevista",
+    "step3Desc": "Nuestro equipo de admisiones revisará tu solicitud y programará una entrevista.",
+    "step4Title": "Recibir decisión",
+    "step4Desc": "Recibe la decisión de admisión y la información de inscripción.",
+    "faq": "Preguntas frecuentes",
+    "faqQ1": "¿Cuál es la fecha límite de solicitud?",
+    "faqA1": "Aceptamos solicitudes de forma continua. Postula lo antes posible para una mejor disponibilidad de cursos.",
+    "faqQ2": "¿Cuáles son las tasas de matrícula?",
+    "faqA2": "Las tasas de matrícula varían según el programa. Contacta a nuestro equipo de admisiones para obtener precios detallados.",
+    "faqQ3": "¿Cuándo comienza el año académico?",
+    "faqA3": "El año académico normalmente comienza en septiembre. También ofrecemos ingresos en primavera y verano.",
+    "faqQ4": "¿Ofrecen ayuda financiera?",
+    "faqA4": "¡Sí! Ofrecemos becas, subvenciones y planes de pago flexibles.",
+    "startApplication": "Comienza tu solicitud",
+    "explorePrograms": "Explorar programas",
+    "importantDeadlines": "Fechas límite importantes",
+    "intakeSeptember": "Ingreso de septiembre",
+    "intakeJanuary": "Ingreso de enero",
+    "intakeMay": "Ingreso de mayo",
+    "priorityDeadline": "Fecha límite prioritaria",
+    "finalDeadline": "Fecha límite final",
+    "septemberPriorityDate": "15 de julio",
+    "septemberFinalDate": "31 de agosto",
+    "januaryPriorityDate": "1 de noviembre",
+    "januaryFinalDate": "15 de diciembre",
+    "mayPriorityDate": "1 de marzo",
+    "mayFinalDate": "15 de abril"
+  },
+  "donations": {
+    "title": "Apoya nuestra misión a través de donaciones",
+    "subtitle": "Ayúdanos a hacer la educación accesible para todos",
+    "desc": "Tu donación impacta directamente la vida de los estudiantes. Al contribuir a la Universidad Internacional St. Austin, nos ayudas a brindar educación de calidad y servicios de apoyo.",
+    "donationAmounts": "Elige tu monto de donación",
+    "custom": "Monto personalizado",
+    "givingMethods": "Formas de donar",
+    "method1Title": "Donación en línea",
+    "method1Desc": "Dona de forma segura a través de nuestra plataforma de donaciones en línea",
+    "method2Title": "Transferencia bancaria",
+    "method2Desc": "Transfiere fondos directamente a la cuenta de la universidad",
+    "method3Title": "Cheque",
+    "method3Desc": "Envía un cheque por correo a la dirección de la universidad",
+    "method4Title": "Donaciones corporativas",
+    "method4Desc": "Establece un programa de donaciones corporativas con igualación",
+    "impact": "Tu impacto",
+    "impact1": "Apoya becas y subvenciones estudiantiles",
+    "impact2": "Mejora las instalaciones y recursos del campus",
+    "impact3": "Financia programas de investigación e innovación",
+    "impact4": "Permite ayuda financiera para estudiantes desfavorecidos",
+    "donateNow": "Donar ahora",
+    "thankYou": "¡Gracias por tu apoyo!"
+  },
+  "governmentPrograms": {
+    "title": "Programas especiales para empleados públicos",
+    "subtitle": "Beneficios y descuentos exclusivos",
+    "desc": "La Universidad Internacional St. Austin reconoce el servicio de los empleados públicos con descuentos especiales en matrícula y opciones de aprendizaje flexibles.",
+    "discountPercentage": "Recibe hasta un 20% de descuento en la matrícula",
+    "groups": "Grupos de empleados",
+    "federal": "Empleados federales",
+    "federalDesc": "Empleados federales de tiempo completo y sus familias",
+    "state": "Empleados estatales",
+    "stateDesc": "Empleados estatales y sus familias",
+    "local": "Empleados municipales",
+    "localDesc": "Empleados municipales y locales y sus familias",
+    "military": "Personal militar",
+    "militaryDesc": "Militares en activo, veteranos y sus familias",
+    "benefits": "Beneficios para empleados públicos",
+    "benefit1": "20% de descuento en matrícula",
+    "benefit2": "Horarios de clases flexibles",
+    "benefit3": "Opciones en línea y presenciales",
+    "benefit4": "Servicios de apoyo dedicados",
+    "benefit5": "Programas de desarrollo profesional",
+    "benefit6": "Oportunidades de igualación por el empleador",
+    "howToApply": "Cómo aplicar",
+    "step1": "Verifica tu empleo público",
+    "step2": "Sube prueba de empleo",
+    "step3": "Completa tu solicitud",
+    "step4": "Recibe tu código de descuento",
+    "verifyStatus": "Verificar estado de empleo",
+    "discountCode": "Tu código de descuento",
+    "validated": "Estado verificado",
+    "pendingReview": "En revisión",
+    "uploadDocument": "Sube tu identificación o certificado de empleo público",
+    "documentUploaded": "Documento subido exitosamente",
+    "startBenefiting": "Comienza a beneficiarte de los descuentos"
+  },
+  "about": {
+    "title": "About St. Austin's International University",
+    "mission": "Our Mission",
+    "missionDesc": "To empower individuals through accessible, high-quality education that bridges academic excellence with practical career readiness.",
+    "vision": "Our Vision",
+    "visionDesc": "To be a global leader in career-focused higher education, recognized for innovation, inclusivity, and student success.",
+    "values": "Our Values",
+    "value1Title": "Excellence",
+    "value1Desc": "We maintain the highest standards in education and student outcomes",
+    "value2Title": "Accessibility",
+    "value2Desc": "We make quality education available to all, regardless of background",
+    "value3Title": "Innovation",
+    "value3Desc": "We embrace modern teaching methods and cutting-edge technology",
+    "value4Title": "Community",
+    "value4Desc": "We foster a supportive and inclusive campus environment",
+    "history": "Our History",
+    "historyDesc": "Founded in 1995, St. Austin's International University has been dedicated to providing career-focused education for over 25 years. Starting as a small institution with just 50 students, we have grown to serve thousands of students annually while maintaining our commitment to personalized education and career success.",
+    "leadership": "Leadership Team",
+    "president": "President",
+    "provost": "Provost",
+    "chancellor": "Chancellor",
+    "accreditation": "Accreditation",
+    "accreditationDesc": "We are accredited by the Southern Association of Colleges and Schools Commission on Colleges (SACSCOC).",
+    "accreditationCards": {
+      "nationalBoardTitle": "Junta Nacional de Educación Superior",
+      "nationalBoardDesc": "Junta Nacional de Educación Superior",
+      "businessProgramsTitle": "Programas de Negocios",
+      "businessProgramsDesc": "Acreditación internacional para programas de negocios",
+      "nursingProgramsTitle": "Programas de Enfermería",
+      "nursingProgramsDesc": "Comisión de Educación Universitaria en Enfermería"
+    }
+  },
+  "tuition": {
+    "title": "Matrícula y ayuda financiera",
+    "subtitle": "Opciones educativas asequibles",
+    "desc": "Ofrecemos planes de matrícula flexibles y ayuda financiera integral para hacer accesible la educación de calidad.",
+    "programs": "Matrícula del programa",
+    "semester": "Por semestre",
+    "year": "Por año",
+    "total": "Costo total del programa",
+    "financialAid": "Opciones de ayuda financiera",
+    "grantsLabel": "Subvenciones",
+    "grantsDesc": "Subvenciones federales y estatales para estudiantes elegibles",
+    "loans": "Préstamos estudiantiles",
+    "loansDesc": "Opciones de préstamos federales y privados",
+    "workStudy": "Trabajo-estudio",
+    "workStudyDesc": "Oportunidades de empleo dentro y fuera del campus",
+    "paymentPlans": "Planes de pago",
+    "monthlyPayment": "Plan de pago mensual",
+    "semesterPayment": "Plan de pago por semestre",
+    "annualPayment": "Plan de pago anual",
+    "faqTuition": "Preguntas frecuentes sobre matrícula",
+    "faqQ1": "¿Hay opciones de planes de pago?",
+    "faqA1": "Sí, ofrecemos planes de pago flexibles para distribuir los costos a lo largo del año.",
+    "faqQ2": "¿Qué hay de la ayuda financiera?",
+    "faqA2": "Ofrecemos becas, subvenciones, préstamos y oportunidades de trabajo-estudio.",
+    "faqQ3": "¿Puedo aplazar el pago?",
+    "faqA3": "Contacta a nuestra oficina de ayuda financiera para discutir opciones de aplazamiento.",
+    "requestFinancialAid": "Solicitar información sobre ayuda financiera",
+    "scholarships": {
+      "academicExcellence": {
+        "title": "Excelencia académica",
+        "description": "Orientación de carrera"
+      },
+      "flexibleLearning": {
+        "title": "Aprendizaje flexible",
+        "description": "Aprenda de expertos e investigadores consumados"
+      },
+      "careerFocused": {
+        "title": "Orientado a la carrera",
+        "description": "Tasa de colocación del 92% con servicios de carrera dedicados y alianzas industriales"
+      },
+      "expertFaculty": {
+        "title": "Profesores expertos",
+        "description": "Aprenda de profesionales de la industria e investigadores consumados"
+      },
+      "financialAidButton": "Contactar la oficina de ayuda financiera"
+    },
+    "paymentPlan": {
+      "monthlyInstallment": "Planes de pago mensual sin intereses",
+      "militaryVeteran": "Beneficios para militares y veteranos aceptados",
+      "employerReimbursement": "Procesamiento de reembolso de matrícula por el empleador",
+      "federalAid": "Elegible para ayuda financiera federal y estatal"
+    }
+  },
+  "requestInfo": {
+    "title": "Solicitar información",
+    "subtitle": "Conoce más sobre nuestros programas",
+    "desc": "Completa el siguiente formulario y nuestro equipo de admisiones te contactará con información detallada sobre nuestros programas.",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "phone": "Número de teléfono",
+    "programInterest": "¿Qué programa te interesa?",
+    "selectProgram": "Selecciona un programa",
+    "businessAdmin": "Administración de empresas",
+    "computerScience": "Informática",
+    "dataScience": "Ciencia de datos",
+    "mba": "Maestría en administración de empresas",
+    "other": "Otro",
+    "otherProgram": "Por favor especifica",
+    "studyMode": "Modalidad de estudio preferida",
+    "onCampus": "Presencial",
+    "online": "En línea",
+    "hybrid": "Híbrido",
+    "message": "Preguntas adicionales",
+    "submit": "Enviar",
+    "submitting": "Enviando...",
+    "success": "¡Gracias! Nos pondremos en contacto contigo pronto.",
+    "error": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Por favor, introduce un correo electrónico válido",
+    "invalidPhone": "Por favor, introduce un número de teléfono válido"
+  },
+  "apply": {
+    "title": "Solicitar ahora",
+    "step1Title": "Información personal",
+    "step2Title": "Educación",
+    "step3Title": "Selección de programa",
+    "step4Title": "Revisión y envío",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "phone": "Número de teléfono",
+    "dateOfBirth": "Fecha de nacimiento",
+    "gender": "Género",
+    "male": "Hombre",
+    "female": "Mujer",
+    "other": "Otro",
+    "nationality": "Nacionalidad",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "state": "Estado/Provincia",
+    "zipCode": "Código postal",
+    "country": "País",
+    "educationLevel": "Nivel educativo más alto",
+    "highSchool": "Diploma de secundaria",
+    "bachelor": "Licenciatura",
+    "master": "Maestría",
+    "phd": "Doctorado",
+    "university": "Nombre de la universidad/institución",
+    "graduationYear": "Año de graduación",
+    "gpa": "Promedio (GPA)",
+    "programsInterested": "Programas que te interesan",
+    "selectPrograms": "Selecciona programas (puedes elegir varios)",
+    "studyPreference": "Preferencia de estudio",
+    "fullTime": "Tiempo completo",
+    "partTime": "Medio tiempo",
+    "startDate": "Fecha de inicio preferida",
+    "workExperience": "Años de experiencia laboral",
+    "careerGoals": "Cuéntanos sobre tus objetivos profesionales",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar solicitud",
+    "submitting": "Enviando...",
+    "applicationSubmitted": "¡Tu solicitud ha sido enviada exitosamente!",
+    "checkEmail": "Por favor, revisa tu correo electrónico para la confirmación.",
+    "payApplicationFee": "Pagar tasa de solicitud",
+    "paymentRedirectDesc": "Serás redirigido a CamPay para ingresar tus datos de pago y completar la tasa de solicitud.",
+    "baseApplicationFee": "Tasa de solicitud base",
+    "governmentEmployeeDiscountLabel": "Descuento para empleados públicos ({discount}%)",
+    "totalDue": "Total a pagar",
+    "choosePaymentMethod": "Elige método de pago",
+    "cardOptionTitle": "Tarjeta (Pago CamPay)",
+    "cardOptionDescription": "Paga en línea con tarjeta a través de CamPay.",
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Por favor, introduce un correo electrónico válido",
+    "invalidPhone": "Por favor, introduce un número de teléfono válido",
+    "studentFallback": "Estudiante",
+    "notAvailable": "N/D",
+    "back": "Atrás",
+    "backToPortal": "Volver al portal",
+    "saveAndNext": "Guardar y continuar",
+    "cellPhone": "Teléfono móvil",
+    "emailSyncedNotice": "El correo electrónico está sincronizado desde tu cuenta del portal.",
+    "feesLabelLine1": "Tasa",
+    "feesLabelLine2": "de solicitud",
+    "pageHeading": {
+      "title": "Solicitar a la Universidad St. Austin",
+      "description": "Completa tu solicitud en unos simples pasos."
+    },
+    "dashboard": {
+      "greeting": "Hola, bienvenido {name}",
+      "logout": "Cerrar sesión",
+      "loggingOut": "Cerrando sesión...",
+      "emailLabel": "Correo electrónico",
+      "phoneLabel": "Teléfono",
+      "userSinceLabel": "Miembro desde",
+      "userSinceValue": "Miembro del portal",
+      "admissionsOpen": "Admisiones abiertas",
+      "availableBatchesLabel": "Sesiones disponibles",
+      "applyNow": "Postular ahora"
+    },
+    "program": {
+      "heading": "Programa",
+      "selectLabel": "Seleccionar un programa",
+      "selectPlaceholder": "Elija su programa"
+    },
+    "batchStart": {
+      "heading": "Inicio de sesión",
+      "question": "Seleccione su sesión de ingreso"
+    },
+    "studentType": {
+      "heading": "Tipo de estudiante",
+      "question": "¿Es usted un estudiante local o internacional?",
+      "localTitle": "Estudiante local",
+      "localDescription": "Postulando como solicitante local",
+      "internationalTitle": "Estudiante internacional",
+      "internationalDescription": "Postulando como solicitante internacional",
+      "localShort": "Nacional",
+      "internationalShort": "Internacional"
+    },
+    "studentInfo": {
+      "heading": "Información del estudiante"
+    },
+    "highestEducationLabel": "Nivel de educación más alto",
+    "highestEducationPlaceholder": "Seleccione el nivel de educación",
+    "interestLevelLabel": "Nivel de interés",
+    "interestLevelPlaceholder": "Seleccione el nivel de interés",
+    "interestAreaLabel": "Área de interés",
+    "placeholders": {
+      "firstName": "Juan",
+      "lastName": "Pérez",
+      "email": "usted@ejemplo.com",
+      "phone": "+34 600 000 000",
+      "interestArea": "IA, Salud Pública, Estrategia Empresarial...",
+      "paymentPhone": "2376XXXXXXXX"
+    },
+    "review": {
+      "heading": "Revisión",
+      "description": "Por favor, revise su solicitud antes de enviarla.",
+      "feeRequiredNotice": "Se requiere el pago de la tasa de solicitud antes de poder enviar esta solicitud.",
+      "continueToPayment": "Continuar al pago",
+      "fields": {
+        "program": "Programa",
+        "batchStart": "Inicio de sesión",
+        "studentType": "Tipo de estudiante",
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "email": "Correo electrónico",
+        "phone": "Teléfono móvil",
+        "highestEducation": "Nivel de educación",
+        "interestLevel": "Nivel de interés",
+        "interestArea": "Área de interés"
+      }
+    },
+    "paymentPhoneLabel": "Número de teléfono para el pago",
+    "paymentSecureNotice": "Su información de pago está segura y encriptada.",
+    "paymentMethods": {
+      "mtn": {
+        "title": "MTN Mobile Money",
+        "description": "Confirmará en su teléfono MTN Mobile Money."
+      },
+      "orange": {
+        "title": "Orange Money",
+        "description": "Confirmará en su teléfono Orange Money."
+      }
+    },
+    "payWithCamPay": "Pagar {amount} XAF con CamPay",
+    "submitted": {
+      "title": "Su solicitud",
+      "statusUnderReview": "En revisión",
+      "checklistTitle": "Lista de verificación (correo electrónico)",
+      "summaryNotice": "Solicitud enviada con éxito. Su solicitud está en revisión y nos pondremos en contacto con usted pronto.",
+      "timeline": {
+        "feeSubmitted": {
+          "title": "Solicitud enviada",
+          "description": "Su solicitud ha sido enviada con éxito.",
+          "meta": "Correo electrónico de confirmación enviado a {email}."
+        },
+        "underReview": {
+          "title": "Solicitud en revisión",
+          "description": "Su solicitud para {program} está ahora en revisión.",
+          "meta": "Tiempo estimado: 3-5 días hábiles"
+        },
+        "documentVerification": {
+          "title": "Verificación de documentos",
+          "description": "Nuestro equipo de admisiones revisará sus documentos después de que complete la lista de verificación."
+        },
+        "admissionDecision": {
+          "title": "Decisión de admisión",
+          "description": "Recibirá su decisión de admisión por correo electrónico una vez finalizada la revisión."
+        }
+      }
+    },
+    "governmentDiscount": {
+      "pendingReviewNotice": "El descuento para empleados públicos está pendiente de aprobación administrativa. Envíe sus detalles de identificación a {email}.",
+      "rejectedNotice": "Su solicitud anterior de descuento para empleados públicos no fue aprobada. Actualice sus datos en la página de Empleados Públicos y vuelva a enviarla."
+    },
+    "validation": {
+      "selectProgram": "Por favor, seleccione un programa antes de continuar.",
+      "selectIntakeBatch": "Por favor, seleccione su sesión de ingreso antes de continuar.",
+      "firstNameRequired": "Por favor, introduzca su nombre.",
+      "lastNameRequired": "Por favor, introduzca su apellido.",
+      "emailRequired": "Por favor, introduzca su dirección de correo electrónico.",
+      "phoneRequired": "Por favor, introduzca su número de teléfono móvil.",
+      "highestEducationRequired": "Por favor, seleccione su nivel de educación más alto.",
+      "interestLevelRequired": "Por favor, seleccione su nivel de interés.",
+      "interestAreaRequired": "Por favor, introduzca su área de interés.",
+      "paymentMethodRequired": "Por favor, elija un método de pago.",
+      "paymentPhoneRequired": "Por favor, introduzca el número de teléfono de Mobile Money."
+    },
+    "errors": {
+      "paymentCancelled": "El pago fue cancelado. Por favor, complete el pago para enviar su solicitud.",
+      "paymentReferenceMissing": "No pudimos encontrar su referencia de pago. Por favor, intente pagar de nuevo.",
+      "paymentConfirmFailed": "No se pudo confirmar el pago. Por favor, inténtelo de nuevo.",
+      "paymentConfirmUnavailable": "No se puede confirmar el pago en este momento. Por favor, inténtelo de nuevo.",
+      "submitFailed": "No se pudo enviar la solicitud. Por favor, inténtelo de nuevo.",
+      "checkoutInitFailed": "No se pudo iniciar el pago con CamPay. Por favor, inténtelo de nuevo."
+    },
+    "intake": {
+      "september": "Septiembre",
+      "january": "Enero",
+      "may": "Mayo"
+    },
+    "education": {
+      "highSchoolDiploma": "Diploma de secundaria",
+      "associateDegree": "Grado asociado",
+      "bachelorsDegree": "Licenciatura",
+      "mastersDegree": "Maestría",
+      "doctorate": "Doctorado",
+      "other": "Otro"
+    },
+    "interest": {
+      "exploringOptions": "Explorando opciones",
+      "interested": "Interesado",
+      "veryInterested": "Muy interesado",
+      "readyToApply": "Listo para postular"
+    },
+    "checklist": {
+      "transcript": "Expediente académico más reciente",
+      "resume": "Currículum vitae actual",
+      "learningGoalsStatement": "Breve declaración de objetivos de aprendizaje",
+      "personalStatement": "Declaración personal",
+      "statementOfPurpose": "Carta de motivación",
+      "identityProof": "Documento de identidad"
+    }
+  },
+  "payment": {
+    "title": "Pago",
+    "selectPaymentMethod": "Seleccionar método de pago",
+    "creditCard": "Tarjeta de crédito",
+    "debitCard": "Tarjeta de débito",
+    "bankTransfer": "Transferencia bancaria",
+    "paymentGateway": "Pasarela de pago",
+    "cardNumber": "Número de tarjeta",
+    "expiryDate": "Fecha de vencimiento",
+    "cvv": "CVV",
+    "cardholderName": "Nombre del titular de la tarjeta",
+    "billingAddress": "Dirección de facturación",
+    "amount": "Monto",
+    "pay": "Pagar",
+    "processing": "Procesando...",
+    "paymentFailed": "El pago falló. Por favor, inténtalo de nuevo.",
+    "paymentSuccessful": "¡Pago exitoso!",
+    "orderConfirmation": "Confirmación del pedido",
+    "transactionId": "ID de transacción",
+    "invoiceNumber": "Número de factura"
+  },
+  "whyAustin": {
+    "title": "¿Por qué St. Austin?",
+    "desc": "Descubra la diferencia de St. Austin con nuestro compromiso con la excelencia, la flexibilidad y el éxito profesional.",
+    "learnMore": "Saber más",
+    "card1Title": "Acreditado y reconocido",
+    "card1Desc": "Institución acreditada a nivel nacional con programas reconocidos por los líderes de la industria.",
+    "card2Title": "Opciones de aprendizaje flexibles",
+    "card2Desc": "Estudie en línea o en el campus con horarios diseñados para profesionales que trabajan.",
+    "card3Title": "Orientado a la carrera",
+    "card3Desc": "Tasa de colocación del 92% con servicios de carrera dedicados y asociaciones industriales.",
+    "card4Title": "Profesores expertos",
+    "card4Desc": "Aprenda de profesionales de la industria e investigadores consumados."
+  },
+  "testimonial": {
+    "title": "Lo que dicen nuestros estudiantes",
+    "description": "Escuche a graduados y estudiantes actuales sobre su experiencia en St. Austin",
+    "card1": {
+      "name": "Nombre del estudiante 1",
+      "role": "Graduado en Administración de Empresas",
+      "content": "El programa de St. Austin me dio las habilidades prácticas y la confianza que necesitaba para mi puesto actual. El profesorado realmente se preocupa por el éxito de los estudiantes."
+    },
+    "card2": {
+      "name": "Nombre del estudiante 2",
+      "role": "Estudiante de Informática",
+      "content": "La flexibilidad en línea me permitió trabajar a tiempo completo mientras obtenía mi título. Los instructores son expertos en su campo con experiencia en el mundo real."
+    },
+    "card3": {
+      "name": "Nombre del estudiante 3",
+      "role": "Graduado en Ciencia de Datos",
+      "content": "Agradecí el apoyo de los servicios de carrera. Me ayudaron a asegurar un puesto en una importante empresa tecnológica. El plan de estudios se alineó perfectamente con las necesidades de la industria."
+    },
+    "card4": {
+      "name": "Nombre del estudiante 4",
+      "role": "Graduado de MBA",
+      "content": "Las oportunidades de networking y la colaboración entre pares transformaron mi trayectoria profesional. Recomiendo encarecidamente St. Austin a cualquiera que busque crecer."
+    }
+  },
+  "learnSomething": {
+    "title": "Aprenda algo nuevo con St. Austin",
+    "desc": "St. Austin ayuda a estudiantes de todo el mundo a desarrollar sus habilidades y carreras. ¡Únase a nuestra comunidad de aprendizaje hoy!",
+    "cardGraduates": "Graduados",
+    "cardPlacementRate": "Tasa de colocación",
+    "cardPrograms": "Programas",
+    "cardSatisfaction": "Satisfacción de los graduados"
+  },
+  "learningExperience": {
+    "title": "Su experiencia de aprendizaje",
+    "desc": "Nuestra plataforma de aprendizaje integrada lo conecta con todo lo que necesita: tareas, debates, mensajería y más.",
+    "card1Title": "Tareas",
+    "card1Desc": "Envíe y realice un seguimiento de las tareas con comentarios en tiempo real",
+    "card2Title": "Debates",
+    "card2Desc": "Participe con sus compañeros y el profesorado en foros temáticos",
+    "card3Title": "Clases en vivo",
+    "card3Desc": "Asista a sesiones interactivas desde cualquier lugar"
+  },
+  "newsAnnouncements": {
+    "title": "Noticias y anuncios",
+    "readMore": "Leer más noticias",
+    "card1Title": "Administración de Empresas",
+    "card1Desc": "Desarrolle el pensamiento estratégico y las habilidades de liderazgo para el mundo empresarial moderno.",
+    "card1Time": "15 de marzo de 2026",
+    "card1Badge": "Acreditación",
+    "card2Title": "Informática",
+    "card2Desc": "Domine los algoritmos, la ingeniería de software y la tecnología de vanguardia.",
+    "card2Time": "10 de abril de 2026",
+    "card2Badge": "Admisiones",
+    "card3Title": "Ciencia de Datos",
+    "card3Desc": "Analice e interprete datos complejos para impulsar una toma de decisiones informada.",
+    "card3Time": "20 de mayo de 2026",
+    "card3Badge": "Acreditación",
+    "card4Title": "Maestría en Administración de Empresas",
+    "card4Desc": "Avanza en tu carrera con perspicacia empresarial de nivel ejecutivo y formación en liderazgo.",
+    "card4Time": "5 de junio de 2026",
+    "card4Badge": "Campus"
+  },
+  "employerMatchingGift": {
+    "title": "Los programas de donaciones equivalentes maximizan su impacto",
+    "desc": "Muchos empleadores patrocinan programas de donaciones equivalentes e igualarán las contribuciones caritativas realizadas por sus empleados. ¡El impacto de su donación a St. Austin podría duplicarse o incluso triplicarse!",
+    "searchLabel": "Busque a su empleador",
+    "searchPlaceholder": "Introduzca el nombre de su empleador",
+    "searchButton": "Buscar"
+  },
+  "programCard": {
+    "defaultBadgeLabel": "Programa",
+    "viewProgramLabel": "Ver programa",
+    "badgeNew": "Nuevo",
+    "badgePopular": "Popular"
+  },
+  "governmentEmployeeDiscount": {
+    "claimTitle": "Reclamar descuento para empleados públicos",
+    "claimDescription": "Inicie sesión para enviar su identificación gubernamental para revisión administrativa y desbloquear su descuento en la tasa de solicitud tras la aprobación.",
+    "signInButton": "Iniciar sesión para reclamar descuento",
+    "cardTitle": "Descuento para empleados públicos",
+    "description": "Los empleados públicos elegibles reciben un {discount}% de descuento en la tasa de solicitud tras la aprobación administrativa.",
+    "currentStatus": "Estado actual:",
+    "categoryLabel": "Categoría:",
+    "governmentIdLabel": "ID gubernamental:",
+    "emailConfirmation": "Envíe su confirmación de identificación a {email} para su aprobación.",
+    "activeDiscount": "Descuento activo: {discount}% de descuento en la tasa de solicitud.",
+    "checkboxLabel": "Soy un empleado público actual / miembro del personal del sector público.",
+    "selectCategoryLabel": "Seleccione su categoría de empleado público",
+    "governmentEmployeeIdLabel": "ID de empleado público",
+    "governmentEmployeeIdPlaceholder": "Introduzca su identificación oficial del gobierno",
+    "submitIdMessage": "Envíe la misma identificación por correo electrónico a {email}. El descuento se aplica solo tras la aprobación administrativa.",
+    "saving": "Guardando...",
+    "saveButton": "Guardar ajustes de descuento",
+    "validation": {
+      "selectCategory": "Por favor, seleccione su categoría de empleado público.",
+      "governmentId": "Por favor, proporcione su identificación de empleado público."
+    },
+    "errors": {
+      "save": "No se pudieron guardar los ajustes de descuento.",
+      "connect": "No se pudo conectar con el servidor. Por favor, inténtalo de nuevo."
+    },
+    "success": {
+      "approved": "Descuento para empleados públicos aprobado ({discount}% de descuento en la tasa de solicitud).",
+      "submitted": "Solicitud enviada. Envíe su identificación gubernamental a {email}. El descuento se activa tras la aprobación administrativa.",
+      "removed": "Descuento para empleados públicos eliminado."
+    },
+    "status": {
+      "notClaimed": "No reclamado",
+      "pendingReview": "Pendiente de aprobación administrativa",
+      "rejected": "Rechazado (se requiere volver a enviar)",
+      "approved": "Aprobado (descuento del {discount}% activo)"
+    },
+    "group": {
+      "civilServiceEmployees": "Empleados de la administración pública",
+      "veteransAndActiveDuty": "Veteranos y personal en servicio activo",
+      "publicSafetyPersonnel": "Personal de seguridad pública",
+      "publicHealthAndEducationWorkers": "Trabajadores de salud pública y educación"
+    }
+  },
+  "governmentEmployees": {
+    "bannerTitle": "Programas especiales para empleados públicos",
+    "bannerDescription": "Beneficios y descuentos exclusivos",
+    "quickLinksTitle": "Enlaces rápidos y recursos",
+    "asideTitle": "Servicios para empleados públicos en la Universidad St. Austin",
+    "contactSupport": "Contactar soporte",
+    "contactEmail": "Correo electrónico: ",
+    "phoneNumber": "Teléfono: ",
+    "howDiscountWorksTitle": "Cómo funciona el descuento",
+    "howDiscountWorksStep1": "Inicie sesión, seleccione su categoría y envíe su identificación de empleado público.",
+    "howDiscountWorksStep2Part1": "Reciba",
+    "howDiscountWorksStep2Part2": "el descuento en la tasa de solicitud solo después de la aprobación administrativa.",
+    "howDiscountWorksStep3": "Envíe sus detalles de identificación a govtservices@staustin.edu para revisión antes de la activación del descuento.",
+    "supportByGroupTitle": "Soporte por grupo de empleados públicos",
+    "supportByGroupDesc": "Hemos agrupado a los estudiantes del sector público para que cada equipo reciba orientación, beneficios y trayectorias académicas pertinentes.",
+    "quickLinks": {
+      "tuitionSupport": "Apoyo a la matrícula y orientación sobre patrocinio",
+      "flexibleSchedules": "Horarios de clases flexibles para trabajadores por turnos",
+      "advising": "Asesoramiento académico para carreras de servicio público",
+      "creditForPriorLearning": "Crédito por aprendizaje previo y formación profesional",
+      "careerPathways": "Trayectorias profesionales en administración, TI y liderazgo",
+      "veteransSupport": "Servicios de apoyo a la transición de veteranos"
+    },
+    "groups": {
+      "civilService": {
+        "title": "Empleados de la administración pública",
+        "summary": "Para el personal de ministerios, consejos y agencias que busca fortalecer sus habilidades de gestión, política y digitales.",
+        "support1": "Trayectorias en administración pública",
+        "support2": "Opciones de fin de semana y tarde",
+        "support3": "Apoyo al estudio patrocinado por el empleador"
+      },
+      "veterans": {
+        "title": "Veteranos y personal en servicio activo",
+        "summary": "Para militares y veteranos que transitan hacia carreras civiles o avanzan en sus cualificaciones.",
+        "support1": "Asesoramiento centrado en la transición",
+        "support2": "Reconocimiento de la experiencia de servicio previa",
+        "support3": "Planificación de carrera y apoyo a la colocación"
+      },
+      "publicSafety": {
+        "title": "Personal de seguridad pública",
+        "summary": "Para profesionales de la policía, emergencias y seguridad que equilibran los horarios de servicio con objetivos académicos.",
+        "support1": "Programación adaptada a los turnos",
+        "support2": "Mejora de las habilidades de liderazgo y operaciones",
+        "support3": "Seguimiento del progreso con apoyo de un asesor"
+      },
+      "publicHealth": {
+        "title": "Trabajadores de salud pública y educación",
+        "summary": "Para maestros, trabajadores de la salud y administradores empleados por el gobierno que buscan progresar.",
+        "support1": "Trayectorias de programas para funciones de prestación de servicios",
+        "support2": "Plan de estudios práctico y alineado con la carrera",
+        "support3": "Apoyo al crecimiento profesional a largo plazo"
+      }
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "success": "Éxito",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "remove": "Quitar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "noData": "No hay datos disponibles",
+    "retry": "Reintentar",
+    "learnMore": "Saber más",
+    "readMore": "Leer más",
+    "seeAll": "Ver todo",
+    "more": "Más",
+    "less": "Menos",
+    "yes": "Sí",
+    "no": "No",
+    "ok": "OK",
+    "continue": "Continuar",
+    "confirm": "Confirmar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "all": "Todos"
+  },
+  "programDetail": {
+    "overviewHeading": "Resumen",
+    "curriculumHeading": "Plan de estudios",
+    "careerOpportunitiesHeading": "Oportunidades profesionales",
+    "tuitionHeading": "Matrícula y tasas",
+    "viewFinancialAid": "Ver ayuda financiera",
+    "admissionRequirementsHeading": "Requisitos de admisión",
+    "startApplicationTitle": "Comienza tu solicitud",
+    "nextCohort": "Próxima cohorte",
+    "emptyContent": "El contenido aún no está actualizado"
+  }
+}

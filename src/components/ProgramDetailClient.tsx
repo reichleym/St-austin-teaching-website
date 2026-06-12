@@ -62,6 +62,49 @@ interface LanguageSpecificContent {
   careerOpportunities?: unknown;
 }
 
+type TranslationObject = {
+  en?: unknown;
+  fr?: unknown;
+  es?: unknown;
+  [key: string]: unknown;
+};
+
+function normalizeObject(value: unknown): Record<string, unknown> | null {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
+  return null;
+}
+
+function isTranslationObject(value: unknown): value is TranslationObject {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const record = value as Record<string, unknown>;
+  return 'en' in record || 'fr' in record || 'es' in record;
+}
+
+function deepTranslate<T>(value: T, language: string): T {
+  if (Array.isArray(value)) {
+    return value.map((item) => deepTranslate(item, language)) as T;
+  }
+
+  if (isTranslationObject(value)) {
+    const record = value as TranslationObject;
+    const picked = record[language] ?? record.en;
+    return (typeof picked === 'undefined' ? ('' as unknown) : picked) as T;
+  }
+
+  if (value && typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    const result: Record<string, unknown> = {};
+    for (const key of Object.keys(record)) {
+      result[key] = deepTranslate(record[key], language);
+    }
+    return result as T;
+  }
+
+  return value;
+}
+
 function extractLanguageContent(programContentJson: string | undefined, language: string): LanguageSpecificContent {
   if (!programContentJson || programContentJson.trim().length === 0) {
     return {};
@@ -69,12 +112,25 @@ function extractLanguageContent(programContentJson: string | undefined, language
 
   try {
     const parsed: unknown = JSON.parse(programContentJson);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      const allContent = parsed as Record<string, unknown>;
-      const languageContent = allContent[language];
+    const allContent = normalizeObject(parsed);
+    if (allContent) {
+      const directLanguageContent = normalizeObject(allContent[language]);
+      if (directLanguageContent) {
+        return directLanguageContent as LanguageSpecificContent;
+      }
 
-      if (languageContent && typeof languageContent === 'object' && !Array.isArray(languageContent)) {
-        return languageContent as LanguageSpecificContent;
+      const translations = normalizeObject(allContent.translations);
+      const nestedLanguageContent = translations ? normalizeObject(translations[language]) : null;
+      if (nestedLanguageContent) {
+        return nestedLanguageContent as LanguageSpecificContent;
+      }
+
+      // Support content stored as translation objects on each field:
+      // { overview: { en: "...", es: "..." }, curriculum: { en: [".."], es: [".."] }, ... }
+      const deep = deepTranslate(allContent, language) as unknown;
+      const deepRecord = normalizeObject(deep);
+      if (deepRecord) {
+        return deepRecord as LanguageSpecificContent;
       }
     }
   } catch {

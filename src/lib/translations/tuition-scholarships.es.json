@@ -1,0 +1,25 @@
+{
+  "academicExcellence": {
+    "title": "Premio a la Excelencia Académica",
+    "description": "Para estudiantes con un promedio (GPA) de 3.5 o superior."
+  },
+  "flexibleLearning": {
+    "title": "Opciones de aprendizaje flexibles",
+    "description": "Estudie en línea o en el campus con horarios diseñados para profesionales que trabajan."
+  },
+  "careerFocused": {
+    "title": "Orientado a la carrera",
+    "description": "92% de tasa de colocación con servicios de carrera dedicados y asociaciones industriales."
+  },
+  "expertFaculty": {
+    "title": "Profesores expertos",
+    "description": "Aprenda de profesionales de la industria e investigadores consumados."
+  },
+  "paymentPlansList": [
+    "Planes de pago mensual sin intereses",
+    "Se aceptan beneficios para militares y veteranos",
+    "Tramitación del reembolso de la matrícula por el empleador",
+    "Elegible para ayuda financiera federal y estatal"
+  ],
+  "financialAidButton": "Contactar con la oficina de ayuda financiera"
+}

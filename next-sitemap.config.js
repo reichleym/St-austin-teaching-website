@@ -16,8 +16,10 @@ module.exports = {
   },
 
   additionalPaths: async () => {
+    const locales = ['en', 'fr', 'es'];
+
     // Static pages
-    const staticPages = [
+    const staticPaths = [
       "/",
       "/about",
       "/admissions",
@@ -30,12 +32,20 @@ module.exports = {
       "/request-info",
       "/studentExperience",
       "/tuition",
-    ].map((path) => ({
-      loc: path,
-      changefreq: "weekly",
-      priority: 1.0,
-      lastmod: new Date().toISOString(),
-    }));
+    ];
+
+    // For each static path, generate entries for each locale. Default locale ('en') keeps root path.
+    const staticPages = staticPaths.flatMap((path) => {
+      return locales.map((locale) => {
+        const loc = locale === 'en' ? path : `/${locale}${path === '/' ? '' : path}`;
+        return {
+          loc,
+          changefreq: 'weekly',
+          priority: 1.0,
+          lastmod: new Date().toISOString(),
+        };
+      });
+    });
 
     try {
       // Dynamic program pages
@@ -45,12 +55,18 @@ module.exports = {
 
       const dynamicPrograms =
         result?.ok && Array.isArray(result.data)
-          ? result.data.map((program) => ({
-              loc: `/program/${program.id}`,
-              changefreq: "weekly",
-              priority: 0.8,
-              lastmod: new Date().toISOString(),
-            }))
+          ? result.data.flatMap((program) => {
+              return locales.map((locale) => {
+                const base = `/program/${program.id}`;
+                const loc = locale === 'en' ? base : `/${locale}${base}`;
+                return {
+                  loc,
+                  changefreq: 'weekly',
+                  priority: 0.8,
+                  lastmod: new Date().toISOString(),
+                };
+              });
+            })
           : [];
 
       return [...staticPages, ...dynamicPrograms];

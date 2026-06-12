@@ -42,7 +42,10 @@
   "languages": {
     "en": "🇺🇸 EN",
     "fr": "🇫🇷 FR"
+    ,
+    "es": "🇪🇸 ES"
   },
+
   "cta": {
     "title": "Ready to Start Your Journey?",
     "desc": "Take the next step toward your future. Our admissions team is here to guide you through every step of the process.",
@@ -160,7 +163,7 @@
     "donateNow": "Donate Now",
     "thankYou": "Thank You for Your Support!"
   },
-  "governmentEmployees": {
+  "governmentPrograms": {
     "title": "Special Programs for Government Employees",
     "subtitle": "Exclusive Benefits & Discounts",
     "desc": "St. Austin's International University honors the service of government employees with special tuition discounts and flexible learning options.",
@@ -227,7 +230,6 @@
     "year": "Per Year",
     "total": "Total Program Cost",
     "financialAid": "Financial Aid Options",
-    "scholarships": "Scholarships",
     "scholarshipsDesc": "Merit-based and need-based scholarships available",
     "grants": "Grants",
     "grantsDesc": "Federal and state grants for eligible students",

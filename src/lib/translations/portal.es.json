@@ -1,0 +1,55 @@
+{
+  "accessTitle": "Acceda a su portal de aprendizaje",
+  "accessDescription": "Su portal para cursos, tareas, debates y todo lo que necesita para tener éxito.",
+  "bannerTitle": "Su portal de aprendizaje",
+  "bannerDescription": "Acceda a todo lo que necesita para su éxito académico en un solo lugar.",
+  "blocks": {
+    "students": {
+      "title": "Estudiantes",
+      "description": "Acceda a cursos, envíe tareas, únase a debates, realice un seguimiento de las calificaciones y envíe mensajes a los instructores."
+    },
+    "faculty": {
+      "title": "Profesorado",
+      "description": "Gestione cursos, califique tareas, cree debates y comuníquese con los estudiantes."
+    },
+    "administrators": {
+      "title": "Administradores",
+      "description": "Gestione usuarios, departamentos, programas, informes y configuraciones institucionales."
+    }
+  },
+  "features": {
+    "title": "Características de la plataforma",
+    "description": "Todo lo que necesita para una experiencia de aprendizaje fluida",
+    "courseManagement": {
+      "title": "Gestión de cursos",
+      "description": "Aprendizaje al estilo Blackboard con módulos, materiales y cuestionarios organizados."
+    },
+    "messaging": {
+      "title": "Mensajería en tiempo real",
+      "description": "Mensajería directa y debates grupales con notificaciones instantáneas."
+    },
+    "progressTracking": {
+      "title": "Seguimiento del progreso",
+      "description": "Paneles visuales que muestran calificaciones, asistencia e hitos de aprendizaje."
+    },
+    "assignmentSystem": {
+      "title": "Sistema de tareas",
+      "description": "Envíe, revise y califique tareas con comentarios integrados."
+    },
+    "virtualClassrooms": {
+      "title": "Aulas virtuales",
+      "description": "Sesiones en vivo con vídeo, pantalla compartida y herramientas interactivas."
+    },
+    "collaboration": {
+      "title": "Colaboración",
+      "description": "Proyectos grupales, revisión por pares y edición colaborativa de documentos."
+    }
+  },
+  "programsSectionTitle": "Explorar programas disponibles",
+  "programsSectionDescription": "Estos programas se cargan dinámicamente desde la base de datos.",
+  "intuitivePortal": {
+    "title": "Portal intuitivo",
+    "description": "Navegue por su trayectoria académica con facilidad. Nuestro portal pone todo al alcance de su mano, desde las próximas tareas hasta los horarios de clases en vivo.",
+    "button": "Ir al portal"
+  }
+}

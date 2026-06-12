@@ -1,7 +1,7 @@
 'use client';
 
 import { IoMdTime } from "react-icons/io";
-import Button from "../Button";
+import ExpandableText from "../ExpandableText";
 import { useTranslations } from "@/lib/useTranslations";
 
 type Props = {
@@ -54,7 +54,7 @@ export default function NewsAnnouncements({ title, items }: Props) {
                   {item.title}
                 </div>
 
-                <p className="leading-tight">{item.excerpt}</p>
+                <ExpandableText text={item.excerpt || ""} maxLength={180} />
 
                 {item.date && (
                   <div className="flex items-center justify-between mt-5">
