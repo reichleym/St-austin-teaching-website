@@ -6,6 +6,7 @@ import Footer from "@/components/sections/Footer";
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { getCurrentSessionUser } from "@/lib/auth/server";
 import { isDatabaseConfigured } from "@/lib/postgres";
+import { getServerLanguage } from "@/lib/i18n/server";
 
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   let initialSessionUser = null;
+  let lang = 'en';
 
   if (isDatabaseConfigured) {
     try {
@@ -34,8 +36,14 @@ export default async function RootLayout({
     }
   }
 
+  try {
+    lang = await getServerLanguage();
+  } catch {
+    lang = 'en';
+  }
+
   return (
-    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+    <html lang={lang} className="h-full antialiased" suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Teachers:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet" />
       </head>
